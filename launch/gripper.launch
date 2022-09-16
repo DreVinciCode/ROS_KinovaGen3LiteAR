@@ -5,7 +5,7 @@
     <arg name="start_delay_seconds" default="0"/>
 
     <!-- Launch the example in that namespace -->
-    <node name="gripper_controller" pkg="kortex_driver" type="GripperController.py" output="screen" launch-prefix="bash -c 'sleep $(arg start_delay_seconds); $0 $@' ">
+    <node name="gripper_controller" pkg="kinova_ar" type="GripperController.py" output="screen" launch-prefix="bash -c 'sleep $(arg start_delay_seconds); $0 $@' ">
         <param name="robot_name" value="$(arg robot_name)"/>
     </node>
 

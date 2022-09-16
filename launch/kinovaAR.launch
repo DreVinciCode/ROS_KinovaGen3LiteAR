@@ -5,12 +5,12 @@
         <arg name="arm" value="gen3_lite"/>
         <arg name="dof" value="6"/>
     </include>
-    
+
     <include file="$(find gen3_lite_gen3_lite_2f_move_it_config)/launch/moveit_rviz.launch">
         <arg name="rviz_config" value="$(find kinova_ar)/rviz_configs/kinova_rviz.rviz"/>
     </include>
 
-
+    <include file="$(find kinova_ar)/launch/gripper.launch"/>
     
     <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch"/>
     
