@@ -18,10 +18,18 @@ class messageConverter:
     	linearY = data.linear.y
     	linearZ = data.linear.z 
 
+        angularX = data.angular.x 
+        angularY = data.angular.y 
+        angularZ = data.angular.z 
+
     	TwistCommand_Message = TwistCommand()
     	TwistCommand_Message.twist.linear_x = linearX
     	TwistCommand_Message.twist.linear_y = linearY
     	TwistCommand_Message.twist.linear_z = linearZ
+        TwistCommand_Message.twist.angular_x = angularX
+        TwistCommand_Message.twist.angular_y = angularY
+        TwistCommand_Message.twist.angular_z = angularZ
+
 
     	self.TwistCommand_pub.publish(TwistCommand_Message)
 
