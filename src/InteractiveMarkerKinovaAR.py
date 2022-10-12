@@ -1,33 +1,26 @@
 #!/usr/bin/env python
 
-###
-# KINOVA (R) KORTEX (TM)
-#
-# Copyright (c) 2021 Kinova inc. All rights reserved.
-#
-# This software may be modified and distributed 
-# under the terms of the BSD 3-Clause license.
-#
-# Refer to the LICENSE file for details.
-#
-###
-
-import sys
-import rospy
-import time
-import math
-
-import actionlib
-
 from kortex_driver.srv import *
 from kortex_driver.msg import *
-
 from std_msgs.msg import Int16, Header
+from std_srvs.srv import Empty
+
+import actionlib
+import geometry_msgs.msg
+import math
+import moveit_commander
+import moveit_msgs.msg
+import rospy
+import sys
+import time
+
+from moveit_kinovaAR import arm_group
 
 
-class ExampleWaypointActionClient:
+class InteractiveMarkerFunction(object):
     def __init__(self):
         try:
+
             rospy.init_node('example_waypoint_action_python')
 
             self.PACKAGE_ACTION_IDENTIFIER = 3
@@ -65,7 +58,8 @@ class ExampleWaypointActionClient:
             get_product_configuration_full_name = '/' + self.robot_name + '/base/get_product_configuration'
             rospy.wait_for_service(get_product_configuration_full_name)
             self.get_product_configuration = rospy.ServiceProxy(get_product_configuration_full_name, GetProductConfiguration)
-        
+                                   
+
         except:
             self.is_init_success = False
         else:
@@ -78,7 +72,8 @@ class ExampleWaypointActionClient:
             success &=self.example_clear_faults()
             success &=self.example_subscribe_to_a_robot_notification()
             success &=self.example_home_the_robot()
-            success &=self.example_cartesian_waypoint_action()
+            success &=self.cartesian_waypoint_callback()
+            # success &=self.example_cartesian_waypoint_action()
 
         try:
             self.GripperSubscriber = rospy.Subscriber("/KinovaAR/Pose", Int16, self.KinovaPose_callback)
@@ -87,8 +82,41 @@ class ExampleWaypointActionClient:
             rospy.logerr("Failed to call ROS spin")
 
 
+    def cartesian_waypoint_callback(self):
+        self.last_action_notif_type = None
 
-    
+        client = actionlib.SimpleActionClient('/' + self.robot_name + '/cartesian_trajectory_controller/follow_cartesian_trajectory', kortex_driver.msg.FollowCartesianTrajectoryAction)
+
+        client.wait_for_server()
+
+        goal = FollowCartesianTrajectoryGoal()
+
+        config = self.get_product_configuration()
+
+        # Crane positions for Kinova Arm
+        goal.trajectory.append(self.FillCartesianWaypoint(0.17,  0.20,  0.14, math.radians(3.3), math.radians(180), math.radians(90), 0))
+
+        # rospy.loginfo("Sending goal(Cartesian waypoint) to action server...")
+        # arm_group = self.arm_group
+
+        # Get the current pose and display it
+        pose = arm_group.get_current_pose()
+        rospy.loginfo("Actual cartesian pose is : ")
+        # rospy.loginfo(pose.pose)
+
+        # Send this goal to arm_group planner
+
+        # Call the service
+        # rospy.loginfo("Sending goal(Cartesian waypoint) to action server...")
+        # try:
+        #     client.send_goal(goal)
+        # except rospy.ServiceException:
+        #     rospy.logerr("Failed to send goal.")
+        #     return False
+        # else:
+        #     client.wait_for_result()
+        #     return True
+
 
 
     def KinovaPose_callback(self, data):
@@ -226,47 +254,6 @@ class ExampleWaypointActionClient:
             return True
     
 
-    # def main(self):
-    #     # For testing purposes
-    #     success = self.is_init_success
-    #     try:
-    #         rospy.delete_param("/kortex_examples_test_results/waypoint_action_python")
-    #     except:
-    #         pass
-
-    #     if success:
-    #         #*******************************************************************************
-    #         # Make sure to clear the robot's faults else it won't move if it's already in fault
-    #         success &= self.example_clear_faults()
-    #         #*******************************************************************************
-            
-    #         #*******************************************************************************
-    #         # Activate the action notifications
-    #         success &= self.example_subscribe_to_a_robot_notification()
-    #         #*******************************************************************************
-
-    #         #*******************************************************************************
-    #         # Move the robot to the Home position with an Action
-    #         success &= self.example_home_the_robot()
-    #         #*******************************************************************************
-
-    #         #*******************************************************************************
-    #         # Example of Cartesian waypoint using an action client
-    #         # success &= self.example_cartesian_waypoint_action()
-    #         #*******************************************************************************
-
-    #         #*******************************************************************************
-    #         # Move back the robot to the Home position with an Action
-    #         # success &= self.example_home_the_robot()
-    #         #*******************************************************************************
-
-    #     # For testing purposes
-    #     rospy.set_param("/kortex_examples_test_results/waypoint_action_python", success)
-
-    #     if not success:
-    #         rospy.logerr("The example encountered an error.")
-
-
 if __name__ == "__main__":
-    ex = ExampleWaypointActionClient()
-    # ex.main()
+    ex = InteractiveMarkerFunction()
+
