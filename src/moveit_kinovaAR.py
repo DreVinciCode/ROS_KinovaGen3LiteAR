@@ -40,6 +40,7 @@
 # To run this node in a given namespace with rosrun (for example 'my_gen3'), start a Kortex driver and then run : 
 # rosrun kortex_examples example_moveit_trajectories.py __ns:=my_gen3
 
+from geometry_msgs.msg import PoseStamped
 from kortex_driver.srv import *
 from kortex_driver.msg import *
 
@@ -50,7 +51,7 @@ import time
 import rospy
 import moveit_commander
 import moveit_msgs.msg
-import geometry_msgs.msg 
+
 import math
 import time
 
@@ -94,7 +95,6 @@ class ExampleMoveItTrajectories(object):
       self.main_plan = self.arm_group.plan()
 
 
-
       if self.is_gripper_present:
         gripper_group_name = "gripper"
         self.gripper_group = moveit_commander.MoveGroupCommander(gripper_group_name, ns=rospy.get_namespace())
@@ -127,6 +127,7 @@ class ExampleMoveItTrajectories(object):
 
       self.trajectory_execution_sub = rospy.Subscriber("/KinovaAR/execute_action", Empty, self.trajectory_execution_callback)
 
+      self.target_pose_sub = rospy.Subscriber("/KinovaAR/targetPose", PoseStamped, self.target_pose_callback)
 
     except Exception as e:
       print (e)
@@ -137,14 +138,22 @@ class ExampleMoveItTrajectories(object):
     success = self.is_init_success
 
     if success:
+      pass
       self.get_cartesian_pose()
-      self.example_cartesian_waypoint_action()
+      # self.example_cartesian_waypoint_action()
 
 
     try:
       rospy.spin()
     except:
       rospy.logerr("Failed to call ROS spin")
+
+
+  def target_pose_callback(self, data):
+    rospy.loginfo(data.pose.position)
+
+ 
+    self.reach_cartesian_pose(pose=data.pose, tolerance=0.01, constraints=None)
 
 
   def get_quaternion_from_euler(self, roll, pitch, yaw):
@@ -283,7 +292,17 @@ class ExampleMoveItTrajectories(object):
     # Get the current Cartesian Position
     arm_group.set_pose_target(pose)
 
-    self.main_plan = arm_group.plan()
+    try:
+      # Plan the new trajectory
+      self.main_plan = arm_group.plan()
+    except:
+      rospy.logerr("Failed to plan trajectory.")
+      # Call function to reset the position of target pose object to end effector location
+
+    else:
+      pass
+
+
 
     self.arm_group = arm_group
 
@@ -312,4 +331,4 @@ class ExampleMoveItTrajectories(object):
 
 if __name__ == '__main__':
   example = ExampleMoveItTrajectories()
-  # main()
+
