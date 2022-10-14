@@ -61,7 +61,7 @@ import numpy as np
 
 from math import pi
 from std_srvs.srv import Empty
-from std_msgs.msg import Empty
+from std_msgs.msg import Empty, Int16
 
 class ExampleMoveItTrajectories(object):
   """ExampleMoveItTrajectories"""
@@ -128,6 +128,8 @@ class ExampleMoveItTrajectories(object):
       self.trajectory_execution_sub = rospy.Subscriber("/KinovaAR/execute_action", Empty, self.trajectory_execution_callback)
 
       self.target_pose_sub = rospy.Subscriber("/KinovaAR/targetPose", PoseStamped, self.target_pose_callback)
+      self.GripperSubscriber = rospy.Subscriber("/KinovaAR/Pose", Int16, self.KinovaPose_callback)
+
 
     except Exception as e:
       print (e)
@@ -148,6 +150,30 @@ class ExampleMoveItTrajectories(object):
     except:
       rospy.logerr("Failed to call ROS spin")
 
+  def KinovaPose_callback(self, data):
+        self.last_action_notif_type = None
+        req = ReadActionRequest()
+        
+        req.input.identifier = data.data
+
+        try:
+            res = self.read_action(req)
+        except rospy.ServiceException:
+            rospy.logerr("Failed to call ReadAction")
+            return False
+        # Execute the HOME action if we could read it
+        else:
+            # What we just read is the input of the ExecuteAction service
+            req = ExecuteActionRequest()
+            req.input = res.output
+            # rospy.loginfo("Sending the robot home...")
+            try:
+                self.execute_action(req)
+            except rospy.ServiceException:
+                rospy.logerr("Failed to call ExecuteAction")
+                return False
+            else:
+                return self.wait_for_action_end_or_abort()
 
   def target_pose_callback(self, data):
     rospy.loginfo(data.pose.position)
@@ -295,6 +321,7 @@ class ExampleMoveItTrajectories(object):
     try:
       # Plan the new trajectory
       self.main_plan = arm_group.plan()
+      print(arm_group.plan())
     except:
       rospy.logerr("Failed to plan trajectory.")
       # Call function to reset the position of target pose object to end effector location
