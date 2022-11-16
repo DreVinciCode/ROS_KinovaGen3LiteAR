@@ -72,10 +72,7 @@ class ExampleMoveItTrajectories(object):
     moveit_commander.roscpp_initialize(sys.argv)
     rospy.init_node('example_move_it_trajectories')
 
-
-
     try:
-
       self.is_gripper_present = rospy.get_param(rospy.get_namespace() + "is_gripper_present", False)
       if self.is_gripper_present:
         gripper_joint_names = rospy.get_param(rospy.get_namespace() + "gripper_joint_names", [])
@@ -93,7 +90,6 @@ class ExampleMoveItTrajectories(object):
                                                     moveit_msgs.msg.DisplayTrajectory,
                                                     queue_size=20)
       self.main_plan = self.arm_group.plan()
-
 
       if self.is_gripper_present:
         gripper_group_name = "gripper"
@@ -124,12 +120,9 @@ class ExampleMoveItTrajectories(object):
       rospy.wait_for_service(get_product_configuration_full_name)
       self.get_product_configuration = rospy.ServiceProxy(get_product_configuration_full_name, GetProductConfiguration)
 
-
       self.trajectory_execution_sub = rospy.Subscriber("/KinovaAR/execute_action", Empty, self.trajectory_execution_callback)
-
       self.target_pose_sub = rospy.Subscriber("/KinovaAR/targetPose", PoseStamped, self.target_pose_callback)
       self.GripperSubscriber = rospy.Subscriber("/KinovaAR/Pose", Int16, self.KinovaPose_callback)
-
 
     except Exception as e:
       print (e)
@@ -140,9 +133,9 @@ class ExampleMoveItTrajectories(object):
     success = self.is_init_success
 
     if success:
-      pass
-      self.get_cartesian_pose()
-      # self.example_cartesian_waypoint_action()
+      print("Hereerereree")
+      # self.get_cartesian_pose()
+      self.example_cartesian_waypoint_action()
 
 
     try:
@@ -178,7 +171,6 @@ class ExampleMoveItTrajectories(object):
   def target_pose_callback(self, data):
     rospy.loginfo(data.pose.position)
 
- 
     self.reach_cartesian_pose(pose=data.pose, tolerance=0.01, constraints=None)
 
 
