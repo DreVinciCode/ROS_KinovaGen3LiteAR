@@ -133,10 +133,9 @@ class ExampleMoveItTrajectories(object):
     success = self.is_init_success
 
     if success:
-      print("Hereerereree")
       # self.get_cartesian_pose()
       self.example_cartesian_waypoint_action()
-
+      # self.reach_named_position("vertical")
 
     try:
       rospy.spin()
