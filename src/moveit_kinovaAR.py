@@ -123,6 +123,7 @@ class ExampleMoveItTrajectories(object):
       self.trajectory_execution_sub = rospy.Subscriber("/KinovaAR/execute_action", Empty, self.trajectory_execution_callback)
       self.target_pose_sub = rospy.Subscriber("/KinovaAR/targetPose", PoseStamped, self.target_pose_callback)
       self.GripperSubscriber = rospy.Subscriber("/KinovaAR/Pose", Int16, self.KinovaPose_callback)
+      self.RL_Home_Position_Subscriber = rospy.Subscriber("/KinovaAR/RL_HomePosition", Empty, self.reach_home_joint_values)
 
     except Exception as e:
       print (e)
@@ -132,15 +133,41 @@ class ExampleMoveItTrajectories(object):
 
     success = self.is_init_success
 
-    if success:
+    if success:    
+      rospy.loginfo("Printing current joint values :")
+      self.get_current_joint_values()
+     
+      rospy.loginfo("Printing current position :")
+      self.get_cartesian_pose()
+      self.reach_home_joint_values()
       # self.get_cartesian_pose()
-      self.example_cartesian_waypoint_action()
+      # self.example_cartesian_waypoint_action()
       # self.reach_named_position("vertical")
 
     try:
       rospy.spin()
     except:
       rospy.logerr("Failed to call ROS spin")
+
+
+  def reach_home_joint_values(self):
+    arm_group = self.arm_group
+    joint_positions = arm_group.get_current_joint_values()
+
+    joint_positions[0] = 1.836
+    joint_positions[1] = -0.129
+    joint_positions[2] = 2.063
+    joint_positions[3] = -1.587
+    joint_positions[4] = -0.941
+    joint_positions[5] = 0.313
+
+    arm_group.set_joint_value_target(joint_positions)
+    arm_group.go(wait=True)
+
+  def get_current_joint_values(self):
+    arm_group = self.arm_group
+    joint_positions = arm_group.get_current_joint_values()
+    for p in joint_positions: rospy.loginfo(p)
 
   def KinovaPose_callback(self, data):
         self.last_action_notif_type = None
@@ -194,31 +221,31 @@ class ExampleMoveItTrajectories(object):
 
 
 
-  def example_cartesian_waypoint_action(self):
-      self.last_action_notif_type = None
+  # def example_cartesian_waypoint_action(self):
+  #     self.last_action_notif_type = None
 
-      client = actionlib.SimpleActionClient('/' + self.robot_name + '/cartesian_trajectory_controller/follow_cartesian_trajectory', kortex_driver.msg.FollowCartesianTrajectoryAction)
-      client.wait_for_server()
-      goal = FollowCartesianTrajectoryGoal()
+  #     client = actionlib.SimpleActionClient('/' + self.robot_name + '/cartesian_trajectory_controller/follow_cartesian_trajectory', kortex_driver.msg.FollowCartesianTrajectoryAction)
+  #     client.wait_for_server()
+  #     goal = FollowCartesianTrajectoryGoal()
 
-      config = self.get_product_configuration()
+  #     config = self.get_product_configuration()
 
-      # Crane positions for Kinova Arm
-      goal.trajectory.append(self.FillCartesianWaypoint(0.17,  0.20,  0.14, math.radians(3.3), math.radians(180), math.radians(90), 0))
+  #     # Crane positions for Kinova Arm
+  #     goal.trajectory.append(self.FillCartesianWaypoint(0.17,  0.20,  0.14, math.radians(3.3), math.radians(180), math.radians(90), 0))
 
-      quat = self.get_quaternion_from_euler(math.radians(3.3), math.radians(180), math.radians(90))
+  #     quat = self.get_quaternion_from_euler(math.radians(3.3), math.radians(180), math.radians(90))
 
-      pose = geometry_msgs.msg.Pose()
+  #     pose = geometry_msgs.msg.Pose()
 
-      pose.position.x = 0.17
-      pose.position.y = 0.2
-      pose.position.z = 0.14
-      pose.orientation.x = quat[0]
-      pose.orientation.y = quat[1]
-      pose.orientation.z = quat[2]
-      pose.orientation.w = quat[3]
+  #     pose.position.x = 0.17
+  #     pose.position.y = 0.2
+  #     pose.position.z = 0.14
+  #     pose.orientation.x = quat[0]
+  #     pose.orientation.y = quat[1]
+  #     pose.orientation.z = quat[2]
+  #     pose.orientation.w = quat[3]
 
-      self.reach_cartesian_pose(pose=pose, tolerance=0.01, constraints=None)
+  #     self.reach_cartesian_pose(pose=pose, tolerance=0.01, constraints=None)
 
 
   def FillCartesianWaypoint(self, new_x, new_y, new_z, new_theta_x, new_theta_y, new_theta_z, blending_radius):
