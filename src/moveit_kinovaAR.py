@@ -125,7 +125,7 @@ class ExampleMoveItTrajectories(object):
       self.GripperSubscriber = rospy.Subscriber("/KinovaAR/Pose", Int16, self.KinovaPose_callback)
       self.RL_Home_Position_Subscriber = rospy.Subscriber("/KinovaAR/RL_HomePosition", Empty, self.reach_home_joint_values)
 
-    except Exception as e:
+    except Exception as e:   
       print (e)
       self.is_init_success = False
     else:
@@ -139,7 +139,7 @@ class ExampleMoveItTrajectories(object):
      
       rospy.loginfo("Printing current position :")
       self.get_cartesian_pose()
-      self.reach_home_joint_values()
+      self.reach_home_joint_values("")
       # self.get_cartesian_pose()
       # self.example_cartesian_waypoint_action()
       # self.reach_named_position("vertical")
@@ -150,7 +150,7 @@ class ExampleMoveItTrajectories(object):
       rospy.logerr("Failed to call ROS spin")
 
 
-  def reach_home_joint_values(self):
+  def reach_home_joint_values(self, data):
     arm_group = self.arm_group
     joint_positions = arm_group.get_current_joint_values()
 
