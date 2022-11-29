@@ -14,6 +14,9 @@ class messageConverter:
     	self.Twist_pub = rospy.Publisher("/my_gen3_lite/end_effector_pose", Twist, queue_size=1)
     	self.Kinova_Position = rospy.Publisher("/my_gen3_lite/end_effector_pose", Twist, queue_size=1)
         self.Kinova_Velocity = rospy.Publisher("KinovaAR/end_effector_velocity", Twist, queue_size=1)
+
+        self.KinovaAR_velocity_correction = rospy.Publisher("/my_gen3_lite/in/cartesian_velocity_mod", Twist, queue_size=1)
+
     	rospy.spin()
 
     def base_feedback_callback(self, data):
@@ -51,9 +54,14 @@ class messageConverter:
     def base_feedback_boundary_callback(self, data):
         z_pos = data.base.commanded_tool_pose_z
 
-        if(z_pos > rospy.get_param("/kinovaAR/z_min")):
+        if(z_pos < rospy.get_param("/kinovaAR/z_min")):
             # What command to send? Stop command? Opposite velocity commands?
-            pass
+            
+            # Trigger only if this condition is met. 
+            Twist_Message = Twist()
+            Twist_Message.linear.z = 0.1
+            KinovaAR_velocity_correction.publish(Twist_Message)
+            
 
 if __name__ == '__main__':
     converter = messageConverter()
