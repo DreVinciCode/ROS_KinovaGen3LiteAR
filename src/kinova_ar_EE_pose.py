@@ -10,7 +10,10 @@ class messageConverter:
     def __init__(self):
     	rospy.init_node('PoseToPoint', anonymous = True)
     	self.base_feedback_sub = rospy.Subscriber("/my_gen3_lite/base_feedback", BaseCyclic_Feedback, self.base_feedback_callback)
+        self.base_feedback_boundary_sub = rospy.Subscriber("/my_gen3_lite/base_feedback", BaseCyclic_Feedback, self.base_feedback_boundary_callback)
     	self.Twist_pub = rospy.Publisher("/my_gen3_lite/end_effector_pose", Twist, queue_size=1)
+
+
     	rospy.spin()
 
     def base_feedback_callback(self, data):
@@ -31,6 +34,16 @@ class messageConverter:
         Twist_Message.angular.z = angularZ
 
     	self.Twist_pub.publish(Twist_Message)
+
+
+    # Ensure robotic end effector remains within the box boundary
+    def base_feedback_boundary_callback(self, data):
+        z_pos = data.base.commanded_tool_pose_z
+
+        if(z_pos > rospy.get_param("/kinovaAR/z_min")):
+            # What command to send? Stop command? Opposite velocity commands?
+            pass
+
 
 if __name__ == '__main__':
     converter = messageConverter()
