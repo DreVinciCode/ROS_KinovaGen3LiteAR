@@ -60,8 +60,20 @@ class messageConverter:
             # Trigger only if this condition is met. 
             Twist_Message = Twist()
             Twist_Message.linear.z = 0.1
-            KinovaAR_velocity_correction.publish(Twist_Message)
+            self.KinovaAR_velocity_correction.publish(Twist_Message)
+            Twist_Message.linear.z = 0.0
+            self.KinovaAR_velocity_correction.publish(Twist_Message)
+
+        if(z_pos > rospy.get_param("/kinovaAR/z_max")):
+            # What command to send? Stop command? Opposite velocity commands?
             
+            # Trigger only if this condition is met. 
+            Twist_Message = Twist()
+            Twist_Message.linear.z = -0.1
+            self.KinovaAR_velocity_correction.publish(Twist_Message)
+            Twist_Message.linear.z = 0.0
+            self.KinovaAR_velocity_correction.publish(Twist_Message)
+
 
 if __name__ == '__main__':
     converter = messageConverter()
