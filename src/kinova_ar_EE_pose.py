@@ -11,7 +11,7 @@ class messageConverter:
     	rospy.init_node('PoseToPoint', anonymous = True)
     	self.base_feedback_sub = rospy.Subscriber("/my_gen3_lite/base_feedback", BaseCyclic_Feedback, self.base_feedback_callback)
         self.base_feedback_boundary_sub = rospy.Subscriber("/my_gen3_lite/base_feedback", BaseCyclic_Feedback, self.base_feedback_boundary_callback)
-    	self.Twist_pub = rospy.Publisher("/my_gen3_lite/end_effector_pose", Twist, queue_size=1)
+    	# self.Twist_pub = rospy.Publisher("/my_gen3_lite/end_effector_pose", Twist, queue_size=1)
     	self.Kinova_Position = rospy.Publisher("/my_gen3_lite/end_effector_pose", Twist, queue_size=1)
         self.Kinova_Velocity = rospy.Publisher("KinovaAR/end_effector_velocity", Twist, queue_size=1)
 
