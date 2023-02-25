@@ -72,6 +72,9 @@ class ExampleMoveItTrajectories(object):
     moveit_commander.roscpp_initialize(sys.argv)
     rospy.init_node('example_move_it_trajectories')
 
+    self.HOME_ACTION_IDENTIFIER = 2
+    self.REST_ACTION_IDENTIFIER = 1
+
     try:
       self.is_gripper_present = rospy.get_param(rospy.get_namespace() + "is_gripper_present", False)
       if self.is_gripper_present:
@@ -139,7 +142,9 @@ class ExampleMoveItTrajectories(object):
      
       rospy.loginfo("Printing current position :")
       self.get_cartesian_pose()
-      self.reach_home_joint_values("")
+      
+      success &= self.example_home_the_robot()
+      success &= self.reach_home_joint_values("")
       # self.get_cartesian_pose()
       # self.example_cartesian_waypoint_action()
       # self.reach_named_position("vertical")
@@ -149,6 +154,40 @@ class ExampleMoveItTrajectories(object):
     except:
       rospy.logerr("Failed to call ROS spin")
 
+  def example_home_the_robot(self):
+
+        self.last_action_notif_type = None
+        req = ReadActionRequest()
+        req.input.identifier = self.HOME_ACTION_IDENTIFIER
+        try:
+            res = self.read_action(req)
+        except rospy.ServiceException:
+            rospy.logerr("Failed to call ReadAction")
+            return False
+        # Execute the HOME action if we could read it
+        else:
+            # What we just read is the input of the ExecuteAction service
+            req = ExecuteActionRequest()
+            req.input = res.output
+            rospy.loginfo("Sending the robot home...")
+            try:
+                self.execute_action(req)
+            except rospy.ServiceException:
+                rospy.logerr("Failed to call ExecuteAction")
+                return False
+            else:
+                return self.wait_for_action_end_or_abort()
+
+  def wait_for_action_end_or_abort(self):
+    while not rospy.is_shutdown():
+        if (self.last_action_notif_type == ActionEvent.ACTION_END):
+            rospy.loginfo("Received ACTION_END notification")
+            return True
+        elif (self.last_action_notif_type == ActionEvent.ACTION_ABORT):
+            rospy.loginfo("Received ACTION_ABORT notification")
+            return False
+        else:
+            time.sleep(0.01)
 
   def reach_home_joint_values(self, data):
     arm_group = self.arm_group
@@ -364,7 +403,7 @@ class ExampleMoveItTrajectories(object):
   def reach_gripper_position(self, relative_position):
     gripper_group = self.gripper_group
     
-    # We only have to move this joint because all others are mimic!
+    # We only have to move this joint because it is symmetrical!
     gripper_joint = self.robot.get_joint(self.gripper_joint_name)
     gripper_max_absolute_pos = gripper_joint.max_bound()
     gripper_min_absolute_pos = gripper_joint.min_bound()

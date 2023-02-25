@@ -15,10 +15,10 @@
     
     <node pkg="kinova_ar" name="GripperPose" type="GripperController.py" output="screen"> </node>
     <node pkg="kinova_ar" name="TwistMessageConverter" type="ConvertTwistToTwistCommand.py" output="screen"> </node>
-    <node pkg="kinova_ar" name="EndEffectorPose" type="kinova_ar_EE_pose.py" output="screen"> </node>
+    <!-- <node pkg="kinova_ar" name="EndEffectorPose" type="kinova_ar_EE_pose.py" output="screen"> </node> -->
     <!-- <node pkg="kinova_ar" name="Waypoint" type="WaypointExample.py" output="screen"> </node> -->
 
-    <node pkg="kinova_ar" name="UnityRosParamManager" type="UnityRosParamManager.py" output="screen"> </node>
+    <!-- <node pkg="kinova_ar" name="UnityRosParamManager" type="UnityRosParamManager.py" output="screen"> </node> -->
 
     <rosparam>
         kinovaAR/z_min: 0.1

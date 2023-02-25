@@ -14,6 +14,8 @@
 import sys
 import rospy
 import time
+import moveit_commander
+import moveit_msgs.msg
 
 from kortex_driver.srv import *
 from kortex_driver.msg import *
@@ -21,8 +23,10 @@ from kortex_driver.msg import *
 
 class LiftCup:
     def __init__(self):
+
         try:
             rospy.init_node('example_full_arm_movement_python')
+            moveit_commander.roscpp_initialize(sys.argv)
 
             self.HOME_ACTION_IDENTIFIER = 2
             self.REST_ACTION_IDENTIFIER = 1
@@ -33,6 +37,27 @@ class LiftCup:
             self.is_gripper_present = rospy.get_param("/" + self.robot_name + "/is_gripper_present", False)
 
             rospy.loginfo("Using robot_name " + self.robot_name + " , robot has " + str(self.degrees_of_freedom) + " degrees of freedom and is_gripper_present is " + str(self.is_gripper_present))
+
+            # clear_faults_full_name = '/' + self.robot_name + '/base/clear_faults'
+            # rospy.wait_for_service(clear_faults_full_name)
+            # self.clear_faults = rospy.ServiceProxy(clear_faults_full_name, Base_ClearFaults)
+
+            # activate_publishing_of_action_notification_full_name = '/' + self.robot_name + '/base/activate_publishing_of_action_topic'
+            # rospy.wait_for_service(activate_publishing_of_action_notification_full_name)
+            # self.activate_publishing_of_action_notification = rospy.ServiceProxy(activate_publishing_of_action_notification_full_name, OnNotificationActionTopic)
+        
+
+            # # Create the MoveItInterface necessary objects
+            # arm_group_name = "arm"
+            # self.robot = moveit_commander.RobotCommander("robot_description")
+            # self.scene = moveit_commander.PlanningSceneInterface(ns=rospy.get_namespace())
+            # self.arm_group = moveit_commander.MoveGroupCommander(arm_group_name, ns=rospy.get_namespace())
+            # self.display_trajectory_publisher = rospy.Publisher(rospy.get_namespace() + 'move_group/display_planned_path',
+            #                                                 moveit_msgs.msg.DisplayTrajectory,
+            #                                                 queue_size=20)
+            # self.main_plan = self.arm_group.plan()
+
+
 
             # Init the action topic subscriber
             self.action_topic_sub = rospy.Subscriber("/" + self.robot_name + "/action_topic", ActionNotification, self.cb_action_topic)
@@ -70,10 +95,25 @@ class LiftCup:
             validate_waypoint_list_full_name = '/' + self.robot_name + '/base/validate_waypoint_list'
             rospy.wait_for_service(validate_waypoint_list_full_name)
             self.validate_waypoint_list = rospy.ServiceProxy(validate_waypoint_list_full_name, ValidateWaypointList)
+
         except:
             self.is_init_success = False
         else:
             self.is_init_success = True
+
+    def reach_home_joint_values(self):
+        arm_group = self.arm_group
+        joint_positions = arm_group.get_current_joint_values()
+
+        joint_positions[0] = 1.836
+        joint_positions[1] = -0.129
+        joint_positions[2] = 2.063
+        joint_positions[3] = -1.587
+        joint_positions[4] = -0.941
+        joint_positions[5] = 0.313
+
+        arm_group.set_joint_value_target(joint_positions)
+        arm_group.go(wait=True)
 
     def cb_action_topic(self, notif):
         self.last_action_notif_type = notif.action_event
@@ -236,18 +276,19 @@ class LiftCup:
         else:
             return self.wait_for_action_end_or_abort()
 
-    def example_send_joint_angles(self):
+    def send_robot_to_initial_pose(self):
         self.last_action_notif_type = None
-
         req = ExecuteActionRequest()
-
         trajectory = WaypointList()
         waypoint = Waypoint()
         angularWaypoint = AngularWaypoint()
 
-        # Angles to send the arm to vertical position (all zeros)
-        for _ in range(self.degrees_of_freedom):
-            angularWaypoint.angles.append(0.0)
+        angularWaypoint.angles.append(105.2)
+        angularWaypoint.angles.append(-7.4)
+        angularWaypoint.angles.append(118.2)
+        angularWaypoint.angles.append(-90.9)        
+        angularWaypoint.angles.append(-53.91)
+        angularWaypoint.angles.append(17.93)
 
         # Each AngularWaypoint needs a duration and the global duration (from WaypointList) is disregarded. 
         # If you put something too small (for either global duration or AngularWaypoint duration), the trajectory will be rejected.
@@ -290,7 +331,85 @@ class LiftCup:
         req.input.oneof_action_parameters.execute_waypoint_list.append(trajectory)
         
         # Send the angles
-        rospy.loginfo("Sending the robot vertical...")
+        rospy.loginfo("Sending the robot to target joints")
+        try:
+            self.execute_action(req)
+        except rospy.ServiceException:
+            rospy.logerr("Failed to call ExecuteWaypointjectory")
+            return False
+        else:
+            return self.wait_for_action_end_or_abort()
+
+
+    def example_send_joint_angles(self):
+        self.last_action_notif_type = None
+
+        req = ExecuteActionRequest()
+
+        trajectory = WaypointList()
+        waypoint = Waypoint()
+        angularWaypoint = AngularWaypoint()
+
+        # Angles to send the arm to vertical position (all zeros)
+        # for _ in range(self.degrees_of_freedom):
+        #     angularWaypoint.angles.append(0.0)
+        angularWaypoint.angles.append(105.2)
+        angularWaypoint.angles.append(-7.4)
+        angularWaypoint.angles.append(118.2)
+        angularWaypoint.angles.append(-90.9)        
+        angularWaypoint.angles.append(-53.91)
+        angularWaypoint.angles.append(17.93)
+
+        # joint_positions[0] = 1.836  -> 105.2
+        # joint_positions[1] = -0.129 -> -7.4
+        # joint_positions[2] = 2.063  -> 118.2
+        # joint_positions[3] = -1.587 -> -90.9
+        # joint_positions[4] = -0.941 -> -53.91 
+        # joint_positions[5] = 0.313  -> 17.93 
+
+
+        # Each AngularWaypoint needs a duration and the global duration (from WaypointList) is disregarded. 
+        # If you put something too small (for either global duration or AngularWaypoint duration), the trajectory will be rejected.
+        angular_duration = 0
+        angularWaypoint.duration = angular_duration
+
+        # Initialize Waypoint and WaypointList
+        waypoint.oneof_type_of_waypoint.angular_waypoint.append(angularWaypoint)
+        trajectory.duration = 0
+        trajectory.use_optimal_blending = False
+        trajectory.waypoints.append(waypoint)
+
+        try:
+            res = self.validate_waypoint_list(trajectory)
+        except rospy.ServiceException:
+            rospy.logerr("Failed to call ValidateWaypointList")
+            return False
+        
+        error_number = len(res.output.trajectory_error_report.trajectory_error_elements)
+        MAX_ANGULAR_DURATION = 30
+        
+        while (error_number >= 1 and angular_duration != MAX_ANGULAR_DURATION) :
+            angular_duration += 1
+            trajectory.waypoints[0].oneof_type_of_waypoint.angular_waypoint[0].duration = angular_duration
+            
+            try:
+                res = self.validate_waypoint_list(trajectory)
+            except rospy.ServiceException:
+                rospy.logerr("Failed to call ValidateWaypointList")
+                return False
+            
+            error_number = len(res.output.trajectory_error_report.trajectory_error_elements)
+
+        if (angular_duration == MAX_ANGULAR_DURATION) :
+            # It should be possible to reach position within 30s
+            # WaypointList is invalid (other error than angularWaypoint duration)
+            rospy.loginfo("WaypointList is invalid")
+            return False
+
+        req.input.oneof_action_parameters.execute_waypoint_list.append(trajectory)
+        
+        # Send the angles
+        rospy.loginfo("Sending the robot to target joints")
         try:
             self.execute_action(req)
         except rospy.ServiceException:
@@ -369,16 +488,19 @@ class LiftCup:
         
         success &= self.example_subscribe_to_a_robot_notification()
 
-        success &= self.example_cartesian_waypoint_action()
+        success &= self.send_robot_to_initial_pose()
 
-        # success &= self.example_send_gripper_command(0.0)
-        
-        # success &= self.example_home_the_robot()
+        success &= self.example_send_gripper_command(0.0)
+
+        success &= self.example_home_the_robot()
 
         success &= self.example_send_gripper_command(1.0)
 
-        success &= self.example_rest_the_robot()
+        success &= self.send_robot_to_initial_pose()
 
+        success &= self.example_send_gripper_command(0.0)
+       
+        success &= self.example_send_gripper_command(1.0)
 
         # if(home):
         #     self.example_rest_the_robot()
