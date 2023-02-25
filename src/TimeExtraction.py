@@ -19,11 +19,11 @@ class TimeExtration:
         
     def plannerTimer_callback(self, data):
         plannerTime = data.result.planning_time
-        # rospy.logerr(plannerTime)
+        rospy.loginfo("Planning Time: " + str(plannerTime))
 
     def executeTimer_callback(self, data):
         executeTime = (data.header.stamp.secs + data.header.stamp.nsecs * 1e-9) - (data.status.goal_id.stamp.secs + data.status.goal_id.stamp.nsecs * 1e-9)
-        # rospy.logerr(executeTime)
+        rospy.loginfo("Execution Time: " + str(executeTime))
 
 if __name__ == '__main__':
     Time = TimeExtration()
