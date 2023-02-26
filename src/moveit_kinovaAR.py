@@ -128,6 +128,12 @@ class ExampleMoveItTrajectories(object):
       self.GripperSubscriber = rospy.Subscriber("/KinovaAR/Pose", Int16, self.KinovaPose_callback)
       self.RL_Home_Position_Subscriber = rospy.Subscriber("/KinovaAR/RL_HomePosition", Empty, self.reach_home_joint_values)
 
+      self.trajectory_result_sub = rospy.Subscriber("/" + self.robot_name + "/execute_trajectory/result", ExecuteTrajectoryActionResult, self.trajectory_result_callback)
+      
+      self.trajectorySequence_Publisher = rospy.Publisher("/KinovaAR/execute_sequence", Empty, queue_size=1)
+
+
+
     except Exception as e:   
       print (e)
       self.is_init_success = False
@@ -408,6 +414,21 @@ class ExampleMoveItTrajectories(object):
     else:
         if(self.wait_for_action_end_or_abort()):
           rospy.loginfo("Finished")
+
+  def trajectory_result_callback(self, data):
+    status_value = data.result.error_code.val
+    if(status_value == 1):
+      rospy.loginfo("success!!!!")
+
+      # Call the sequence 
+      sequence_message = Empty()
+      sequence_message.data = ""
+    	self.trajectorySequence_Publisher.publish(Position_Message)
+
+
+    elif(status_value == -4):
+      rospy.loginfo("Solution found but controller failed...")
+      
 
 
     

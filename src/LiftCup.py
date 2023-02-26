@@ -111,18 +111,12 @@ class LiftCup:
         
         sequence &= self.example_subscribe_to_a_robot_notification()
         
-        sequence &= self.example_send_gripper_command(0.5)
-
-        sequence &= self.example_home_the_robot()
-
         sequence &= self.example_send_gripper_command(1.0)
 
         sequence &= self.send_robot_to_initial_pose()
 
         sequence &= self.example_send_gripper_command(0.5)
        
-        sequence &= self.example_send_gripper_command(1.0)
-
     def reach_home_joint_values(self):
         arm_group = self.arm_group
         joint_positions = arm_group.get_current_joint_values()
