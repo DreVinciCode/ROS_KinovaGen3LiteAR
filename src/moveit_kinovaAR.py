@@ -43,6 +43,9 @@
 from geometry_msgs.msg import PoseStamped
 from kortex_driver.srv import *
 from kortex_driver.msg import *
+from moveit_msgs.msg import *
+
+
 
 import actionlib
 
@@ -50,7 +53,7 @@ import sys
 import time
 import rospy
 import moveit_commander
-import moveit_msgs.msg
+
 
 import math
 import time
@@ -416,21 +419,18 @@ class ExampleMoveItTrajectories(object):
           rospy.loginfo("Finished")
 
   def trajectory_result_callback(self, data):
+    
     status_value = data.result.error_code.val
+    
     if(status_value == 1):
       rospy.loginfo("success!!!!")
 
       # Call the sequence 
       sequence_message = Empty()
-      sequence_message.data = ""
-    	self.trajectorySequence_Publisher.publish(Position_Message)
-
-
+      self.trajectorySequence_Publisher.publish(sequence_message)
+    
     elif(status_value == -4):
       rospy.loginfo("Solution found but controller failed...")
-      
-
-
     
 
   def reach_gripper_position(self, relative_position):
