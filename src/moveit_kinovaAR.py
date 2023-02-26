@@ -131,9 +131,10 @@ class ExampleMoveItTrajectories(object):
       self.GripperSubscriber = rospy.Subscriber("/KinovaAR/Pose", Int16, self.KinovaPose_callback)
       self.RL_Home_Position_Subscriber = rospy.Subscriber("/KinovaAR/RL_HomePosition", Empty, self.reach_home_joint_values)
 
-      self.trajectory_result_sub = rospy.Subscriber("/" + self.robot_name + "/execute_trajectory/result", ExecuteTrajectoryActionResult, self.trajectory_result_callback)
-      
-      self.trajectorySequence_Publisher = rospy.Publisher("/KinovaAR/execute_sequence", Empty, queue_size=1)
+      # self.trajectory_result_sub = rospy.Subscriber("/" + self.robot_name + "/execute_trajectory/result", ExecuteTrajectoryActionResult, self.trajectory_result_callback)
+      self.execute_sequence_sub = rospy.Subscriber("/KinovaAR/execute_sequence", Empty, self.execute_sequence_callback)
+
+      self.trajectorySequence_Publisher = rospy.Publisher("/KinovaAR/execute_practice_sequence", Empty, queue_size=1)
 
 
 
@@ -149,9 +150,9 @@ class ExampleMoveItTrajectories(object):
       rospy.loginfo("Printing current joint values :")
       self.get_current_joint_values()
      
-      rospy.loginfo("Printing current position :")
-      self.get_cartesian_pose()
-      
+      # rospy.loginfo("Printing current position :")
+      # self.get_cartesian_pose()
+      self.reach_gripper_position(0.5)
       self.reach_home_joint_values()
       # self.get_cartesian_pose()
       # self.example_cartesian_waypoint_action()
@@ -164,27 +165,27 @@ class ExampleMoveItTrajectories(object):
 
   def example_home_the_robot(self):
 
-        self.last_action_notif_type = None
-        req = ReadActionRequest()
-        req.input.identifier = self.HOME_ACTION_IDENTIFIER
+    self.last_action_notif_type = None
+    req = ReadActionRequest()
+    req.input.identifier = self.HOME_ACTION_IDENTIFIER
+    try:
+        res = self.read_action(req)
+    except rospy.ServiceException:
+        rospy.logerr("Failed to call ReadAction")
+        return False
+    # Execute the HOME action if we could read it
+    else:
+        # What we just read is the input of the ExecuteAction service
+        req = ExecuteActionRequest()
+        req.input = res.output
+        rospy.loginfo("Sending the robot home...")
         try:
-            res = self.read_action(req)
+            self.execute_action(req)
         except rospy.ServiceException:
-            rospy.logerr("Failed to call ReadAction")
+            rospy.logerr("Failed to call ExecuteAction")
             return False
-        # Execute the HOME action if we could read it
         else:
-            # What we just read is the input of the ExecuteAction service
-            req = ExecuteActionRequest()
-            req.input = res.output
-            rospy.loginfo("Sending the robot home...")
-            try:
-                self.execute_action(req)
-            except rospy.ServiceException:
-                rospy.logerr("Failed to call ExecuteAction")
-                return False
-            else:
-                return self.wait_for_action_end_or_abort()
+            return self.wait_for_action_end_or_abort()
 
   def wait_for_action_end_or_abort(self):
     while not rospy.is_shutdown():
@@ -197,7 +198,8 @@ class ExampleMoveItTrajectories(object):
         else:
             time.sleep(0.01)
 
-  def reach_home_joint_values(self):
+
+  def test_sequence(self):
     arm_group = self.arm_group
     joint_positions = arm_group.get_current_joint_values()
 
@@ -209,7 +211,71 @@ class ExampleMoveItTrajectories(object):
     joint_positions[5] = 0.313
 
     arm_group.set_joint_value_target(joint_positions)
-    arm_group.go(wait=True)
+
+    try:
+      # Plan the new trajectory
+      self.main_plan = arm_group.plan()
+      print(arm_group.plan())
+    except:
+      rospy.logerr("Failed to plan trajectory.")
+      # Call function to reset the position of target pose object to end effector location
+
+    else:
+      rospy.loginfo("Planned Initial Pose!")
+
+
+
+  def reach_dropoff_joint_values(self):
+    arm_group = self.arm_group
+    joint_positions = arm_group.get_current_joint_values()
+
+    joint_positions[0] = 1.836
+    joint_positions[1] = -0.129
+    joint_positions[2] = 2.063
+    joint_positions[3] = -1.587
+    joint_positions[4] = -0.941
+    joint_positions[5] = 0.313
+
+    arm_group.set_joint_value_target(joint_positions)
+
+    try:
+      # Plan the new trajectory
+      self.main_plan = arm_group.plan()
+      print(arm_group.plan())
+    except:
+      rospy.logerr("Failed to plan trajectory.")
+      # Call function to reset the position of target pose object to end effector location
+
+    else:
+      rospy.loginfo("Planned Initial Pose!")
+      arm_group.go(wait=True)
+
+
+
+  def reach_home_joint_values(self):
+    arm_group = self.arm_group
+    joint_positions = arm_group.get_current_joint_values()
+
+    joint_positions[0] = 1.836
+    joint_positions[1] = 0.033
+    joint_positions[2] = 1.57
+    joint_positions[3] = -1.587
+    joint_positions[4] = -1.59
+    joint_positions[5] = 0.304
+
+    arm_group.set_joint_value_target(joint_positions)
+
+    try:
+      # Plan the new trajectory
+      self.main_plan = arm_group.plan()
+      print(arm_group.plan())
+    except:
+      rospy.logerr("Failed to plan trajectory.")
+      # Call function to reset the position of target pose object to end effector location
+
+    else:
+      rospy.loginfo("Planned Initial Pose!")
+      arm_group.go(wait=True)
 
   def get_current_joint_values(self):
     arm_group = self.arm_group
@@ -394,13 +460,10 @@ class ExampleMoveItTrajectories(object):
     else:
       pass
 
-
-
     self.arm_group = arm_group
+    # Plan
 
-
-    # Plan and execute
-    rospy.loginfo("Planning and going to the Cartesian Pose")
+    rospy.loginfo("Planning")
 
     # return arm_group.go(wait=True)
 
@@ -415,8 +478,8 @@ class ExampleMoveItTrajectories(object):
         rospy.logerr("Failed to call ExecuteAction")
         # return False
     else:
-        if(self.wait_for_action_end_or_abort()):
-          rospy.loginfo("Finished")
+      self.capture_the_flag()
+
 
   def trajectory_result_callback(self, data):
     
@@ -427,7 +490,7 @@ class ExampleMoveItTrajectories(object):
 
       # Call the sequence 
       sequence_message = Empty()
-      self.trajectorySequence_Publisher.publish(sequence_message)
+      # self.trajectorySequence_Publisher.publish(sequence_message)
     
     elif(status_value == -4):
       rospy.loginfo("Solution found but controller failed...")
@@ -440,11 +503,27 @@ class ExampleMoveItTrajectories(object):
     gripper_joint = self.robot.get_joint(self.gripper_joint_name)
     gripper_max_absolute_pos = gripper_joint.max_bound()
     gripper_min_absolute_pos = gripper_joint.min_bound()
+    
     try:
-      val = gripper_joint.move(relative_position * (gripper_max_absolute_pos - gripper_min_absolute_pos) + gripper_min_absolute_pos, True)
-      return val
+      self.main_plan = gripper_group.plan()
+      rospy.loginfo("Planning Gripper")
     except:
+      rospy.loginfo("Failed to plan gripper")
       return False 
+    else:  
+      gripper_joint.move(relative_position * (gripper_max_absolute_pos - gripper_min_absolute_pos) + gripper_min_absolute_pos, True)
+
+  def execute_sequence_callback(self, data):
+    # self.test_sequence()
+    self.capture_the_flag()
+
+  def capture_the_flag(self):
+     
+    self.reach_gripper_position(0)
+    self.reach_dropoff_joint_values()
+    self.reach_gripper_position(0.5)
+    self.reach_home_joint_values()
+
 
 if __name__ == '__main__':
   example = ExampleMoveItTrajectories()
