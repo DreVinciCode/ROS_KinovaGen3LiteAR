@@ -28,9 +28,6 @@ class LiftCup:
             rospy.init_node('example_full_arm_movement_python')
             moveit_commander.roscpp_initialize(sys.argv)
 
-            self.HOME_ACTION_IDENTIFIER = 2
-            self.REST_ACTION_IDENTIFIER = 1
-
             # Get node params
             self.robot_name = rospy.get_param('~robot_name', "my_gen3_lite")
             self.degrees_of_freedom = rospy.get_param("/" + self.robot_name + "/degrees_of_freedom", 7)
@@ -57,7 +54,7 @@ class LiftCup:
             #                                                 queue_size=20)
             # self.main_plan = self.arm_group.plan()
 
-
+            self.execute_sequence_sub = rospy.Subscriber("/KinovaAR/execute_sequence", Empty, self.execute_sequence_callback)
 
             # Init the action topic subscriber
             self.action_topic_sub = rospy.Subscriber("/" + self.robot_name + "/action_topic", ActionNotification, self.cb_action_topic)
@@ -100,6 +97,31 @@ class LiftCup:
             self.is_init_success = False
         else:
             self.is_init_success = True
+
+        try:
+            rospy.spin()
+        except:
+            rospy.logerr("Failed to call ROS spin")
+
+
+    def execute_sequence_callback(self, data):
+        sequence = True
+        
+        sequence &= self.example_clear_faults()
+        
+        sequence &= self.example_subscribe_to_a_robot_notification()
+        
+        sequence &= self.example_send_gripper_command(0.5)
+
+        sequence &= self.example_home_the_robot()
+
+        sequence &= self.example_send_gripper_command(1.0)
+
+        sequence &= self.send_robot_to_initial_pose()
+
+        sequence &= self.example_send_gripper_command(0.5)
+       
+        sequence &= self.example_send_gripper_command(1.0)
 
     def reach_home_joint_values(self):
         arm_group = self.arm_group
@@ -484,35 +506,23 @@ class LiftCup:
         except:
             pass
 
-        success &= self.example_clear_faults()
+        # success &= self.example_clear_faults()
         
-        success &= self.example_subscribe_to_a_robot_notification()
+        # success &= self.example_subscribe_to_a_robot_notification()
 
-        success &= self.send_robot_to_initial_pose()
+        # success &= self.send_robot_to_initial_pose()
 
-        success &= self.example_send_gripper_command(0.0)
+        # success &= self.example_send_gripper_command(0.5)
 
-        success &= self.example_home_the_robot()
+        # success &= self.example_home_the_robot()
 
-        success &= self.example_send_gripper_command(1.0)
+        # success &= self.example_send_gripper_command(1.0)
 
-        success &= self.send_robot_to_initial_pose()
+        # success &= self.send_robot_to_initial_pose()
 
-        success &= self.example_send_gripper_command(0.0)
+        # success &= self.example_send_gripper_command(0.5)
        
-        success &= self.example_send_gripper_command(1.0)
-
-        # if(home):
-        #     self.example_rest_the_robot()
-
-        # if self.is_gripper_present:
-        #     self.example_send_gripper_command(0.0)
-
-
-
-        #     # self.example_send_gripper_command(1.0)
-        # else:
-        #     rospy.logwarn("No gripper is present on the arm.")  
+        # success &= self.example_send_gripper_command(1.0)
 
         # For testing purposes
         rospy.set_param("/kortex_examples_test_results/full_arm_movement_python", success)
@@ -523,4 +533,4 @@ class LiftCup:
 
 if __name__ == "__main__":
     ex = LiftCup()
-    ex.main()
+    # ex.main()

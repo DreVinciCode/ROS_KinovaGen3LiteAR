@@ -143,8 +143,7 @@ class ExampleMoveItTrajectories(object):
       rospy.loginfo("Printing current position :")
       self.get_cartesian_pose()
       
-      success &= self.example_home_the_robot()
-      success &= self.reach_home_joint_values("")
+      self.reach_home_joint_values()
       # self.get_cartesian_pose()
       # self.example_cartesian_waypoint_action()
       # self.reach_named_position("vertical")
@@ -189,7 +188,7 @@ class ExampleMoveItTrajectories(object):
         else:
             time.sleep(0.01)
 
-  def reach_home_joint_values(self, data):
+  def reach_home_joint_values(self):
     arm_group = self.arm_group
     joint_positions = arm_group.get_current_joint_values()
 
@@ -398,7 +397,20 @@ class ExampleMoveItTrajectories(object):
 
 
   def trajectory_execution_callback(self, data):
-    self.arm_group.execute(self.main_plan, wait=True)
+    self.last_action_notif_type = None
+
+    try:
+      self.arm_group.execute(self.main_plan, wait=True)
+        # self.execute_action(req)
+    except rospy.ServiceException:
+        rospy.logerr("Failed to call ExecuteAction")
+        # return False
+    else:
+        if(self.wait_for_action_end_or_abort()):
+          rospy.loginfo("Finished")
+
+
+    
 
   def reach_gripper_position(self, relative_position):
     gripper_group = self.gripper_group
