@@ -136,7 +136,7 @@ class ExampleMoveItTrajectories(object):
 
       self.trajectorySequence_Publisher = rospy.Publisher("/KinovaAR/execute_practice_sequence", Empty, queue_size=1)
 
-
+      self.reset_position_sub = rospy.Subscriber("/KinovaAR/reset_position", Empty, self.reset_position_callback)
 
     except Exception as e:   
       print (e)
@@ -162,6 +162,9 @@ class ExampleMoveItTrajectories(object):
       rospy.spin()
     except:
       rospy.logerr("Failed to call ROS spin")
+
+
+
 
   def example_home_the_robot(self):
 
@@ -198,6 +201,10 @@ class ExampleMoveItTrajectories(object):
         else:
             time.sleep(0.01)
 
+  def reset_position_callback(self, data):
+    rospy.loginfo("Reseting Position!")
+    self.reach_gripper_position(0.5)
+    self.reach_home_joint_values()
 
   def test_sequence(self):
     arm_group = self.arm_group
@@ -519,7 +526,7 @@ class ExampleMoveItTrajectories(object):
 
   def capture_the_flag(self):
      
-    self.reach_gripper_position(0)
+    self.reach_gripper_position(0.01)
     self.reach_dropoff_joint_values()
     self.reach_gripper_position(0.5)
     self.reach_home_joint_values()
