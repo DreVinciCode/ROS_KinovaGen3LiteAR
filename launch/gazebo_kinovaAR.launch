@@ -6,9 +6,11 @@
         <arg name="dof" value="6"/>
     </include>
 
+    <!-- <node name="rviz" pkg="rviz" type="rviz" args="-d $(find rviz_config)/Default.rviz"/> -->
     <!-- <include file="$(find kinova_ar)/launch/gripper.launch"/> -->
     
-    <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch"/>
+    <!-- <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch"/> -->
+    <include file="$(find ros_tcp_endpoint)/launch/endpoint.launch"/>
 
 
     <node pkg="kinova_ar" name="GripperPose" type="GripperController.py" output="screen"> </node>
