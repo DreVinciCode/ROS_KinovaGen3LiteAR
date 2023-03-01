@@ -45,8 +45,6 @@ from kortex_driver.srv import *
 from kortex_driver.msg import *
 from moveit_msgs.msg import *
 
-
-
 import actionlib
 
 import sys
@@ -475,7 +473,7 @@ class ExampleMoveItTrajectories(object):
     # return arm_group.go(wait=True)
 
 
-  def trajectory_execution_callback(self, data):
+  def trajectory_sequence_callback(self, data):
     self.last_action_notif_type = None
 
     try:
@@ -486,6 +484,19 @@ class ExampleMoveItTrajectories(object):
         # return False
     else:
       self.capture_the_flag()
+
+
+  def trajectory_execution_callback(self, data):
+    self.last_action_notif_type = None
+
+    try:
+      self.arm_group.execute(self.main_plan, wait=True)
+        # self.execute_action(req)
+    except rospy.ServiceException:
+        rospy.logerr("Failed to call ExecuteAction")
+        # return False
+    else:
+      pass
 
 
   def trajectory_result_callback(self, data):
