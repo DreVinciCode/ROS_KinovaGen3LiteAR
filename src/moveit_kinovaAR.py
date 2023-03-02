@@ -152,8 +152,10 @@ class ExampleMoveItTrajectories(object):
 
       self.reset_position_sub = rospy.Subscriber("/KinovaAR/reset_position", Empty, self.reset_position_callback)
 
-      self.execute_FirstTrajectory_sub = rospy.Subscriber("/KinovaAR/FirstTrajectory", DisplayTrajectory, self.loadFirstTrajectory)
-      self.execute_SecondTrajectory_sub = rospy.Subscriber("/KinovaAR/SecondTrajectory", DisplayTrajectory, self.loadSecondTrajectory)
+      self.load_FirstTrajectory_sub = rospy.Subscriber("/KinovaAR/FirstTrajectory", DisplayTrajectory, self.loadFirstTrajectory)
+      self.load_SecondTrajectory_sub = rospy.Subscriber("/KinovaAR/SecondTrajectory", DisplayTrajectory, self.loadSecondTrajectory)
+      self.execute_sequence_sub = rospy.Subscriber("/KinovaAR/execute_FirstTrajectory", Empty, self.loadFirstTrajectory)
+      self.execute_sequence_sub = rospy.Subscriber("/KinovaAR/execute_SecondTrajectory", Empty, self.loadSecondTrajectory)
 
     except Exception as e:   
       print (e)
@@ -169,11 +171,11 @@ class ExampleMoveItTrajectories(object):
      
       # rospy.loginfo("Printing current position :")
       # self.get_cartesian_pose()
-      # self.reach_gripper_position(0.5)
-      # self.reach_home_joint_values()
+      self.reach_gripper_position(0.5)
+      self.reach_home_joint_values()
       # self.get_cartesian_pose()
       # self.example_cartesian_waypoint_action()
-      self.reach_named_position("vertical")
+      # self.reach_named_position("vertical")
 
     try:
       rospy.spin()
@@ -183,18 +185,14 @@ class ExampleMoveItTrajectories(object):
 
   def loadFirstTrajectory(self, data):
     self.FirstTrajectory = data.trajectory[0]
-    
-    # print(self.FirstTrajectory)
-    self.playFirstTrajector()
-    rospy.loginfo("First Trajectory Recorded")
+    rospy.loginfo("First Trajectory Logged")
 
   def loadSecondTrajectory(self, data):
-    self.SecondTrajectory = data
-       
+    self.SecondTrajectory = data.trajectory[0]
+    rospy.loginfo("Second Trajectory Logged")
 
-  def playFirstTrajector(self):
+  def playFirstTrajectory(self):
     self.main_plan = self.FirstTrajectory
-    
     try:
       self.arm_group.execute(self.main_plan, wait=True)
         # self.execute_action(req)
@@ -204,8 +202,16 @@ class ExampleMoveItTrajectories(object):
     else:
       self.PointAndReturn()
 
-
-
+  def playSecondTrajectory(self):
+    self.main_plan = self.SecondTrajectory
+    try:
+      self.arm_group.execute(self.main_plan, wait=True)
+        # self.execute_action(req)
+    except rospy.ServiceException:
+        rospy.logerr("Failed to call ExecuteAction for Second Trajectory")
+        # return False
+    else:
+      self.PointAndReturn()
 
   def example_home_the_robot(self):
 
