@@ -8,6 +8,8 @@ class KinovaARTrajectoryManager(object):
     
     def __init__(self):
         
+        self.record_check = False
+
         self.plan1_check = False
         self.plan2_check = False
         self.FirstTrajectory = DisplayTrajectory()
@@ -20,6 +22,9 @@ class KinovaARTrajectoryManager(object):
             self.SecondTrajectory_Publisher = rospy.Publisher("/KinovaAR/SecondTrajectory", DisplayTrajectory, queue_size=1)
             self.DisplayPlanner_sub = rospy.Subscriber("/KinovaAR/DisplayTrajectories", Empty, self.display_planners)
 
+            self.KeyPress_sub = rospy.Subscriber("/KinovaAR/save", Empty, self.change_bool_callback)
+
+
         except Exception as e:   
             print (e)
             self.is_init_success = False
@@ -31,6 +36,11 @@ class KinovaARTrajectoryManager(object):
             rospy.spin()
         except:
             rospy.logerr("Failed to call ROS spin")
+
+    def change_bool_callback(self, data):
+        
+        self.record_check = not(self.record_check)   
+        print("Recording: " + self.record_check)
 
 
     def trajectory_planner_callback(self, data):     

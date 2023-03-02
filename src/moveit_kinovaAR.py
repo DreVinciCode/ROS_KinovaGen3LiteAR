@@ -269,7 +269,6 @@ class ExampleMoveItTrajectories(object):
     try:
       # Plan the new trajectory
       self.main_plan = arm_group.plan()
-      print(arm_group.plan())
     except:
       rospy.logerr("Failed to plan trajectory.")
       # Call function to reset the position of target pose object to end effector location
