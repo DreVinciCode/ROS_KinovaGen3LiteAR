@@ -76,8 +76,8 @@ class ExampleMoveItTrajectories(object):
     self.HOME_ACTION_IDENTIFIER = 2
     self.REST_ACTION_IDENTIFIER = 1
 
-    self.FirstTrajectory = DisplayTrajectory()
-    self.SecondTrajectory = DisplayTrajectory()
+    self.FirstTrajectory = RobotTrajectory()
+    self.SecondTrajectory = RobotTrajectory()
 
     try:
       self.is_gripper_present = rospy.get_param(rospy.get_namespace() + "is_gripper_present", False)
@@ -172,7 +172,8 @@ class ExampleMoveItTrajectories(object):
       # rospy.loginfo("Printing current position :")
       # self.get_cartesian_pose()
       self.reach_gripper_position(0.5)
-      self.reach_home_joint_values()
+      self.example_rest_the_robot()
+      # self.reach_home_joint_values()
       # self.get_cartesian_pose()
       # self.example_cartesian_waypoint_action()
       # self.reach_named_position("vertical")
@@ -237,6 +238,29 @@ class ExampleMoveItTrajectories(object):
         else:
             return self.wait_for_action_end_or_abort()
 
+  def example_rest_the_robot(self):
+    self.last_action_notif_type = None
+    req = ReadActionRequest()
+    req.input.identifier = self.REST_ACTION_IDENTIFIER
+    try:
+        res = self.read_action(req)
+    except rospy.ServiceException:
+        rospy.logerr("Failed to call ReadAction")
+        return False
+    # Execute the HOME action if we could read it
+    else:
+        # What we just read is the input of the ExecuteAction service
+        req = ExecuteActionRequest()
+        req.input = res.output
+        rospy.loginfo("Sending the robot rest...")
+        try:
+            self.execute_action(req)
+        except rospy.ServiceException:
+            rospy.logerr("Failed to call ExecuteAction")
+            return False
+        else:
+            return self.wait_for_action_end_or_abort()
+
   def wait_for_action_end_or_abort(self):
     while not rospy.is_shutdown():
         if (self.last_action_notif_type == ActionEvent.ACTION_END):
@@ -251,7 +275,8 @@ class ExampleMoveItTrajectories(object):
   def reset_position_callback(self, data):
     rospy.loginfo("Reseting Position!")
     self.reach_gripper_position(0.5)
-    self.reach_home_joint_values()
+    # self.reach_home_joint_values()
+    self.example_rest_the_robot()
 
   def test_sequence(self):
     arm_group = self.arm_group

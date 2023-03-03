@@ -40,7 +40,7 @@ class KinovaARTrajectoryManager(object):
     def change_bool_callback(self, data):
         
         self.record_check = not(self.record_check)   
-        print("Recording: " + self.record_check)
+        print("Recording: " + str(self.record_check))
 
 
     def trajectory_planner_callback(self, data):     
@@ -49,28 +49,36 @@ class KinovaARTrajectoryManager(object):
 
         data.trajectory[0].joint_trajectory.header = h
 
-        if(self.plan1_check):
+        if(self.record_check):
             self.FirstTrajectory = data
-            
-            rospy.loginfo("First Trajectory Recorded!")
             self.FirstTrajectory_Publisher.publish(self.FirstTrajectory)
+        else:
+            pass
 
-        if(self.plan2_check):
-            self.SecondTrajectory = data
-            self.plan2_check = False
-            rospy.loginfo("Second Trajectory Recorded!")
-            self.SecondTrajectory_Publisher.publish(self.SecondTrajectory)
 
-        if( not self.plan1_check and not self.plan2_check):
-            self.plan1_check = True
 
-        elif(not self.plan2_check and self.plan1_check):
-            self.plan2_check = True
-            self.plan1_check = False
+        # if(self.plan1_check):
+        #     self.FirstTrajectory = data
+            
+        #     rospy.loginfo("First Trajectory Recorded!")
+        #     self.FirstTrajectory_Publisher.publish(self.FirstTrajectory)
 
-        elif(self.plan2_check and not self.plan1_check):
-            self.plan2_check = False
-            self.plan1_check = False
+        # if(self.plan2_check):
+        #     self.SecondTrajectory = data
+        #     self.plan2_check = False
+        #     rospy.loginfo("Second Trajectory Recorded!")
+        #     self.SecondTrajectory_Publisher.publish(self.SecondTrajectory)
+
+        # if( not self.plan1_check and not self.plan2_check):
+        #     self.plan1_check = True
+
+        # elif(not self.plan2_check and self.plan1_check):
+        #     self.plan2_check = True
+        #     self.plan1_check = False
+
+        # elif(self.plan2_check and not self.plan1_check):
+        #     self.plan2_check = False
+        #     self.plan1_check = False
 
 
     def display_planners(self, data):
