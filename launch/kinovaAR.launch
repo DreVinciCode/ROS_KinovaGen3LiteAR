@@ -22,7 +22,7 @@
 
     <rosparam>
         kinovaAR/z_min: 0.05
-        kinovaAR/z_max: 0.6
+        kinovaAR/z_max: 1.5
 
         kinovaAR/y_min: 1
         kinovaAR/y_max: 1

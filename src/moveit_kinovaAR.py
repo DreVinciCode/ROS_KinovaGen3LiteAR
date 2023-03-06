@@ -192,28 +192,34 @@ class ExampleMoveItTrajectories(object):
     self.SecondTrajectory = data.trajectory[0]
     rospy.loginfo("Second Trajectory Logged")
 
-  def playFirstTrajectory(self):
+  def playFirstTrajectory(self, data):
+    
+    sequence = True
     self.main_plan = self.FirstTrajectory
     try:
-      self.arm_group.execute(self.main_plan, wait=True)
+      sequence &= self.arm_group.execute(self.main_plan, wait=True)
         # self.execute_action(req)
     except rospy.ServiceException:
         rospy.logerr("Failed to call ExecuteAction for First Trajectory")
         # return False
     else:
-      self.PointAndReturn()
+      sequence &= self.PointAndReturn()
+      
 
-  def playSecondTrajectory(self):
+  def playSecondTrajectory(self, data):
+    sequence = True
+
     self.main_plan = self.SecondTrajectory
     try:
-      self.arm_group.execute(self.main_plan, wait=True)
+      sequence &= self.arm_group.execute(self.main_plan, wait=True)
         # self.execute_action(req)
     except rospy.ServiceException:
         rospy.logerr("Failed to call ExecuteAction for Second Trajectory")
         # return False
     else:
-      self.PointAndReturn()
-
+      # sequence &= self.wait_for_action_end_or_abort()
+      sequence &= self.PointAndReturn()
+  
   def example_home_the_robot(self):
 
     self.last_action_notif_type = None
@@ -621,7 +627,7 @@ class ExampleMoveItTrajectories(object):
      
     self.reach_gripper_position(0.01)
     self.reach_gripper_position(0.5)
-    self.reach_home_joint_values()
+    self.example_rest_the_robot()
 
 
 
