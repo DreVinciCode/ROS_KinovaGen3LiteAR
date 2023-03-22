@@ -76,6 +76,9 @@ class ExampleMoveItTrajectories(object):
     self.HOME_ACTION_IDENTIFIER = 2
     self.REST_ACTION_IDENTIFIER = 1
 
+    self.FirstTrajectory = RobotTrajectory()
+    self.SecondTrajectory = RobotTrajectory()
+
     try:
       self.is_gripper_present = rospy.get_param(rospy.get_namespace() + "is_gripper_present", False)
       if self.is_gripper_present:
@@ -94,6 +97,19 @@ class ExampleMoveItTrajectories(object):
                                                     moveit_msgs.msg.DisplayTrajectory,
                                                     queue_size=20)
       self.main_plan = self.arm_group.plan()
+
+      # Create the second MoveItInterface necessary objects
+      arm_group_name2 = "arm"
+      self.robot2 = moveit_commander.RobotCommander("robot_description")
+      self.scene2 = moveit_commander.PlanningSceneInterface(ns=rospy.get_namespace())
+      self.arm_group2 = moveit_commander.MoveGroupCommander(arm_group_name2, ns=rospy.get_namespace())
+      self.display_trajectory_publisher2 = rospy.Publisher(rospy.get_namespace() + 'move_group/SecondTrajectory',
+                                                    moveit_msgs.msg.DisplayTrajectory,
+                                                    queue_size=20)
+      self.main_plan2 = self.arm_group2.plan()
+
+
+
 
       if self.is_gripper_present:
         gripper_group_name = "gripper"
@@ -136,6 +152,11 @@ class ExampleMoveItTrajectories(object):
 
       self.reset_position_sub = rospy.Subscriber("/KinovaAR/reset_position", Empty, self.reset_position_callback)
 
+      self.load_FirstTrajectory_sub = rospy.Subscriber("/KinovaAR/FirstTrajectory", DisplayTrajectory, self.loadFirstTrajectory)
+      self.load_SecondTrajectory_sub = rospy.Subscriber("/KinovaAR/SecondTrajectory", DisplayTrajectory, self.loadSecondTrajectory)
+      self.execute_sequence_sub = rospy.Subscriber("/KinovaAR/execute_FirstTrajectory", Empty, self.playFirstTrajectory)
+      self.execute_sequence_sub = rospy.Subscriber("/KinovaAR/execute_SecondTrajectory", Empty, self.playSecondTrajectory)
+
     except Exception as e:   
       print (e)
       self.is_init_success = False
@@ -151,7 +172,8 @@ class ExampleMoveItTrajectories(object):
       # rospy.loginfo("Printing current position :")
       # self.get_cartesian_pose()
       self.reach_gripper_position(0.5)
-      self.reach_home_joint_values()
+      self.example_rest_the_robot()
+      # self.reach_home_joint_values()
       # self.get_cartesian_pose()
       # self.example_cartesian_waypoint_action()
       # self.reach_named_position("vertical")
@@ -162,8 +184,42 @@ class ExampleMoveItTrajectories(object):
       rospy.logerr("Failed to call ROS spin")
 
 
+  def loadFirstTrajectory(self, data):
+    self.FirstTrajectory = data.trajectory[0]
+    rospy.loginfo("First Trajectory Logged")
 
+  def loadSecondTrajectory(self, data):
+    self.SecondTrajectory = data.trajectory[0]
+    rospy.loginfo("Second Trajectory Logged")
 
+  def playFirstTrajectory(self, data):
+    
+    sequence = True
+    self.main_plan = self.FirstTrajectory
+    try:
+      sequence &= self.arm_group.execute(self.main_plan, wait=True)
+        # self.execute_action(req)
+    except rospy.ServiceException:
+        rospy.logerr("Failed to call ExecuteAction for First Trajectory")
+        # return False
+    else:
+      sequence &= self.PointAndReturn()
+      
+
+  def playSecondTrajectory(self, data):
+    sequence = True
+
+    self.main_plan = self.SecondTrajectory
+    try:
+      sequence &= self.arm_group.execute(self.main_plan, wait=True)
+        # self.execute_action(req)
+    except rospy.ServiceException:
+        rospy.logerr("Failed to call ExecuteAction for Second Trajectory")
+        # return False
+    else:
+      # sequence &= self.wait_for_action_end_or_abort()
+      sequence &= self.PointAndReturn()
+  
   def example_home_the_robot(self):
 
     self.last_action_notif_type = None
@@ -188,6 +244,29 @@ class ExampleMoveItTrajectories(object):
         else:
             return self.wait_for_action_end_or_abort()
 
+  def example_rest_the_robot(self):
+    self.last_action_notif_type = None
+    req = ReadActionRequest()
+    req.input.identifier = self.REST_ACTION_IDENTIFIER
+    try:
+        res = self.read_action(req)
+    except rospy.ServiceException:
+        rospy.logerr("Failed to call ReadAction")
+        return False
+    # Execute the HOME action if we could read it
+    else:
+        # What we just read is the input of the ExecuteAction service
+        req = ExecuteActionRequest()
+        req.input = res.output
+        rospy.loginfo("Sending the robot rest...")
+        try:
+            self.execute_action(req)
+        except rospy.ServiceException:
+            rospy.logerr("Failed to call ExecuteAction")
+            return False
+        else:
+            return self.wait_for_action_end_or_abort()
+
   def wait_for_action_end_or_abort(self):
     while not rospy.is_shutdown():
         if (self.last_action_notif_type == ActionEvent.ACTION_END):
@@ -202,7 +281,8 @@ class ExampleMoveItTrajectories(object):
   def reset_position_callback(self, data):
     rospy.loginfo("Reseting Position!")
     self.reach_gripper_position(0.5)
-    self.reach_home_joint_values()
+    # self.reach_home_joint_values()
+    self.example_rest_the_robot()
 
   def test_sequence(self):
     arm_group = self.arm_group
@@ -220,7 +300,6 @@ class ExampleMoveItTrajectories(object):
     try:
       # Plan the new trajectory
       self.main_plan = arm_group.plan()
-      print(arm_group.plan())
     except:
       rospy.logerr("Failed to plan trajectory.")
       # Call function to reset the position of target pose object to end effector location
@@ -389,8 +468,10 @@ class ExampleMoveItTrajectories(object):
     arm_group.set_named_target(target)
     # Plan the trajectory
     planned_path1 = arm_group.plan()
+
     # Execute the trajectory and block while it's not finished
-    return arm_group.execute(planned_path1, wait=True)
+    # return arm_group.execute(planned_path1, wait=True)
+    return True
 
   def reach_joint_angles(self, tolerance):
     arm_group = self.arm_group
@@ -541,6 +622,14 @@ class ExampleMoveItTrajectories(object):
     self.reach_dropoff_joint_values()
     self.reach_gripper_position(0.5)
     self.reach_home_joint_values()
+
+  def PointAndReturn(self):
+     
+    self.reach_gripper_position(0.01)
+    self.reach_gripper_position(0.5)
+    self.example_rest_the_robot()
+
+
 
 
 if __name__ == '__main__':

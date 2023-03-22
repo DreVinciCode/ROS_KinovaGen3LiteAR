@@ -9,24 +9,28 @@ from moveit_msgs.msg import *
 rospy.init_node('RosbagManager')
 
 
-directory_location = "/home/andre/catkin_ws/src/ROS_KinovaGen3LiteAR/"
-rosbagfileName = "rosbagTest"
+directory_location = "/home/andre/catkin_ws/src/ROS_KinovaGen3LiteAR/Trajectories/"
+rosbagfileName1 = "sample2"
+rosbagfileName2 = "sample4"
+
 filetype = ".bag"
 
+file1 = directory_location + rosbagfileName1 + filetype
+file2 = directory_location + rosbagfileName2 + filetype
 
-file = directory_location + rosbagfileName + filetype
+Trajectory1 = DisplayTrajectory()
+Trajectory2 = DisplayTrajectory()
 
-Trajectory = DisplayTrajectory()
+bag_in1 = rosbag.Bag(file1)
+bag_in2 = rosbag.Bag(file2)
 
-bag_in = rosbag.Bag(file)
 msg_counters = {} # empty dict
 total_count = 0
 
 FirstTrajectory_Publisher = rospy.Publisher("/KinovaAR/FirstTrajectory", DisplayTrajectory, queue_size=1)
+SecondTrajectory_Publisher = rospy.Publisher("/KinovaAR/SecondTrajectory", DisplayTrajectory, queue_size=1)
 
-
-
-for topic, msg, t in bag_in.read_messages():
+for topic, msg, t in bag_in1.read_messages():
     print("\n# =======================================")
     total_count += 1
     no_msgs_found = False
@@ -36,6 +40,9 @@ for topic, msg, t in bag_in.read_messages():
     else:
         msg_counters[topic] += 1
 
+    if (topic == "/KinovaAR/FirstTrajectory"):
+        Trajectory1 = msg
+
     # Print topic name and message receipt info
     print("# topic:           " + topic)
     print("# msg_count:       %u" % msg_counters[topic])
@@ -44,16 +51,19 @@ for topic, msg, t in bag_in.read_messages():
     print("# timestamp (sec): {:.9f}".format(t.to_sec())),
     print("# - - -")
 
-    # Print the message
-    #  print(msg)
+for topic, msg, t in bag_in2.read_messages():
+    print("\n# =======================================")
+    total_count += 1
+    no_msgs_found = False
+    # Keep track of individual message counters for each message type
+    if topic not in msg_counters:
+        msg_counters[topic] = 1
+    else:
+        msg_counters[topic] += 1
 
-# for topic, msg in bag_in.read_messages():
-#     print(msg)
-
-for topic in bag_in.read_messages():
-    for msg in topic:
-        pass
+    if (topic == "/KinovaAR/FirstTrajectory"):
+        Trajectory2 = msg
 
 
-FirstTrajectory_Publisher.publish(Trajectory)
-
+FirstTrajectory_Publisher.publish(Trajectory1)
+SecondTrajectory_Publisher.publish(Trajectory2)

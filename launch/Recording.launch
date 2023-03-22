@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<launch>
+
+    <node pkg="kinova_ar" name="TimeExtration" type="TimeExtraction.py" output="screen"> </node>
+    <!-- <node pkg="kinova_ar" name="RecordKeyPress" type="RecordKeyPress.py" output="screen"> </node> -->
+    <node pkg="kinova_ar" name="TrajectoryManager" type="TrajectoryManager.py" output="screen"> </node>
+
+</launch>
