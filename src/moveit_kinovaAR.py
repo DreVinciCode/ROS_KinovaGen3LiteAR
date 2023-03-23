@@ -253,19 +253,19 @@ class ExampleMoveItTrajectories(object):
     except rospy.ServiceException:
         rospy.logerr("Failed to call ReadAction")
         return False
-    # Execute the HOME action if we could read it
     else:
         # What we just read is the input of the ExecuteAction service
         req = ExecuteActionRequest()
         req.input = res.output
-        rospy.loginfo("Sending the robot rest...")
+        rospy.loginfo("Sending robot to rest position...")
         try:
             self.execute_action(req)
         except rospy.ServiceException:
             rospy.logerr("Failed to call ExecuteAction")
             return False
         else:
-            return self.wait_for_action_end_or_abort()
+            pass
+            # return self.wait_for_action_end_or_abort()
 
   def wait_for_action_end_or_abort(self):
     while not rospy.is_shutdown():
@@ -281,7 +281,6 @@ class ExampleMoveItTrajectories(object):
   def reset_position_callback(self, data):
     rospy.loginfo("Reseting Position!")
     self.reach_gripper_position(0.5)
-    # self.reach_home_joint_values()
     self.example_rest_the_robot()
 
   def test_sequence(self):
