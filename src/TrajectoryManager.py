@@ -43,7 +43,8 @@ class KinovaARTrajectoryManager(object):
         print("Recording: " + str(self.record_check))
 
 
-    def trajectory_planner_callback(self, data):     
+    def trajectory_planner_callback(self, data): 
+        print("planned recieved...")    
         h = std_msgs.msg.Header()
         h.stamp = rospy.Time.now() 
 

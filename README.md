@@ -5,7 +5,7 @@ This project is tied to its Unity component linked here, [Unity_KinovaGen3LiteAR
 
 Requirements:
 - Ubuntu 18.04 
-- rox-kortex repo
+- ros-kortex repo
 
 Follow installation instructions from [ros-kortex](https://github.com/Kinovarobotics/ros_kortex) readme.
 
