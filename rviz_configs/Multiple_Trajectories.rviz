@@ -160,7 +160,7 @@ Visualization Manager:
             Value: true
         Loop Animation: true
         Robot Alpha: 0.5
-        Robot Color: 255; 0; 255
+        Robot Color: 255; 150; 0
         Show Robot Collision: false
         Show Robot Visual: true
         Show Trail: false
@@ -377,7 +377,7 @@ Visualization Manager:
             Value: true
         Loop Animation: true
         Robot Alpha: 0.5
-        Robot Color: 255; 150; 0
+        Robot Color: 255; 0; 255
         Show Robot Collision: false
         Show Robot Visual: true
         Show Trail: false
