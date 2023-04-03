@@ -40,7 +40,7 @@
 # To run this node in a given namespace with rosrun (for example 'my_gen3'), start a Kortex driver and then run : 
 # rosrun kortex_examples example_moveit_trajectories.py __ns:=my_gen3
 
-from geometry_msgs.msg import PoseStamped
+from geometry_msgs.msg import PoseStamped, PoseArray
 from kortex_driver.srv import *
 from kortex_driver.msg import *
 from moveit_msgs.msg import *
@@ -142,6 +142,8 @@ class ExampleMoveItTrajectories(object):
 
       self.trajectory_execution_sub = rospy.Subscriber("/KinovaAR/execute_action", Empty, self.trajectory_execution_callback)
       self.target_pose_sub = rospy.Subscriber("/KinovaAR/targetPose", PoseStamped, self.target_pose_callback)
+      self.waypoint_pose_sub = rospy.Subscriber("/KinovaAR/WayPoints", PoseArray, self.waypoint_callback)
+
       self.GripperSubscriber = rospy.Subscriber("/KinovaAR/Pose", Int16, self.KinovaPose_callback)
       self.RL_Home_Position_Subscriber = rospy.Subscriber("/KinovaAR/RL_HomePosition", Empty, self.reach_home_joint_values)
 
@@ -151,11 +153,17 @@ class ExampleMoveItTrajectories(object):
       self.trajectorySequence_Publisher = rospy.Publisher("/KinovaAR/execute_practice_sequence", Empty, queue_size=1)
 
       self.reset_position_sub = rospy.Subscriber("/KinovaAR/reset_position", Empty, self.reset_position_callback)
+      self.reset_position_reached_pub = rospy.Publisher("/KinovaAR/reset_position/reached", Empty, queue_size=1)
+      self.trajectory_position_reached_pub = rospy.Publisher("/KinovaAR/trajectory_position/reached", Empty, queue_size=1)
+
 
       self.load_FirstTrajectory_sub = rospy.Subscriber("/KinovaAR/FirstTrajectory", DisplayTrajectory, self.loadFirstTrajectory)
       self.load_SecondTrajectory_sub = rospy.Subscriber("/KinovaAR/SecondTrajectory", DisplayTrajectory, self.loadSecondTrajectory)
       self.execute_sequence_sub = rospy.Subscriber("/KinovaAR/execute_FirstTrajectory", Empty, self.playFirstTrajectory)
       self.execute_sequence_sub = rospy.Subscriber("/KinovaAR/execute_SecondTrajectory", Empty, self.playSecondTrajectory)
+
+      self.firstTrajectory_sub = rospy.Subscriber("/KinovaAR/FirstTrajectory", DisplayTrajectory, self.concat)
+      self.concat_pub = rospy.Publisher("/KinovaAR/ConcatTrajectory", DisplayTrajectory, queue_size=1)
 
     except Exception as e:   
       print (e)
@@ -183,6 +191,46 @@ class ExampleMoveItTrajectories(object):
     except:
       rospy.logerr("Failed to call ROS spin")
 
+  def concat(self, data):
+      second_msg = rospy.wait_for_message("/KinovaAR/FirstTrajectory", DisplayTrajectory)
+      
+      appended_msg = DisplayTrajectory()
+      appended_msg.trajectory = data.trajectory + second_msg.trajectory
+      appended_msg.RobotState = data.RobotState
+      self.concat_pub.publish(appended_msg)
+
+      print("Printed Concated message")
+
+
+
+  def waypoint_callback(self, data):
+    waypoint_count = len(data.poses)
+    
+    req = ExecuteActionRequest()
+
+    trajectory = WaypointList()
+    trajectory.waypoints.append(data.poses[0])
+    trajectory.waypoints.append(data.poses[1])
+
+    # req.input.oneof_action_parameters.execute_waypoint_list.append(trajectory)
+    # try:
+    #     self.execute_action(req)
+    # except rospy.ServiceException:
+    #     rospy.logerr("Failed to call action ExecuteWaypointTrajectory")
+    #     return False
+    # else:
+    #     return self.wait_for_action_end_or_abort()
+    # success = True
+    self.reach_cartesian_pose(pose=data.poses[0], tolerance=0.01, constraints=None)
+    # suxccess &= self.trajectory_execution_callback()
+    
+    # success &= self.reach_cartesian_pose(pose=data.poses[1], tolerance=0.01, constraints=None)
+    # success &= self.trajectory_execution_callback()
+
+    # for i in waypoint_count:
+       
+
+
 
   def loadFirstTrajectory(self, data):
     self.FirstTrajectory = data.trajectory[0]
@@ -203,8 +251,8 @@ class ExampleMoveItTrajectories(object):
         rospy.logerr("Failed to call ExecuteAction for First Trajectory")
         # return False
     else:
-      sequence &= self.PointAndReturn()
-      
+      # sequence &= self.PointAndReturn()
+      pass
 
   def playSecondTrajectory(self, data):
     sequence = True
@@ -264,6 +312,7 @@ class ExampleMoveItTrajectories(object):
             rospy.logerr("Failed to call ExecuteAction")
             return False
         else:
+            self.reset_position_reached_pub.publish(Empty())
             pass
             # return self.wait_for_action_end_or_abort()
 
@@ -543,7 +592,7 @@ class ExampleMoveItTrajectories(object):
       # Call function to reset the position of target pose object to end effector location
 
     else:
-      pass
+      pass      
 
     self.arm_group = arm_group
     # Plan
@@ -576,7 +625,9 @@ class ExampleMoveItTrajectories(object):
         rospy.logerr("Failed to call ExecuteAction")
         # return False
     else:
-      pass
+      return self.wait_for_action_end_or_abort()
+
+      
 
 
   def trajectory_result_callback(self, data):
@@ -623,7 +674,7 @@ class ExampleMoveItTrajectories(object):
     self.reach_home_joint_values()
 
   def PointAndReturn(self):
-     
+    self.trajectory_position_reached_pub.publish(Empty())
     self.reach_gripper_position(0.01)
     self.reach_gripper_position(0.5)
     self.example_rest_the_robot()
