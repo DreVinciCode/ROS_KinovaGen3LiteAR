@@ -246,14 +246,11 @@ class ExampleMoveItTrajectories(object):
 
     # success = True
 
-    # self.reach_cartesian_pose(pose=data.poses[0], tolerance=0.01, constraints=None)
-    # suxccess &= self.trajectory_execution_callback()
+    # success self.reach_cartesian_pose(pose=data.poses[0], tolerance=0.01, constraints=None)
+    # success &= self.trajectory_execution_callback()
     
     # success &= self.reach_cartesian_pose(pose=data.poses[1], tolerance=0.01, constraints=None)
-    # success &= self.trajectory_execution_callback()
-
-    # for i in waypoint_count:
-       
+    # success &= self.trajectory_execution_callback()        
 
 
 
