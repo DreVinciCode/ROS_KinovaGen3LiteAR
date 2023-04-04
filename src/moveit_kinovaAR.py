@@ -44,6 +44,7 @@ from geometry_msgs.msg import PoseStamped, PoseArray
 from kortex_driver.srv import *
 from kortex_driver.msg import *
 from moveit_msgs.msg import *
+from tf.transformations import euler_from_quaternion, quaternion_from_euler
 
 import actionlib
 
@@ -204,24 +205,48 @@ class ExampleMoveItTrajectories(object):
 
 
   def waypoint_callback(self, data):
-    waypoint_count = len(data.poses)
     
     req = ExecuteActionRequest()
 
     trajectory = WaypointList()
-    trajectory.waypoints.append(data.poses[0])
-    trajectory.waypoints.append(data.poses[1])
 
-    # req.input.oneof_action_parameters.execute_waypoint_list.append(trajectory)
-    # try:
-    #     self.execute_action(req)
-    # except rospy.ServiceException:
-    #     rospy.logerr("Failed to call action ExecuteWaypointTrajectory")
-    #     return False
-    # else:
-    #     return self.wait_for_action_end_or_abort()
+    pos_x1 = data.poses[0].position.x
+    pos_y1 = data.poses[0].position.y
+    pos_z1 = data.poses[0].position.z
+    pos_1quat1 = data.poses[0].orientation.x
+    pos_1quat2 = data.poses[0].orientation.y
+    pos_1quat3 = data.poses[0].orientation.z
+    pos_1quat4 = data.poses[0].orientation.w
+
+    pos_x2 = data.poses[1].position.x
+    pos_y2 = data.poses[1].position.y
+    pos_z2 = data.poses[1].position.z
+    pos_2quat1 = data.poses[1].orientation.x
+    pos_2quat2 = data.poses[1].orientation.y
+    pos_2quat3 = data.poses[1].orientation.z
+    pos_2quat4 = data.poses[1].orientation.w
+
+    orientation_list = [pos_1quat1, pos_1quat2, pos_1quat3, pos_1quat4]
+    (roll1, pitch1, yaw1) = euler_from_quaternion (orientation_list)
+
+    orientation_list = [pos_2quat1, pos_2quat2, pos_2quat3, pos_2quat4]
+    (roll2, pitch2, yaw2) = euler_from_quaternion (orientation_list)
+
+    trajectory.waypoints.append(self.FillCartesianWaypoint(pos_x1, pos_y1, pos_z1, roll1, pitch1, yaw1, 0))
+    trajectory.waypoints.append(self.FillCartesianWaypoint(pos_x2, pos_y2, pos_z2, roll2, pitch2, yaw2, 0))
+
+    req.input.oneof_action_parameters.execute_waypoint_list.append(trajectory)
+    try:
+        self.execute_action(req)
+    except rospy.ServiceException:
+        rospy.logerr("Failed to call action ExecuteWaypointTrajectory")
+        return False
+    else:
+        return self.wait_for_action_end_or_abort()
+
     # success = True
-    self.reach_cartesian_pose(pose=data.poses[0], tolerance=0.01, constraints=None)
+
+    # self.reach_cartesian_pose(pose=data.poses[0], tolerance=0.01, constraints=None)
     # suxccess &= self.trajectory_execution_callback()
     
     # success &= self.reach_cartesian_pose(pose=data.poses[1], tolerance=0.01, constraints=None)
@@ -443,6 +468,9 @@ class ExampleMoveItTrajectories(object):
     rospy.loginfo(data.pose.position)
 
     self.reach_cartesian_pose(pose=data.pose, tolerance=0.01, constraints=None)
+
+  def get_euler_from_quaterion(self, x,y,z,w):
+     t0 
 
 
   def get_quaternion_from_euler(self, roll, pitch, yaw):
