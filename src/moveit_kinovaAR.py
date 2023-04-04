@@ -235,24 +235,26 @@ class ExampleMoveItTrajectories(object):
     trajectory.waypoints.append(self.FillCartesianWaypoint(pos_x1, pos_y1, pos_z1, roll1, pitch1, yaw1, 0))
     trajectory.waypoints.append(self.FillCartesianWaypoint(pos_x2, pos_y2, pos_z2, roll2, pitch2, yaw2, 0))
 
-    req.input.oneof_action_parameters.execute_waypoint_list.append(trajectory)
-    try:
-        self.execute_action(req)
-    except rospy.ServiceException:
-        rospy.logerr("Failed to call action ExecuteWaypointTrajectory")
-        return False
-    else:
-        return self.wait_for_action_end_or_abort()
+    # req.input.oneof_action_parameters.execute_waypoint_list.append(trajectory)
+    # try:
+    #     self.execute_action(req)
+    # except rospy.ServiceException:
+    #     rospy.logerr("Failed to call action ExecuteWaypointTrajectory")
+    #     return False
+    # else:
+    #     return self.wait_for_action_end_or_abort()
 
-    # success = True
-
-    # success self.reach_cartesian_pose(pose=data.poses[0], tolerance=0.01, constraints=None)
-    # success &= self.trajectory_execution_callback()
+    success = True
+    print("First Waypoint")
+    self.reach_cartesian_pose(pose=data.poses[1], tolerance=0.01, constraints=None)
+    self.trajectory_execution_callback(Empty())
     
-    # success &= self.reach_cartesian_pose(pose=data.poses[1], tolerance=0.01, constraints=None)
-    # success &= self.trajectory_execution_callback()        
 
+    print("Second Waypoint")
+    self.reach_cartesian_pose(pose=data.poses[0], tolerance=0.01, constraints=None)
+    self.trajectory_execution_callback(Empty())        
 
+    self.PointAndReturn()
 
   def loadFirstTrajectory(self, data):
     self.FirstTrajectory = data.trajectory[0]
@@ -395,7 +397,7 @@ class ExampleMoveItTrajectories(object):
     try:
       # Plan the new trajectory
       self.main_plan = arm_group.plan()
-      print(arm_group.plan())
+      # print(arm_group.plan())
     except:
       rospy.logerr("Failed to plan trajectory.")
       # Call function to reset the position of target pose object to end effector location
@@ -465,9 +467,6 @@ class ExampleMoveItTrajectories(object):
     rospy.loginfo(data.pose.position)
 
     self.reach_cartesian_pose(pose=data.pose, tolerance=0.01, constraints=None)
-
-  def get_euler_from_quaterion(self, x,y,z,w):
-     t0 
 
 
   def get_quaternion_from_euler(self, roll, pitch, yaw):
@@ -611,12 +610,13 @@ class ExampleMoveItTrajectories(object):
     try:
       # Plan the new trajectory
       self.main_plan = arm_group.plan()
-      print(arm_group.plan())
+      # print(arm_group.plan())
     except:
       rospy.logerr("Failed to plan trajectory.")
       # Call function to reset the position of target pose object to end effector location
 
     else:
+      # return self.wait_for_action_end_or_abort()
       pass      
 
     self.arm_group = arm_group
@@ -650,7 +650,8 @@ class ExampleMoveItTrajectories(object):
         rospy.logerr("Failed to call ExecuteAction")
         # return False
     else:
-      return self.wait_for_action_end_or_abort()
+      pass
+      # return self.wait_for_action_end_or_abort()
 
       
 
