@@ -3,6 +3,7 @@
 import rospy
 
 from moveit_msgs.msg import *
+from std_msgs.msg import Float32
 
 class TimeExtration:
 
@@ -15,7 +16,7 @@ class TimeExtration:
         self.trajectoryTime_sub = rospy.Subscriber('/' + self.robot_name + "/execute_trajectory/result", ExecuteTrajectoryActionResult, self.executeTimer_callback)
 
         self.planningTime_pub = rospy.Publisher("/KinovaAR/PlanningTime", MoveGroupActionResult, queue_size=1)
-        self.executionTime_pub = rospy.Publisher("/KinovaAR/ExecutionTime", ExecuteTrajectoryActionResult, queue_size=1)
+        self.executionTime_pub = rospy.Publisher("/KinovaAR/ExecutionTime", Float32, queue_size=1)
 
         rospy.spin()
         
@@ -26,7 +27,7 @@ class TimeExtration:
 
     def executeTimer_callback(self, data):
         executeTime = (data.header.stamp.secs + data.header.stamp.nsecs * 1e-9) - (data.status.goal_id.stamp.secs + data.status.goal_id.stamp.nsecs * 1e-9)
-        self.executionTime_pub.publish(data)
+        self.executionTime_pub.publish(executeTime)
         # rospy.loginfo("Execution Time: " + str(executeTime))
 
 if __name__ == '__main__':

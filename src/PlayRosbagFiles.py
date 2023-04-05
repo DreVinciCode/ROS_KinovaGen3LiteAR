@@ -10,8 +10,9 @@ rospy.init_node('RosbagManager')
 
 
 directory_location = "/home/andre/catkin_ws/src/ROS_KinovaGen3LiteAR/Trajectories/"
-rosbagfileName1 = "concat"
-rosbagfileName2 = "1"
+# directory_location = '/home/andre/catkin_ws/src/kinova_study/src/Trajectories/'
+rosbagfileName1 = "1"
+rosbagfileName2 = "2"
 
 filetype = ".bag"
 

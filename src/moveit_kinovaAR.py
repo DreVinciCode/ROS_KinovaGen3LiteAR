@@ -275,8 +275,8 @@ class ExampleMoveItTrajectories(object):
         rospy.logerr("Failed to call ExecuteAction for First Trajectory")
         # return False
     else:
-      # sequence &= self.PointAndReturn()
-      pass
+      sequence &= self.PointAndReturn()
+      # pass
 
   def playSecondTrajectory(self, data):
     sequence = True
