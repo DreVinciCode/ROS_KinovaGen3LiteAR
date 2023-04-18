@@ -80,8 +80,8 @@ class ExampleMoveItTrajectories(object):
     self.HOME_ACTION_IDENTIFIER = 2
     self.REST_ACTION_IDENTIFIER = 1
 
-    self.FirstTrajectory = RobotTrajectory()
-    self.SecondTrajectory = RobotTrajectory()
+    self.FirstTrajectory = ()
+    self.SecondTrajectory = ()
 
     try:
       self.is_gripper_present = rospy.get_param(rospy.get_namespace() + "is_gripper_present", False)
@@ -161,8 +161,8 @@ class ExampleMoveItTrajectories(object):
       self.trajectory_position_reached_pub = rospy.Publisher("/KinovaAR/trajectory_position/reached", Empty, queue_size=1)
 
 
-      self.load_FirstTrajectory_sub = rospy.Subscriber("/KinovaAR/FirstTrajectory", DisplayTrajectory, self.loadFirstTrajectory)
-      self.load_SecondTrajectory_sub = rospy.Subscriber("/KinovaAR/SecondTrajectory", DisplayTrajectory, self.loadSecondTrajectory)
+      self.load_FirstTrajectory_sub = rospy.Subscriber("/KinovaAR/FirstTrajectory", load_trajectory, self.loadFirstTrajectory)
+      self.load_SecondTrajectory_sub = rospy.Subscriber("/KinovaAR/SecondTrajectory", load_trajectory, self.loadSecondTrajectory)
       self.execute_sequence_sub = rospy.Subscriber("/KinovaAR/execute_FirstTrajectory", Empty, self.playFirstTrajectory)
       self.execute_sequence_sub = rospy.Subscriber("/KinovaAR/execute_SecondTrajectory", Empty, self.playSecondTrajectory)
 
@@ -195,15 +195,6 @@ class ExampleMoveItTrajectories(object):
     except:
       rospy.logerr("Failed to call ROS spin")
 
-  def concat(self, data):
-      second_msg = rospy.wait_for_message("/KinovaAR/FirstTrajectory", DisplayTrajectory)
-      
-      appended_msg = DisplayTrajectory()
-      appended_msg.trajectory = data.trajectory + second_msg.trajectory
-      appended_msg.RobotState = data.RobotState
-      self.concat_pub.publish(appended_msg)
-
-      print("Printed Concated message")
 
 
 
@@ -260,19 +251,27 @@ class ExampleMoveItTrajectories(object):
     self.PointAndReturn()
 
   def loadFirstTrajectory(self, data):
-    self.FirstTrajectory = data.trajectory[0]
+    approach = data.approach.trajectory[0]
+    grasp = data.grasp.trajectory[0]
+    self.FirstTrajectory = (approach, grasp)
     rospy.loginfo("First Trajectory Logged")
 
   def loadSecondTrajectory(self, data):
-    self.SecondTrajectory = data.trajectory[0]
+    approach = data.approach.trajectory[0]
+    grasp = data.grasp.trajectory[0]
+    self.SecondTrajectory = (approach, grasp)
     rospy.loginfo("Second Trajectory Logged")
 
   def playFirstTrajectory(self, data):
     
     sequence = True
-    self.main_plan = self.FirstTrajectory
+
+    self.approach = self.FirstTrajectory[0]
+    self.grasp = self.FirstTrajectory[1]
     try:
-      sequence &= self.arm_group.execute(self.main_plan, wait=True)
+      sequence &= self.arm_group.execute(self.approach, wait=True)
+      sequence &= self.arm_group.execute(self.grasp, wait=True)
+
         # self.execute_action(req)
     except rospy.ServiceException:
         rospy.logerr("Failed to call ExecuteAction for First Trajectory")
@@ -284,9 +283,11 @@ class ExampleMoveItTrajectories(object):
   def playSecondTrajectory(self, data):
     sequence = True
 
-    self.main_plan = self.SecondTrajectory
+    self.approach = self.SecondTrajectory[0]
+    self.grasp = self.SecondTrajectory[1]
     try:
-      sequence &= self.arm_group.execute(self.main_plan, wait=True)
+      sequence &= self.arm_group.execute(self.approach, wait=True)
+      sequence &= self.arm_group.execute(self.grasp, wait=True)
         # self.execute_action(req)
     except rospy.ServiceException:
         rospy.logerr("Failed to call ExecuteAction for Second Trajectory")
