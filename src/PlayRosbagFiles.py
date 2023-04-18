@@ -5,14 +5,12 @@ import rospy
 
 from moveit_msgs.msg import *
 
-
 rospy.init_node('RosbagManager')
 
-
-directory_location = "/home/andre/catkin_ws/src/ROS_KinovaGen3LiteAR/Trajectories/"
-# directory_location = '/home/andre/catkin_ws/src/kinova_study/src/Trajectories/'
-rosbagfileName1 = "1"
-rosbagfileName2 = "2"
+# directory_location = "/home/andre/catkin_ws/src/ROS_KinovaGen3LiteAR/Trajectories/"
+directory_location = '/home/andre/catkin_ws/src/kinova_study/src/Trajectories/'
+rosbagfileName1 = "0"
+rosbagfileName2 = "1"
 
 filetype = ".bag"
 
@@ -28,7 +26,7 @@ bag_in2 = rosbag.Bag(file2)
 msg_counters = {} # empty dict
 total_count = 0
 
-FirstTrajectory_Publisher = rospy.Publisher("/KinovaAR/FirstTrajectory", DisplayTrajectory, queue_size=1)
+FirstTrajectory_Publisher = rospy.Publisher("/KinovaAR/FirstTrajectoryDisplay", DisplayTrajectory, queue_size=1)
 SecondTrajectory_Publisher = rospy.Publisher("/KinovaAR/SecondTrajectory", DisplayTrajectory, queue_size=1)
 
 for topic, msg, t in bag_in1.read_messages():

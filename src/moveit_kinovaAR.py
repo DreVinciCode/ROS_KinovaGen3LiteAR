@@ -44,7 +44,10 @@ from geometry_msgs.msg import PoseStamped, PoseArray
 from kortex_driver.srv import *
 from kortex_driver.msg import *
 from moveit_msgs.msg import *
-from tf.transformations import euler_from_quaternion, quaternion_from_euler
+from kinova_study.msg import load_trajectory
+
+
+# from tf.transformations import euler_from_quaternion, quaternion_from_euler
 
 import actionlib
 
@@ -164,7 +167,7 @@ class ExampleMoveItTrajectories(object):
       self.execute_sequence_sub = rospy.Subscriber("/KinovaAR/execute_SecondTrajectory", Empty, self.playSecondTrajectory)
 
       self.firstTrajectory_sub = rospy.Subscriber("/KinovaAR/FirstTrajectory", DisplayTrajectory, self.concat)
-      self.concat_pub = rospy.Publisher("/KinovaAR/ConcatTrajectory", DisplayTrajectory, queue_size=1)
+      # self.concat_pub = rospy.Publisher("/KinovaAR/ConcatTrajectory", DisplayTrajectory, queue_size=1)
 
     except Exception as e:   
       print (e)
@@ -206,34 +209,34 @@ class ExampleMoveItTrajectories(object):
 
   def waypoint_callback(self, data):
     
-    req = ExecuteActionRequest()
+    # req = ExecuteActionRequest()
 
-    trajectory = WaypointList()
+    # trajectory = WaypointList()
 
-    pos_x1 = data.poses[0].position.x
-    pos_y1 = data.poses[0].position.y
-    pos_z1 = data.poses[0].position.z
-    pos_1quat1 = data.poses[0].orientation.x
-    pos_1quat2 = data.poses[0].orientation.y
-    pos_1quat3 = data.poses[0].orientation.z
-    pos_1quat4 = data.poses[0].orientation.w
+    # pos_x1 = data.poses[0].position.x
+    # pos_y1 = data.poses[0].position.y
+    # pos_z1 = data.poses[0].position.z
+    # pos_1quat1 = data.poses[0].orientation.x
+    # pos_1quat2 = data.poses[0].orientation.y
+    # pos_1quat3 = data.poses[0].orientation.z
+    # pos_1quat4 = data.poses[0].orientation.w
 
-    pos_x2 = data.poses[1].position.x
-    pos_y2 = data.poses[1].position.y
-    pos_z2 = data.poses[1].position.z
-    pos_2quat1 = data.poses[1].orientation.x
-    pos_2quat2 = data.poses[1].orientation.y
-    pos_2quat3 = data.poses[1].orientation.z
-    pos_2quat4 = data.poses[1].orientation.w
+    # pos_x2 = data.poses[1].position.x
+    # pos_y2 = data.poses[1].position.y
+    # pos_z2 = data.poses[1].position.z
+    # pos_2quat1 = data.poses[1].orientation.x
+    # pos_2quat2 = data.poses[1].orientation.y
+    # pos_2quat3 = data.poses[1].orientation.z
+    # pos_2quat4 = data.poses[1].orientation.w
 
-    orientation_list = [pos_1quat1, pos_1quat2, pos_1quat3, pos_1quat4]
-    (roll1, pitch1, yaw1) = euler_from_quaternion (orientation_list)
+    # orientation_list = [pos_1quat1, pos_1quat2, pos_1quat3, pos_1quat4]
+    # (roll1, pitch1, yaw1) = euler_from_quaternion (orientation_list)
 
-    orientation_list = [pos_2quat1, pos_2quat2, pos_2quat3, pos_2quat4]
-    (roll2, pitch2, yaw2) = euler_from_quaternion (orientation_list)
+    # orientation_list = [pos_2quat1, pos_2quat2, pos_2quat3, pos_2quat4]
+    # (roll2, pitch2, yaw2) = euler_from_quaternion (orientation_list)
 
-    trajectory.waypoints.append(self.FillCartesianWaypoint(pos_x1, pos_y1, pos_z1, roll1, pitch1, yaw1, 0))
-    trajectory.waypoints.append(self.FillCartesianWaypoint(pos_x2, pos_y2, pos_z2, roll2, pitch2, yaw2, 0))
+    # trajectory.waypoints.append(self.FillCartesianWaypoint(pos_x1, pos_y1, pos_z1, roll1, pitch1, yaw1, 0))
+    # trajectory.waypoints.append(self.FillCartesianWaypoint(pos_x2, pos_y2, pos_z2, roll2, pitch2, yaw2, 0))
 
     # req.input.oneof_action_parameters.execute_waypoint_list.append(trajectory)
     # try:
@@ -252,8 +255,8 @@ class ExampleMoveItTrajectories(object):
 
     print("Second Waypoint")
     self.reach_cartesian_pose(pose=data.poses[0], tolerance=0.01, constraints=None)
-    self.trajectory_execution_callback(Empty())        
-
+    self.trajectory_execution_callback(Empty())  
+  
     self.PointAndReturn()
 
   def loadFirstTrajectory(self, data):
@@ -701,7 +704,7 @@ class ExampleMoveItTrajectories(object):
 
   def PointAndReturn(self):
     self.trajectory_position_reached_pub.publish(Empty())
-    self.reach_gripper_position(0.01)
+    self.reach_gripper_position(0.02)
     self.reach_gripper_position(0.5)
     self.example_rest_the_robot()
 
