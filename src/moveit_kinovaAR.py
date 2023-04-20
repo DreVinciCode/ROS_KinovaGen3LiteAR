@@ -659,6 +659,9 @@ class ExampleMoveItTrajectories(object):
     self.lower_arm()
 
     self.reach_gripper_position(0.9)
+
+    self.reach_cartesian_pose(pose=self.waypoint_array.poses[1], tolerance=0.01, constraints=None)
+    self.trajectory_execution_callback(Empty())  
     self.example_rest_the_robot()
 
 
