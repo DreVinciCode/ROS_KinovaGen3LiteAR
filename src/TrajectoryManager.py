@@ -18,8 +18,8 @@ class KinovaARTrajectoryManager(object):
         try:
             rospy.init_node('TrajectoryManager')
             self.trajectory_planner_sub = rospy.Subscriber("/my_gen3_lite/move_group/display_planned_path", DisplayTrajectory, self.trajectory_planner_callback)
-            self.FirstTrajectory_Publisher = rospy.Publisher("/KinovaAR/FirstTrajectory", DisplayTrajectory, queue_size=1)
-            self.SecondTrajectory_Publisher = rospy.Publisher("/KinovaAR/SecondTrajectory", DisplayTrajectory, queue_size=1)
+            self.FirstTrajectory_Publisher = rospy.Publisher("/KinovaAR/FirstTrajectoryDisplay", DisplayTrajectory, queue_size=1)
+            self.SecondTrajectory_Publisher = rospy.Publisher("/KinovaAR/SecondTrajectoryDisplay", DisplayTrajectory, queue_size=1)
             self.DisplayPlanner_sub = rospy.Subscriber("/KinovaAR/DisplayTrajectories", Empty, self.display_planners)
 
             self.KeyPress_sub = rospy.Subscriber("/KinovaAR/save", Empty, self.change_bool_callback)
@@ -44,7 +44,6 @@ class KinovaARTrajectoryManager(object):
 
 
     def trajectory_planner_callback(self, data): 
-        print("planned recieved...")    
         h = std_msgs.msg.Header()
         h.stamp = rospy.Time.now() 
 
