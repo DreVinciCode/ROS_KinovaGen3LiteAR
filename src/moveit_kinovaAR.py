@@ -658,7 +658,8 @@ class ExampleMoveItTrajectories(object):
 
     self.shakedown_arm()
     self.shakeup_arm()
-
+    self.shakedown_arm()
+    self.shakeup_arm()
 
     self.lower_arm()
 
@@ -762,7 +763,7 @@ class ExampleMoveItTrajectories(object):
         self.FillCartesianWaypoint(
             feedback.base.commanded_tool_pose_x,
             feedback.base.commanded_tool_pose_y,
-            feedback.base.commanded_tool_pose_z - 0.10,
+            feedback.base.commanded_tool_pose_z - 0.09,
             feedback.base.commanded_tool_pose_theta_x,
             feedback.base.commanded_tool_pose_theta_y,
             feedback.base.commanded_tool_pose_theta_z,
@@ -822,7 +823,7 @@ class ExampleMoveItTrajectories(object):
         rospy.logerr("Failed to call ExecuteWaypointTrajectory")
         return False
     else:
-        time.sleep(0.5)
+        time.sleep(0.3)
         # return self.wait_for_action_end_or_abort()
 
   def shakeup_arm(self):
@@ -861,7 +862,7 @@ class ExampleMoveItTrajectories(object):
           rospy.logerr("Failed to call ExecuteWaypointTrajectory")
           return False
       else:
-          time.sleep(0.5)
+          time.sleep(0.3)
           # return self.wait_for_action_end_or_abort()
 
 if __name__ == '__main__':
