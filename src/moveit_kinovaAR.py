@@ -161,13 +161,10 @@ class ExampleMoveItTrajectories(object):
       self.trajectory_position_reached_pub = rospy.Publisher("/KinovaAR/trajectory_position/reached", Empty, queue_size=1)
 
 
-      self.load_FirstTrajectory_sub = rospy.Subscriber("/KinovaAR/FirstTrajectory", load_trajectory, self.loadFirstTrajectory)
-      self.load_SecondTrajectory_sub = rospy.Subscriber("/KinovaAR/SecondTrajectory", load_trajectory, self.loadSecondTrajectory)
+      self.load_FirstTrajectory_sub = rospy.Subscriber("/KinovaAR/FirstTrajectoryCombined", load_trajectory, self.loadFirstTrajectory)
+      self.load_SecondTrajectory_sub = rospy.Subscriber("/KinovaAR/SecondTrajectoryCombined", load_trajectory, self.loadSecondTrajectory)
       self.execute_sequence_sub = rospy.Subscriber("/KinovaAR/execute_FirstTrajectory", Empty, self.playFirstTrajectory)
       self.execute_sequence_sub = rospy.Subscriber("/KinovaAR/execute_SecondTrajectory", Empty, self.playSecondTrajectory)
-
-      self.firstTrajectory_sub = rospy.Subscriber("/KinovaAR/FirstTrajectory", DisplayTrajectory, self.concat)
-      # self.concat_pub = rospy.Publisher("/KinovaAR/ConcatTrajectory", DisplayTrajectory, queue_size=1)
 
     except Exception as e:   
       print (e)
