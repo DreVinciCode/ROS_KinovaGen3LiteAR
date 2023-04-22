@@ -162,8 +162,8 @@ class ExampleMoveItTrajectories(object):
       self.reset_position_reached_pub = rospy.Publisher("/KinovaAR/reset_position/reached", Empty, queue_size=1)
       self.trajectory_position_reached_pub = rospy.Publisher("/KinovaAR/trajectory_position/reached", Empty, queue_size=1)
 
-      self.load_FirstTrajectory_sub = rospy.Subscriber("/KinovaAR/FirstTrajectory", load_trajectory, self.loadFirstTrajectory)
-      self.load_SecondTrajectory_sub = rospy.Subscriber("/KinovaAR/SecondTrajectory", load_trajectory, self.loadSecondTrajectory)
+      self.load_FirstTrajectory_sub = rospy.Subscriber("/KinovaAR/FirstTrajectoryCombined", load_trajectory, self.loadFirstTrajectory)
+      self.load_SecondTrajectory_sub = rospy.Subscriber("/KinovaAR/SecondTrajectoryCombined", load_trajectory, self.loadSecondTrajectory)
 
       self.execute_sequence_sub = rospy.Subscriber("/KinovaAR/execute_FirstTrajectory", Empty, self.playFirstTrajectory)
       self.execute_sequence_sub = rospy.Subscriber("/KinovaAR/execute_SecondTrajectory", Empty, self.playSecondTrajectory)

@@ -24,8 +24,8 @@ class KinovaARTrajectoryManager(object):
             rospy.init_node('TrajectoryManager')
             self.trajectory_planner_sub = rospy.Subscriber("/my_gen3_lite/move_group/display_planned_path", DisplayTrajectory, self.trajectory_planner_callback)
 
-            self.FirstTrajectory_Publisher = rospy.Publisher("/KinovaAR/FirstTrajectory", load_trajectory, queue_size=1)
-            self.SecondTrajectory_Publisher = rospy.Publisher("/KinovaAR/SecondTrajectory", load_trajectory, queue_size=1)
+            self.FirstTrajectory_Publisher = rospy.Publisher("/KinovaAR/FirstTrajectory", DisplayTrajectory, queue_size=1)
+            self.SecondTrajectory_Publisher = rospy.Publisher("/KinovaAR/SecondTrajectory", DisplayTrajectory, queue_size=1)
 
             self.FirstTrajectoryDisplay_Publisher = rospy.Publisher("/KinovaAR/FirstTrajectoryDisplay", DisplayTrajectory, queue_size=1)
             self.SecondTrajectoryDisplay_Publisher = rospy.Publisher("/KinovaAR/SecondTrajectoryDisplay", DisplayTrajectory, queue_size=1)
