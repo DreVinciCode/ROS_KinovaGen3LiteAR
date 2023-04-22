@@ -15,8 +15,8 @@ class KinovaARTrajectoryManager(object):
         self.plan1_check = False
         self.plan2_check = False
 
-        self.FirstTrajectory = load_trajectory()
-        self.SecondTrajectory = load_trajectory()
+        self.FirstTrajectory = DisplayTrajectory()
+        self.SecondTrajectory = DisplayTrajectory()
         # self.FirstTrajectory = DisplayTrajectory()
         # self.SecondTrajectory = DisplayTrajectory()
 
@@ -61,10 +61,8 @@ class KinovaARTrajectoryManager(object):
         data.trajectory[0].joint_trajectory.header = h
 
         if(self.record_check):
-            self.FirstTrajectory.approach = data
-            self.FirstTrajectory.grasp = data
+            self.FirstTrajectory = data
             self.FirstTrajectory_Publisher.publish(self.FirstTrajectory)
-            self.FirstTrajectoryDisplay_Publisher.publish(data)
         else:
             pass
 
