@@ -2,6 +2,8 @@
 
 from moveit_msgs.msg import *
 from std_msgs.msg import *
+from kinova_study.msg import load_trajectory
+
 import rospy
 
 class KinovaARTrajectoryManager(object):
@@ -12,15 +14,23 @@ class KinovaARTrajectoryManager(object):
 
         self.plan1_check = False
         self.plan2_check = False
-        self.FirstTrajectory = DisplayTrajectory()
-        self.SecondTrajectory = DisplayTrajectory()
+
+        self.FirstTrajectory = load_trajectory()
+        self.SecondTrajectory = load_trajectory()
+        # self.FirstTrajectory = DisplayTrajectory()
+        # self.SecondTrajectory = DisplayTrajectory()
 
         try:
             rospy.init_node('TrajectoryManager')
             self.trajectory_planner_sub = rospy.Subscriber("/my_gen3_lite/move_group/display_planned_path", DisplayTrajectory, self.trajectory_planner_callback)
-            self.FirstTrajectory_Publisher = rospy.Publisher("/KinovaAR/FirstTrajectoryDisplay", DisplayTrajectory, queue_size=1)
-            self.SecondTrajectory_Publisher = rospy.Publisher("/KinovaAR/SecondTrajectoryDisplay", DisplayTrajectory, queue_size=1)
-            self.DisplayPlanner_sub = rospy.Subscriber("/KinovaAR/DisplayTrajectories", Empty, self.display_planners)
+
+            self.FirstTrajectory_Publisher = rospy.Publisher("/KinovaAR/FirstTrajectory", load_trajectory, queue_size=1)
+            self.SecondTrajectory_Publisher = rospy.Publisher("/KinovaAR/SecondTrajectory", load_trajectory, queue_size=1)
+
+            self.FirstTrajectoryDisplay_Publisher = rospy.Publisher("/KinovaAR/FirstTrajectoryDisplay", DisplayTrajectory, queue_size=1)
+            self.SecondTrajectoryDisplay_Publisher = rospy.Publisher("/KinovaAR/SecondTrajectoryDisplay", DisplayTrajectory, queue_size=1)
+
+            # self.DisplayPlanner_sub = rospy.Subscriber("/KinovaAR/DisplayTrajectories", Empty, self.display_planners)
 
             self.KeyPress_sub = rospy.Subscriber("/KinovaAR/save", Empty, self.change_bool_callback)
 
@@ -44,14 +54,17 @@ class KinovaARTrajectoryManager(object):
 
 
     def trajectory_planner_callback(self, data): 
+
         h = std_msgs.msg.Header()
         h.stamp = rospy.Time.now() 
 
         data.trajectory[0].joint_trajectory.header = h
 
         if(self.record_check):
-            self.FirstTrajectory = data
+            self.FirstTrajectory.approach = data
+            self.FirstTrajectory.grasp = data
             self.FirstTrajectory_Publisher.publish(self.FirstTrajectory)
+            self.FirstTrajectoryDisplay_Publisher.publish(data)
         else:
             pass
 
@@ -80,10 +93,6 @@ class KinovaARTrajectoryManager(object):
         #     self.plan2_check = False
         #     self.plan1_check = False
 
-
-    def display_planners(self, data):
-        self.SecondTrajectory_Publisher.publish(self.SecondTrajectory)
-        self.FirstTrajectory_Publisher.publish(self.FirstTrajectory)
 
 
 if __name__ == '__main__':
