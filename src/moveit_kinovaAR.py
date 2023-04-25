@@ -205,13 +205,15 @@ class ExampleMoveItTrajectories(object):
     self.waypoint_array = data
     self.reach_cartesian_pose(pose=data.poses[1], tolerance=0.01, constraints=None)
     
-    
   def waypoint_execute_callback(self,data):  
     
     self.trajectory_execution_callback(Empty())
     self.reach_cartesian_pose(pose=self.waypoint_array.poses[0], tolerance=0.01, constraints=None)
     self.trajectory_execution_callback(Empty())  
-  
+    
+    print(self.waypoint_array.poses[0])
+
+
     self.PointAndReturn() 
 
   def loadFirstTrajectory(self, data):
@@ -275,7 +277,7 @@ class ExampleMoveItTrajectories(object):
         # What we just read is the input of the ExecuteAction service
         req = ExecuteActionRequest()
         req.input = res.output
-        rospy.loginfo("Sending the robot home...")
+        # rospy.loginfo("Sending the robot home...")
         try:
             self.execute_action(req)
         except rospy.ServiceException:
@@ -297,7 +299,7 @@ class ExampleMoveItTrajectories(object):
         # What we just read is the input of the ExecuteAction service
         req = ExecuteActionRequest()
         req.input = res.output
-        rospy.loginfo("Sending robot to rest position...")
+        # rospy.loginfo("Sending robot to rest position...")
         try:
             self.execute_action(req)
         except rospy.ServiceException:
@@ -568,7 +570,7 @@ class ExampleMoveItTrajectories(object):
     self.arm_group = arm_group
     # Plan
 
-    rospy.loginfo("Planning")
+    # rospy.loginfo("Planning")
 
     # return arm_group.go(wait=True)
 
@@ -627,7 +629,7 @@ class ExampleMoveItTrajectories(object):
     
     try:
       self.main_plan = gripper_group.plan()
-      rospy.loginfo("Planning Gripper")
+      # rospy.loginfo("Planning Gripper")
     except:
       rospy.loginfo("Failed to plan gripper")
       return False 
@@ -698,7 +700,7 @@ class ExampleMoveItTrajectories(object):
     req.input.oneof_action_parameters.execute_waypoint_list.append(trajectory)
 
     # # Call the service
-    rospy.loginfo("Sending the robot to the cartesian pose...")
+    # rospy.loginfo("Sending the robot to the cartesian pose...")
     try:
 
         self.execute_action(req)
@@ -737,7 +739,7 @@ class ExampleMoveItTrajectories(object):
     req.input.oneof_action_parameters.execute_waypoint_list.append(trajectory)
 
     # # Call the service
-    rospy.loginfo("Sending the robot to the cartesian pose...")
+    # rospy.loginfo("Sending the robot to the cartesian pose...")
     try:
         # self.arm_group.execute(req, wait=True)
         self.execute_action(req)
@@ -763,7 +765,7 @@ class ExampleMoveItTrajectories(object):
         self.FillCartesianWaypoint(
             feedback.base.commanded_tool_pose_x,
             feedback.base.commanded_tool_pose_y,
-            feedback.base.commanded_tool_pose_z - 0.09,
+            feedback.base.commanded_tool_pose_z - 0.08,
             feedback.base.commanded_tool_pose_theta_x,
             feedback.base.commanded_tool_pose_theta_y,
             feedback.base.commanded_tool_pose_theta_z,
@@ -776,7 +778,7 @@ class ExampleMoveItTrajectories(object):
     req.input.oneof_action_parameters.execute_waypoint_list.append(trajectory)
 
     # # Call the service
-    rospy.loginfo("Sending the robot to the cartesian pose...")
+    # rospy.loginfo("Sending the robot to the cartesian pose...")
     try:
         # self.arm_group.execute(req, wait=True)
         self.execute_action(req)
@@ -815,7 +817,7 @@ class ExampleMoveItTrajectories(object):
     req.input.oneof_action_parameters.execute_waypoint_list.append(trajectory)
 
     # # Call the service
-    rospy.loginfo("Sending the robot to the cartesian pose...")
+    # rospy.loginfo("Sending the robot to the cartesian pose...")
     try:
         # self.arm_group.execute(req, wait=True)
         self.execute_action(req)
@@ -854,7 +856,7 @@ class ExampleMoveItTrajectories(object):
       req.input.oneof_action_parameters.execute_waypoint_list.append(trajectory)
 
       # # Call the service
-      rospy.loginfo("Sending the robot to the cartesian pose...")
+      # rospy.loginfo("Sending the robot to the cartesian pose...")
       try:
           # self.arm_group.execute(req, wait=True)
           self.execute_action(req)
