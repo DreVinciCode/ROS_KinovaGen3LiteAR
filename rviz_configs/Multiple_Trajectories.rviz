@@ -166,7 +166,7 @@ Visualization Manager:
         Show Trail: false
         State Display Time: 0.1 s
         Trail Step Size: 1
-        Trajectory Topic: /KinovaAR/FirstTrajectory
+        Trajectory Topic: /KinovaAR/FirstTrajectoryDisplay
       Planning Metrics:
         Payload: 1
         Show Joint Torques: false
@@ -383,7 +383,7 @@ Visualization Manager:
         Show Trail: false
         State Display Time: 0.05 s
         Trail Step Size: 1
-        Trajectory Topic: /KinovaAR/SecondTrajectory
+        Trajectory Topic: /KinovaAR/SecondTrajectoryDisplay
       Planning Metrics:
         Payload: 1
         Show Joint Torques: false
