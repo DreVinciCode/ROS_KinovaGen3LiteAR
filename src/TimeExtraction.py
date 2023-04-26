@@ -15,14 +15,14 @@ class TimeExtration:
         self.plannerTime_sub = rospy.Subscriber('/' + self.robot_name + "/move_group/result", MoveGroupActionResult, self.plannerTimer_callback)
         self.trajectoryTime_sub = rospy.Subscriber('/' + self.robot_name + "/execute_trajectory/result", ExecuteTrajectoryActionResult, self.executeTimer_callback)
 
-        self.planningTime_pub = rospy.Publisher("/KinovaAR/PlanningTime", MoveGroupActionResult, queue_size=1)
+        self.planningTime_pub = rospy.Publisher("/KinovaAR/PlanningTime", Float32, queue_size=1)
         self.executionTime_pub = rospy.Publisher("/KinovaAR/ExecutionTime", Float32, queue_size=1)
 
         rospy.spin()
         
     def plannerTimer_callback(self, data):
         plannerTime = data.result.planning_time
-        self.planningTime_pub.publish(data)
+        self.planningTime_pub.publish(plannerTime)
         # rospy.loginfo("Planning Time: " + str(plannerTime))
 
     def executeTimer_callback(self, data):

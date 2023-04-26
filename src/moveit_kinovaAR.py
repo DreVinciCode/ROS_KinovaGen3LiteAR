@@ -83,6 +83,8 @@ class ExampleMoveItTrajectories(object):
     self.FirstTrajectory = ()
     self.SecondTrajectory = ()
 
+    self.approachpose = Pose()
+
     try:
       self.is_gripper_present = rospy.get_param(rospy.get_namespace() + "is_gripper_present", False)
       if self.is_gripper_present:
@@ -210,11 +212,9 @@ class ExampleMoveItTrajectories(object):
     self.trajectory_execution_callback(Empty())
     self.reach_cartesian_pose(pose=self.waypoint_array.poses[0], tolerance=0.01, constraints=None)
     self.trajectory_execution_callback(Empty())  
-    
-    print(self.waypoint_array.poses[0])
-
-
     self.PointAndReturn() 
+    self.example_rest_the_robot()
+
 
   def loadFirstTrajectory(self, data):
     approach = data.approach.trajectory[0]
@@ -234,8 +234,11 @@ class ExampleMoveItTrajectories(object):
 
     self.approach = self.FirstTrajectory[0]
     self.grasp = self.FirstTrajectory[1]
+
+    self.approachReturn = self.approach
     try:
       sequence &= self.arm_group.execute(self.approach, wait=True)
+      self.approachpose = self.arm_group.get_current_pose()
       sequence &= self.arm_group.execute(self.grasp, wait=True)
 
         # self.execute_action(req)
@@ -243,7 +246,13 @@ class ExampleMoveItTrajectories(object):
         rospy.logerr("Failed to call ExecuteAction for First Trajectory")
         # return False
     else:
-      sequence &= self.PointAndReturn()
+      self.PointAndReturn()
+      self.reach_cartesian_pose(pose=self.approachpose, tolerance=0.01, constraints=None)
+      self.arm_group.go(wait= True)
+      self.example_rest_the_robot()
+
+      # self.arm_group.execute(self.approach.trajectory[0].joint_trajectory, wait=True)
+
       # pass
 
   def playSecondTrajectory(self, data):
@@ -253,6 +262,7 @@ class ExampleMoveItTrajectories(object):
     self.grasp = self.SecondTrajectory[1]
     try:
       sequence &= self.arm_group.execute(self.approach, wait=True)
+      self.approachpose = self.arm_group.get_current_pose()
       sequence &= self.arm_group.execute(self.grasp, wait=True)
         # self.execute_action(req)
     except rospy.ServiceException:
@@ -260,7 +270,10 @@ class ExampleMoveItTrajectories(object):
         # return False
     else:
       # sequence &= self.wait_for_action_end_or_abort()
-      sequence &= self.PointAndReturn()
+      self.PointAndReturn()
+      self.reach_cartesian_pose(pose=self.approachpose, tolerance=0.01, constraints=None)
+      self.arm_group.go(wait= True)
+      self.example_rest_the_robot()
   
   def example_home_the_robot(self):
 
@@ -662,14 +675,16 @@ class ExampleMoveItTrajectories(object):
     self.shakeup_arm()
     self.shakedown_arm()
     self.shakeup_arm()
+    self.shakedown_arm()
+    self.shakeup_arm()
 
     self.lower_arm()
 
     self.reach_gripper_position(0.9)
-
-    self.reach_cartesian_pose(pose=self.waypoint_array.poses[1], tolerance=0.01, constraints=None)
+    # self.reach_cartesian_pose(pose=self.waypoint_array.poses[1], tolerance=0.01, constraints=None)
     self.trajectory_execution_callback(Empty())  
-    self.example_rest_the_robot()
+
+    # self.example_rest_the_robot()
 
 
   def move_arm(self, value):
@@ -765,7 +780,7 @@ class ExampleMoveItTrajectories(object):
         self.FillCartesianWaypoint(
             feedback.base.commanded_tool_pose_x,
             feedback.base.commanded_tool_pose_y,
-            feedback.base.commanded_tool_pose_z - 0.08,
+            feedback.base.commanded_tool_pose_z - 0.09,
             feedback.base.commanded_tool_pose_theta_x,
             feedback.base.commanded_tool_pose_theta_y,
             feedback.base.commanded_tool_pose_theta_z,
@@ -804,7 +819,7 @@ class ExampleMoveItTrajectories(object):
         self.FillCartesianWaypoint(
             feedback.base.commanded_tool_pose_x,
             feedback.base.commanded_tool_pose_y,
-            feedback.base.commanded_tool_pose_z - 0.05,
+            feedback.base.commanded_tool_pose_z - 0.07,
             feedback.base.commanded_tool_pose_theta_x,
             feedback.base.commanded_tool_pose_theta_y,
             feedback.base.commanded_tool_pose_theta_z,
@@ -843,7 +858,7 @@ class ExampleMoveItTrajectories(object):
           self.FillCartesianWaypoint(
               feedback.base.commanded_tool_pose_x,
               feedback.base.commanded_tool_pose_y,
-              feedback.base.commanded_tool_pose_z + 0.05,
+              feedback.base.commanded_tool_pose_z + 0.07,
               feedback.base.commanded_tool_pose_theta_x,
               feedback.base.commanded_tool_pose_theta_y,
               feedback.base.commanded_tool_pose_theta_z,
