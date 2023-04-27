@@ -206,13 +206,18 @@ class ExampleMoveItTrajectories(object):
   def waypoint_callback(self, data):
     self.waypoint_array = data
     self.reach_cartesian_pose(pose=data.poses[1], tolerance=0.01, constraints=None)
-    
+
+
   def waypoint_execute_callback(self,data):  
     
     self.trajectory_execution_callback(Empty())
+    self.approachpose = self.arm_group.get_current_pose()
+
     self.reach_cartesian_pose(pose=self.waypoint_array.poses[0], tolerance=0.01, constraints=None)
     self.trajectory_execution_callback(Empty())  
     self.PointAndReturn() 
+    self.reach_cartesian_pose(pose=self.approachpose, tolerance=0.01, constraints=None)
+    self.arm_group.go(wait= True)
     self.example_rest_the_robot()
 
 
@@ -251,9 +256,6 @@ class ExampleMoveItTrajectories(object):
       self.arm_group.go(wait= True)
       self.example_rest_the_robot()
 
-      # self.arm_group.execute(self.approach.trajectory[0].joint_trajectory, wait=True)
-
-      # pass
 
   def playSecondTrajectory(self, data):
     sequence = True
