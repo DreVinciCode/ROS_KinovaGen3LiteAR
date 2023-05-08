@@ -200,9 +200,6 @@ class ExampleMoveItTrajectories(object):
     except:
       rospy.logerr("Failed to call ROS spin")
 
-
-
-
   def waypoint_callback(self, data):
     self.waypoint_array = data
     self.reach_cartesian_pose(pose=data.poses[1], tolerance=0.01, constraints=None)
@@ -252,6 +249,7 @@ class ExampleMoveItTrajectories(object):
         # return False
     else:
       self.PointAndReturn()
+      self.reach_gripper_position(0.9)
       self.reach_cartesian_pose(pose=self.approachpose, tolerance=0.01, constraints=None)
       self.arm_group.go(wait= True)
       self.example_rest_the_robot()
@@ -273,6 +271,7 @@ class ExampleMoveItTrajectories(object):
     else:
       # sequence &= self.wait_for_action_end_or_abort()
       self.PointAndReturn()
+      self.reach_gripper_position(0.9)
       self.reach_cartesian_pose(pose=self.approachpose, tolerance=0.01, constraints=None)
       self.arm_group.go(wait= True)
       self.example_rest_the_robot()
@@ -317,6 +316,8 @@ class ExampleMoveItTrajectories(object):
         # rospy.loginfo("Sending robot to rest position...")
         try:
             self.execute_action(req)
+            self.reach_gripper_position(0.9)
+
         except rospy.ServiceException:
             rospy.logerr("Failed to call ExecuteAction")
             return False
@@ -644,12 +645,14 @@ class ExampleMoveItTrajectories(object):
     
     try:
       self.main_plan = gripper_group.plan()
+      gripper_joint.move(relative_position * (gripper_max_absolute_pos - gripper_min_absolute_pos) + gripper_min_absolute_pos, True)
+
       # rospy.loginfo("Planning Gripper")
     except:
       rospy.loginfo("Failed to plan gripper")
       return False 
     else:  
-      gripper_joint.move(relative_position * (gripper_max_absolute_pos - gripper_min_absolute_pos) + gripper_min_absolute_pos, True)
+      pass
 
   def execute_sequence_callback(self, data):
     self.capture_the_flag()
