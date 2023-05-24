@@ -17,8 +17,6 @@ class KinovaARTrajectoryManager(object):
 
         self.FirstTrajectory = DisplayTrajectory()
         self.SecondTrajectory = DisplayTrajectory()
-        # self.FirstTrajectory = DisplayTrajectory()
-        # self.SecondTrajectory = DisplayTrajectory()
 
         try:
             rospy.init_node('TrajectoryManager')
@@ -29,8 +27,6 @@ class KinovaARTrajectoryManager(object):
 
             self.FirstTrajectoryDisplay_Publisher = rospy.Publisher("/KinovaAR/FirstTrajectoryDisplay", DisplayTrajectory, queue_size=1)
             self.SecondTrajectoryDisplay_Publisher = rospy.Publisher("/KinovaAR/SecondTrajectoryDisplay", DisplayTrajectory, queue_size=1)
-
-            # self.DisplayPlanner_sub = rospy.Subscriber("/KinovaAR/DisplayTrajectories", Empty, self.display_planners)
 
             self.KeyPress_sub = rospy.Subscriber("/KinovaAR/save", Empty, self.change_bool_callback)
 
@@ -66,32 +62,6 @@ class KinovaARTrajectoryManager(object):
             self.FirstTrajectoryDisplay_Publisher.publish(data)
         else:
             pass
-
-
-
-        # if(self.plan1_check):
-        #     self.FirstTrajectory = data
-            
-        #     rospy.loginfo("First Trajectory Recorded!")
-        #     self.FirstTrajectory_Publisher.publish(self.FirstTrajectory)
-
-        # if(self.plan2_check):
-        #     self.SecondTrajectory = data
-        #     self.plan2_check = False
-        #     rospy.loginfo("Second Trajectory Recorded!")
-        #     self.SecondTrajectory_Publisher.publish(self.SecondTrajectory)
-
-        # if( not self.plan1_check and not self.plan2_check):
-        #     self.plan1_check = True
-
-        # elif(not self.plan2_check and self.plan1_check):
-        #     self.plan2_check = True
-        #     self.plan1_check = False
-
-        # elif(self.plan2_check and not self.plan1_check):
-        #     self.plan2_check = False
-        #     self.plan1_check = False
-
 
 
 if __name__ == '__main__':

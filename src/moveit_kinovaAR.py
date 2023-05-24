@@ -60,7 +60,6 @@ import moveit_commander
 import math
 import time
 
-
 import numpy as np
 
 
@@ -167,11 +166,6 @@ class ExampleMoveItTrajectories(object):
       self.load_FirstTrajectory_sub = rospy.Subscriber("/KinovaAR/FirstTrajectoryCombined", load_trajectory, self.loadFirstTrajectory)
       self.load_SecondTrajectory_sub = rospy.Subscriber("/KinovaAR/SecondTrajectoryCombined", load_trajectory, self.loadSecondTrajectory)
 
-      self.display_FirstTrajectory_pub = rospy.Publisher('/KinovaAR/FirstTrajectoryDisplay', DisplayTrajectory, queue_size=1)
-      self.display_SecondTrajectory_pub = rospy.Publisher('/KinovaAR/SecondTrajectoryDisplay', DisplayTrajectory, queue_size=1)
-
-
-
       self.execute_sequence_sub = rospy.Subscriber("/KinovaAR/execute_FirstTrajectory", Empty, self.playFirstTrajectory)
       self.execute_sequence_sub = rospy.Subscriber("/KinovaAR/execute_SecondTrajectory", Empty, self.playSecondTrajectory)
 
@@ -217,7 +211,7 @@ class ExampleMoveItTrajectories(object):
 
     self.reach_cartesian_pose(pose=self.waypoint_array.poses[0], tolerance=0.01, constraints=None)
     self.trajectory_execution_callback(Empty())  
-    self.PointAndReturn() 
+    # self.PointAndReturn() 
     self.reach_cartesian_pose(pose=self.approachpose, tolerance=0.01, constraints=None)
     self.arm_group.go(wait= True)
     self.example_rest_the_robot()
@@ -327,9 +321,8 @@ class ExampleMoveItTrajectories(object):
             rospy.logerr("Failed to call ExecuteAction")
             return False
         else:
+            time.sleep(0.1)
             self.reset_position_reached_pub.publish(Empty())
-            pass
-            # return self.wait_for_action_end_or_abort()
 
   def wait_for_action_end_or_abort(self):
     while not rospy.is_shutdown():
@@ -372,8 +365,6 @@ class ExampleMoveItTrajectories(object):
     else:
       rospy.loginfo("Planned Initial Pose!")
       arm_group.go(wait=True)
-
-
 
   def reach_home_joint_values(self):
     arm_group = self.arm_group
@@ -675,10 +666,7 @@ class ExampleMoveItTrajectories(object):
     self.trajectory_position_reached_pub.publish(Empty())
     self.reach_gripper_position(0.01)
   
-    # Shake function
 
-    # self.move_arm(10)
-    # self.move_arm(-10)
     self.lift_arm()
 
     self.shakedown_arm()
@@ -694,7 +682,6 @@ class ExampleMoveItTrajectories(object):
     # self.reach_cartesian_pose(pose=self.waypoint_array.poses[1], tolerance=0.01, constraints=None)
     self.trajectory_execution_callback(Empty())  
 
-    # self.example_rest_the_robot()
 
 
   def move_arm(self, value):
