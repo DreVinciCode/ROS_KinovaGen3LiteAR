@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import json
 import os
 import rospy
 from std_msgs.msg import *
@@ -8,8 +9,25 @@ class visualrecorder:
 
     def __init__(self, participant_id):
         
+        rospy.init_node('RecordKeypress')
+        self.plan_sub = rospy.Subscriber("/KinovaAR/Visual/Plan", Int32, self.plan_change_callback)
+        self.visual_sub = rospy.Subscriber("/KinovaAR/Visual/Type", Int32, self.visual_change_callback)
+        self.current_pair_sub = rospy.Subscriber("/KinovaAR/TrajectoryPair", Int32, self.pairing_callback)
+
+        self.participant = participant_id
+        self.visual_plan = 0
+        self.visual_type = 0
+        self.pairing = -1
+        self.rostime = 0
+
+        self.dictionary = {}
+        rospy.spin()
+
+        # Check if a file already exists
+  
+    def save_file(self):
         file_location = "/home/andre/PreferenceStudy/PreferenceStudy/Participants/"
-        file_path = os.path.join(file_location, str(participant_id) + ".txt")
+        file_path = os.path.join(file_location, str(self.participant) + ".txt")
 
         if not os.path.exists(file_location):
             print("Folder path does not exist. Creating the folder...")
@@ -21,29 +39,31 @@ class visualrecorder:
 
         try:
             with open(file_path, 'w') as file:
-                # You can write content to the file if needed
-                # file.write("Hello,"  + str(participant_id) + "!")
-                print("File " + str(participant_id) + ".txt created and saved in " + file_location )
+                json.dump(self.dictionary, file)
+                
         except OSError:
-            print("Creation of the file " + participant_id + ".txt failed.")
+            print("Creation of the file " + self.participant + ".txt failed.")
 
+    def pairing_callback(self, data):
+        self.pairing = data.data
+        self.rostime = rospy.Time.now().to_sec()
+        self.dictionary[str(self.pairing) ] = [self.visual_type, self.visual_plan, self.rostime]
+        self.save_file()
+        print("Trajectory Change.")
 
-        rospy.init_node('RecordKeypress')
-        self.plan_sub = rospy.Subscriber("/KinovaAR/Visual/Plan", Int32, self.plan_change_callback)
-        self.visual_sub = rospy.Subscriber("/KinovaAR/Visual/Type", Int32, self.visual_change_callback)
-
-        rospy.spin()
-  
-  
     def plan_change_callback(self, data):
-        pass
-
-
-
+        self.visual_plan = data.data
+        self.rostime = rospy.Time.now().to_sec()
+        self.dictionary[str(self.pairing) ] = [self.visual_type, self.visual_plan, self.rostime]
+        self.save_file()
+        print("Plan Change.")
 
     def visual_change_callback(self, data):
-        pass
-
+        self.visual_type = data.data
+        self.rostime = rospy.Time.now().to_sec()
+        self.dictionary[str(self.pairing) ] = [self.visual_type, self.visual_plan, self.rostime]
+        self.save_file()
+        print("Type Change.")
 
 if __name__ == '__main__':
     inputval = input("Enter starting participant id: ")
