@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-import json
 import os
 import rospy
 from std_msgs.msg import *
@@ -20,10 +19,8 @@ class visualrecorder:
         self.pairing = -1
         self.rostime = 0
 
-        self.dictionary = {}
+        self.entry = []
         rospy.spin()
-
-        # Check if a file already exists
   
     def save_file(self):
         file_location = "/home/andre/PreferenceStudy/PreferenceStudy/Participants/"
@@ -38,8 +35,8 @@ class visualrecorder:
                 return
 
         try:
-            with open(file_path, 'w') as file:
-                json.dump(self.dictionary, file)
+            with open(file_path, 'a') as file:
+                file.write(str(self.entry) + "\n")
                 
         except OSError:
             print("Creation of the file " + self.participant + ".txt failed.")
@@ -47,28 +44,42 @@ class visualrecorder:
     def pairing_callback(self, data):
         self.pairing = data.data
         self.rostime = rospy.Time.now().to_sec()
-        self.dictionary[str(self.pairing) ] = [self.visual_type, self.visual_plan, self.rostime]
+        self.entry = [self.pairing, self.visual_type, self.visual_plan, self.rostime]
         self.save_file()
         print("Trajectory Change.")
 
     def plan_change_callback(self, data):
         self.visual_plan = data.data
         self.rostime = rospy.Time.now().to_sec()
-        self.dictionary[str(self.pairing) ] = [self.visual_type, self.visual_plan, self.rostime]
+        self.entry = [self.pairing, self.visual_type, self.visual_plan, self.rostime]
         self.save_file()
         print("Plan Change.")
 
     def visual_change_callback(self, data):
         self.visual_type = data.data
         self.rostime = rospy.Time.now().to_sec()
-        self.dictionary[str(self.pairing) ] = [self.visual_type, self.visual_plan, self.rostime]
+        self.entry = [self.pairing, self.visual_type, self.visual_plan, self.rostime]
         self.save_file()
         print("Type Change.")
 
 if __name__ == '__main__':
+    file_location = "/home/andre/PreferenceStudy/PreferenceStudy/Participants/"
     inputval = input("Enter starting participant id: ")
-    if int(inputval) > 0:
-        visualrecorder(int(inputval))    
-    else:
-        print("Number must be 1 or larger")
+
+    while True:
+        file = file_location +  str(inputval) + ".txt"
+        if os.path.exists(file):
+            print("File already exists...")
+            inputval = input("Enter starting participant id: ")
+
+        if int(inputval) < 0:
+            print("Number must be 1 or larger")
+            inputval = input("Enter starting participant id: ")
+
+        else:
+            visualrecorder(int(inputval))    
+            break
+
+
+
     
