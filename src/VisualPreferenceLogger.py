@@ -17,7 +17,8 @@ class visualrecorder:
         self.visual_plan = 0
         self.visual_type = 0
         self.pairing = -1
-        self.rostime = 0
+
+        self.startTime = rospy.Time.now()
 
         self.entry = []
         rospy.spin()
@@ -43,22 +44,22 @@ class visualrecorder:
 
     def pairing_callback(self, data):
         self.pairing = data.data
-        self.rostime = rospy.Time.now().to_sec()
-        self.entry = [self.pairing, self.visual_type, self.visual_plan, self.rostime]
+        rostime = (rospy.Time.now() - self.startTime).to_sec()
+        self.entry = [self.pairing, self.visual_type, self.visual_plan, rostime]
         self.save_file()
         print("Trajectory Change.")
 
     def plan_change_callback(self, data):
         self.visual_plan = data.data
-        self.rostime = rospy.Time.now().to_sec()
-        self.entry = [self.pairing, self.visual_type, self.visual_plan, self.rostime]
+        rostime = (rospy.Time.now() - self.startTime).to_sec()
+        self.entry = [self.pairing, self.visual_type, self.visual_plan, rostime]
         self.save_file()
         print("Plan Change.")
 
     def visual_change_callback(self, data):
         self.visual_type = data.data
-        self.rostime = rospy.Time.now().to_sec()
-        self.entry = [self.pairing, self.visual_type, self.visual_plan, self.rostime]
+        rostime = (rospy.Time.now() - self.startTime).to_sec()
+        self.entry = [self.pairing, self.visual_type, self.visual_plan, rostime]
         self.save_file()
         print("Type Change.")
 
