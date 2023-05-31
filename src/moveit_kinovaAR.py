@@ -65,7 +65,7 @@ import numpy as np
 
 from math import pi
 from std_srvs.srv import Empty
-from std_msgs.msg import Empty, Int16
+from std_msgs.msg import Empty, Int16, Float32
 
 class ExampleMoveItTrajectories(object):
   """ExampleMoveItTrajectories"""
@@ -171,6 +171,8 @@ class ExampleMoveItTrajectories(object):
 
       self.waypoint_array = PoseArray()
 
+      self.max_velocity_change_sub = rospy.Subscriber("/KinovaAR/MaxVelocity", Float32, self.max_velocity_change_callback)
+
     except Exception as e:   
       print (e)
       self.is_init_success = False
@@ -198,6 +200,10 @@ class ExampleMoveItTrajectories(object):
       rospy.spin()
     except:
       rospy.logerr("Failed to call ROS spin")
+
+  def max_velocity_change_callback(self, data):
+    self.arm_group.set_max_velocity_scaling_factor(data.data)
+
 
   def waypoint_callback(self, data):
     self.waypoint_array = data
