@@ -219,6 +219,8 @@ class ExampleMoveItTrajectories(object):
   def plan_pour_speed(self):
     arm_group = self.arm_group
     arm_group.set_max_velocity_scaling_factor(self.max_velocity)
+    # arm_group.set_max_acceleration_scaling_factor(0.01)
+
     arm_group.set_goal_position_tolerance(0.1)
     joint_positions = arm_group.get_current_joint_values()
 

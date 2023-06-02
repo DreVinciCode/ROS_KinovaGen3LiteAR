@@ -6,9 +6,6 @@ Panels:
       Expanded:
         - /Status1
         - /MotionPlanning1
-        - /MotionPlanning1/Planning Request1
-        - /MotionPlanning1/Planning Metrics1
-        - /MotionPlanning1/Planned Path1
       Splitter Ratio: 0.501006007194519
     Tree Height: 284
   - Class: rviz/Selection
@@ -161,7 +158,7 @@ Visualization Manager:
         Show Robot Collision: false
         Show Robot Visual: true
         Show Trail: false
-        State Display Time: 0.05 s
+        State Display Time: REALTIME
         Trail Step Size: 1
         Trajectory Topic: /my_gen3_lite/move_group/display_planned_path
       Planning Metrics:
@@ -271,7 +268,7 @@ Visualization Manager:
         Show Robot Collision: false
         Show Robot Visual: true
       Value: true
-      Velocity_Scaling_Factor: 1
+      Velocity_Scaling_Factor: 0.9999999999999999
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
