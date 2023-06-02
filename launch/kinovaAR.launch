@@ -2,6 +2,7 @@
 <launch>
 
     <include file="$(find kortex_driver)/launch/kortex_driver.launch">
+        <arg name="rviz_config" value="$(find kinova_ar)/rviz_configs/kinova_rviz.rviz"/>
         <arg name="arm" value="gen3_lite"/>
         <arg name="dof" value="6"/>
     </include>
@@ -19,6 +20,7 @@
     <!-- <node pkg="kinova_ar" name="Waypoint" type="WaypointExample.py" output="screen"> </node> -->
 
     <node pkg="kinova_ar" name="UnityRosParamManager" type="UnityRosParamManager.py" output="screen"> </node>
+
 
     <rosparam>
         kinovaAR/z_min: 0.01
