@@ -6,6 +6,8 @@ Panels:
       Expanded:
         - /Status1
         - /MotionPlanning1
+        - /MotionPlanning1/Planned Path1
+        - /MotionPlanning1/Planned Path1/Links1
       Splitter Ratio: 0.501006007194519
     Tree Height: 284
   - Class: rviz/Selection
@@ -80,7 +82,7 @@ Visualization Manager:
         Color Enabled: true
         Interrupt Display: false
         Links:
-          All Links Enabled: true
+          All Links Enabled: false
           Expand Joint Details: false
           Expand Link Details: false
           Expand Tree: false
@@ -91,6 +93,11 @@ Visualization Manager:
             Show Trail: false
             Value: true
           base_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: false
+          cup_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
@@ -143,6 +150,11 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
             Value: true
+          table_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: false
           tool_frame:
             Alpha: 1
             Show Axes: false
@@ -160,7 +172,7 @@ Visualization Manager:
         Show Trail: false
         State Display Time: REALTIME
         Trail Step Size: 1
-        Trajectory Topic: /my_gen3_lite/move_group/display_planned_path
+        Trajectory Topic: /KinovaAR/FirstTrajectoryDisplay
       Planning Metrics:
         Payload: 1
         Show Joint Torques: false
@@ -207,6 +219,11 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
             Value: true
+          cup_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
           dummy_link:
             Alpha: 1
             Show Axes: false
@@ -255,6 +272,11 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
             Value: true
+          table_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
           tool_frame:
             Alpha: 1
             Show Axes: false
@@ -268,7 +290,7 @@ Visualization Manager:
         Show Robot Collision: false
         Show Robot Visual: true
       Value: true
-      Velocity_Scaling_Factor: 0.9999999999999999
+      Velocity_Scaling_Factor: 1
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -297,25 +319,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 1.4738880395889282
+      Distance: 1.787093162536621
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 0.10487320274114609
-        Y: -0.21369414031505585
-        Z: -0.01075599156320095
+        X: 0.05265066772699356
+        Y: -0.18106308579444885
+        Z: -0.013032099232077599
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.46539798378944397
+      Pitch: 0.3403981626033783
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 0.7253974676132202
+      Yaw: 1.0253992080688477
     Saved: ~
 Window Geometry:
   Displays:

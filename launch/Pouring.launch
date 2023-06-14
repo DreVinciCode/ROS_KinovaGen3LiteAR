@@ -7,4 +7,8 @@
     <!-- Launch the example in that namespace -->
     <node name="moveIt_Pouring" pkg="kinova_ar" type="Pouring.py" ns="$(arg robot_name)" output="screen" launch-prefix="bash -c 'sleep $(arg start_delay_seconds); $0 $@' "/>
 
+    <node pkg="kinova_ar" name="TrajectoryManager" type="TrajectoryManager.py" output="screen"> </node>
+
+
+
 </launch>

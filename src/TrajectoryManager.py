@@ -56,7 +56,8 @@ class KinovaARTrajectoryManager(object):
 
         data.trajectory[0].joint_trajectory.header = h
 
-        if(self.record_check):
+        # if(self.record_check):
+        if(True):
             self.FirstTrajectory = data
             self.FirstTrajectory_Publisher.publish(self.FirstTrajectory)
             self.FirstTrajectoryDisplay_Publisher.publish(data)
