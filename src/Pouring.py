@@ -127,6 +127,8 @@ class ExampleMoveItTrajectories(object):
     except:
       rospy.logerr("Failed to call ROS spin")
 
+  def test_function(self):
+    print("This worked!!")
 
   def translate_pos_x_callback(self, data):
     self.translate_along_pos_x()

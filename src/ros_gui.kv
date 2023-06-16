@@ -16,25 +16,74 @@ FloatLayout:
 	# 	on_touch_move: app.slider_function(self.value)
 
 	MDLabel:
+		id: Horizontal_Position
+		text: "Horizontal Position:"
+	    pos_hint: {"center_x": 0.9, "center_y": 0.5}
+		size_hint: 1,1
+	
+	MDLabel:
+		id: Horizontal_Position_value_text
+		text: "Value"
+	    pos_hint: {"center_x": 1.1, "center_y": 0.5}
+		size_hint: 1,1
+
+	MDRaisedButton:
+	    text: "+"
+	    md_bg_color: 0, 0, 1, 0.5
+	    pos_hint: {"center_x": 0.2, "center_y": 0.5}
+	    on_press: app.inc_person_threshold(*args)
+
+	MDRaisedButton:
+	    text: "-"
+	    md_bg_color: 0, 0, 1, 0.5
+	    pos_hint: {"center_x": 0.3, "center_y": 0.5}
+	    on_press: app.dec_person_threshold(*args)
+
+
+	MDLabel:
 		id: person_threshold_text
-		text: "Person_Threshold_Value:"
-	    pos_hint: {"center_x": 0.8, "center_y": 0.65}
+		text: "Vertical Position:"
+	    pos_hint: {"center_x": 0.9, "center_y": 0.6}
 		size_hint: 1,1
 	
 	MDLabel:
 		id: person_threshold_value_text
 		text: "Value"
-	    pos_hint: {"center_x": 1.1, "center_y": 0.65}
+	    pos_hint: {"center_x": 1.1, "center_y": 0.6}
 		size_hint: 1,1
 
 	MDRaisedButton:
-	    text: "Increase"
+	    text: "+"
 	    md_bg_color: 0, 0, 1, 0.5
-	    pos_hint: {"center_x": 0.2, "center_y": 0.25}
+	    pos_hint: {"center_x": 0.2, "center_y": 0.6}
 	    on_press: app.inc_person_threshold(*args)
 
 	MDRaisedButton:
-	    text: "Decrease"
+	    text: "-"
 	    md_bg_color: 0, 0, 1, 0.5
-	    pos_hint: {"center_x": 0.2 * 4, "center_y": 0.25}
+	    pos_hint: {"center_x": 0.3, "center_y": 0.6}
+	    on_press: app.dec_person_threshold(*args)
+
+	MDLabel:
+		id: person_threshold_text
+		text: "Tilt Limit:"
+	    pos_hint: {"center_x": 0.9, "center_y": 0.7}
+		size_hint: 1,1
+	
+	MDLabel:
+		id: person_threshold_value_text
+		text: "Value"
+	    pos_hint: {"center_x": 1.1, "center_y": 0.7}
+		size_hint: 1,1
+
+	MDRaisedButton:
+	    text: "+"
+	    md_bg_color: 0, 0, 1, 0.5
+	    pos_hint: {"center_x": 0.2, "center_y": 0.7}
+	    on_press: app.inc_person_threshold(*args)
+
+	MDRaisedButton:
+	    text: "-"
+	    md_bg_color: 0, 0, 1, 0.5
+	    pos_hint: {"center_x": 0.3, "center_y": 0.7}
 	    on_press: app.dec_person_threshold(*args)
