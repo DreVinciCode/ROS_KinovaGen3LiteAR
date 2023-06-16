@@ -1,0 +1,40 @@
+FloatLayout:
+
+	# MDLabel:
+	# 	text: 'Value: %s' % int(_slider.value)
+	# 	halign: "center"
+	# 	size_hint: 0.25, 0.25
+	#     pos_hint: {"center_x": 0.5, "center_y": 0.7}
+
+	# MDSlider:
+	# 	id: _slider
+	# 	min: -2
+	# 	max: 2
+	# 	value: -2 
+	# 	hint: False
+	# 	# on_touch_up: app.slider_function(self.value)
+	# 	on_touch_move: app.slider_function(self.value)
+
+	MDLabel:
+		id: person_threshold_text
+		text: "Person_Threshold_Value:"
+	    pos_hint: {"center_x": 0.8, "center_y": 0.65}
+		size_hint: 1,1
+	
+	MDLabel:
+		id: person_threshold_value_text
+		text: "Value"
+	    pos_hint: {"center_x": 1.1, "center_y": 0.65}
+		size_hint: 1,1
+
+	MDRaisedButton:
+	    text: "Increase"
+	    md_bg_color: 0, 0, 1, 0.5
+	    pos_hint: {"center_x": 0.2, "center_y": 0.25}
+	    on_press: app.inc_person_threshold(*args)
+
+	MDRaisedButton:
+	    text: "Decrease"
+	    md_bg_color: 0, 0, 1, 0.5
+	    pos_hint: {"center_x": 0.2 * 4, "center_y": 0.25}
+	    on_press: app.dec_person_threshold(*args)
