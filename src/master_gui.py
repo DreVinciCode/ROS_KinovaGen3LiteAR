@@ -30,7 +30,20 @@ class ARViz_GUI(MDApp):
 		# Pouring.test_function()
 		print(str(*args))
 		# execute_action_pub.publish(Empty())
+		translate_neg_x_pub.publish(Empty())
+
+	def Horizontal_Position_Positive(self, *args):
+		# Pouring.test_function()
+		print(str(*args))
+		# execute_action_pub.publish(Empty())
 		translate_pos_x_pub.publish(Empty())
+
+	def Horizontal_Position_Negative(self, *args):
+		# Pouring.test_function()
+		print(str(*args))
+		# execute_action_pub.publish(Empty())
+		translate_neg_x_pub.publish(Empty())
+
 
 
 if __name__ == "__main__":
