@@ -31,23 +31,23 @@ FloatLayout:
 	    text: "+"
 	    md_bg_color: 0, 0, 1, 0.5
 	    pos_hint: {"center_x": 0.2, "center_y": 0.5}
-	    on_press: app.inc_person_threshold(*args)
+	    on_press: app.horizontal_control_positive(*args)
 
 	MDRaisedButton:
 	    text: "-"
 	    md_bg_color: 0, 0, 1, 0.5
 	    pos_hint: {"center_x": 0.3, "center_y": 0.5}
-	    on_press: app.dec_person_threshold(*args)
+	    on_press: app.horizontal_control_negative(*args)
 
 
 	MDLabel:
-		id: person_threshold_text
+		id: Vertical_Position
 		text: "Vertical Position:"
 	    pos_hint: {"center_x": 0.9, "center_y": 0.6}
 		size_hint: 1,1
 	
 	MDLabel:
-		id: person_threshold_value_text
+		id: Vertical_Position_value_text
 		text: "Value"
 	    pos_hint: {"center_x": 1.1, "center_y": 0.6}
 		size_hint: 1,1
@@ -56,22 +56,22 @@ FloatLayout:
 	    text: "+"
 	    md_bg_color: 0, 0, 1, 0.5
 	    pos_hint: {"center_x": 0.2, "center_y": 0.6}
-	    on_press: app.inc_person_threshold(*args)
+	    on_press: app.vertical_control_positive(*args)
 
 	MDRaisedButton:
 	    text: "-"
 	    md_bg_color: 0, 0, 1, 0.5
 	    pos_hint: {"center_x": 0.3, "center_y": 0.6}
-	    on_press: app.dec_person_threshold(*args)
+	    on_press: app.vertical_control_negative(*args)
 
 	MDLabel:
-		id: person_threshold_text
+		id: Tile_angle
 		text: "Tilt Limit:"
 	    pos_hint: {"center_x": 0.9, "center_y": 0.7}
 		size_hint: 1,1
 	
 	MDLabel:
-		id: person_threshold_value_text
+		id: Tile_angle_value_text
 		text: "Value"
 	    pos_hint: {"center_x": 1.1, "center_y": 0.7}
 		size_hint: 1,1
@@ -80,10 +80,10 @@ FloatLayout:
 	    text: "+"
 	    md_bg_color: 0, 0, 1, 0.5
 	    pos_hint: {"center_x": 0.2, "center_y": 0.7}
-	    on_press: app.inc_person_threshold(*args)
+	    on_press: app.tilt_angle_control_positive(*args)
 
 	MDRaisedButton:
 	    text: "-"
 	    md_bg_color: 0, 0, 1, 0.5
 	    pos_hint: {"center_x": 0.3, "center_y": 0.7}
-	    on_press: app.dec_person_threshold(*args)
+	    on_press: app.tilt_angle_control_negative(*args)
