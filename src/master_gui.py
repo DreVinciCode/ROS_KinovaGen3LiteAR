@@ -17,55 +17,46 @@ class ARViz_GUI(MDApp):
 	
 	def build(self):
 		self.screen=Builder.load_file('ros_gui.kv')
-		value = rospy.get_param("/KinovaAR/MaxVelocity")
-		self.screen.ids.Max_Velocity_value_text.text = str(value)
-
+		self.screen.ids.Max_Velocity_value_text.text = str(rospy.get_param("/KinovaAR/MaxVelocity"))
+		self.screen.ids.Tile_angle_value_text.text = str(rospy.get_param("/KinovaAR/TiltAngle"))
 		return self.screen
 
 	def horizontal_control_positive(self, *args):
-		# Pouring.test_function()
 		print(str(*args))
 		# execute_action_pub.publish(Empty())
 		translate_pos_x_pub.publish(Empty())
 
 	def horizontal_control_negative(self, *args):
-		# Pouring.test_function()
 		print(str(*args))
 		# execute_action_pub.publish(Empty())
 		translate_neg_x_pub.publish(Empty())
 
 	def vertical_control_positive(self, *args):
-		# Pouring.test_function()
 		print(str(*args))
 		# execute_action_pub.publish(Empty())
 		translate_pos_z_pub.publish(Empty())
 
 	def vertical_control_negative(self, *args):
-		# Pouring.test_function()
 		print(str(*args))
 		# execute_action_pub.publish(Empty())
 		translate_neg_z_pub.publish(Empty())
 
 	def tilt_angle_control_positive(self, *args):
-		# Pouring.test_function()
 		print(str(*args))
 		# execute_action_pub.publish(Empty())
 		tilt_pos_pub.publish(Empty())
 
 	def tilt_angle_control_negative(self, *args):
-		# Pouring.test_function()
 		print(str(*args))
 		# execute_action_pub.publish(Empty())
 		tilt_neg_pub.publish(Empty())
 
 	def max_velocity_control_positive(self, *args):
-		# Pouring.test_function()
 		print(str(*args))
 		# execute_action_pub.publish(Empty())
 		tilt_pos_pub.publish(Empty())
 
 	def max_velocity_control_negative(self, *args):
-		# Pouring.test_function()
 		print(str(*args))
 		# execute_action_pub.publish(Empty())
 		tilt_neg_pub.publish(Empty())

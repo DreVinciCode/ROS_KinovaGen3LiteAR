@@ -40,6 +40,7 @@ class ExampleMoveItTrajectories(object):
     self.max_angle = 1.642
 
     rospy.set_param("/KinovaAR/MaxVelocity", self.max_velocity)
+    rospy.set_param("/KinovaAR/TiltAngle", self.max_angle)
 
     
     try:
