@@ -38,6 +38,9 @@ class ExampleMoveItTrajectories(object):
     
     self.max_velocity = 1
     self.max_angle = 1.642
+
+    rospy.set_param("/KinovaAR/MaxVelocity", self.max_velocity)
+
     
     try:
       self.is_gripper_present = rospy.get_param(rospy.get_namespace() + "is_gripper_present", False)
@@ -105,6 +108,9 @@ class ExampleMoveItTrajectories(object):
       
       self.translate_neg_z_sub = rospy.Subscriber("/KinovaAR/translateNegativeZ", Empty, self.translate_neg_z_callback)
 
+      self.velocity_pos_pub = rospy.Subscriber("/KinovaAR/MaxVelocity_Inc", Empty, self.set_max_vel_dec_callback)
+
+
       # self.plan_pour_actions_sub = rospy.Subscriber("/KinovaAR/plan_pour", Empty, self.plan_pour_speed)
 
     except Exception as e:   
@@ -127,8 +133,11 @@ class ExampleMoveItTrajectories(object):
     except:
       rospy.logerr("Failed to call ROS spin")
 
-  def test_function(self):
-    print("This worked!!")
+  def set_max_vel_inc_callback(self, data):
+    self.inc_max_velocity()
+
+  def set_max_vel_dec_callback(self, data):
+    self.dec_max_velocity()
 
   def translate_pos_x_callback(self, data):
     self.translate_along_pos_x()
@@ -270,6 +279,17 @@ class ExampleMoveItTrajectories(object):
     new_pose_goal = current_pose
     new_pose_goal.position.z = current_pose.position.z - 0.01
     self.reach_cartesian_pose(pose=new_pose_goal, tolerance=0.001, constraints=None)
+
+  def dec_max_velocity(self):
+    pass
+    # current_pose = self.get_cartesian_pose()
+    # new_pose_goal = current_pose
+    # new_pose_goal.position.z = current_pose.position.z - 0.01
+    # self.reach_cartesian_pose(pose=new_pose_goal, tolerance=0.001, constraints=None)
+
+  def inc_max_velocity(self):
+    pass
+
 
 
   def get_cartesian_pose(self):
