@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <launch>
 
-    <include file="$(find kortex_driver)/launch/kortex_driver.launch">
-        <arg name="rviz_config" value="$(find kinova_ar)/rviz_configs/kinova_rviz.rviz"/>
+    <include file="$(find kortex_driver)/launch/kortex_driver_modified.launch">
+        <arg name="rviz_config" value="$(find kinova_ar)/rviz_configs/pouring_rviz.rviz"/>
         <arg name="arm" value="gen3_lite"/>
         <arg name="dof" value="6"/>
     </include>
