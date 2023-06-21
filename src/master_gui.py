@@ -22,43 +22,46 @@ class ARViz_GUI(MDApp):
 		return self.screen
 
 	def horizontal_control_positive(self, *args):
-		print(str(*args))
+		print("hor_pos")
 		# execute_action_pub.publish(Empty())
 		translate_pos_x_pub.publish(Empty())
 
 	def horizontal_control_negative(self, *args):
-		print(str(*args))
+		print("hor_neg")
 		# execute_action_pub.publish(Empty())
 		translate_neg_x_pub.publish(Empty())
 
 	def vertical_control_positive(self, *args):
-		print(str(*args))
+		print("vert_pos")
 		# execute_action_pub.publish(Empty())
 		translate_pos_z_pub.publish(Empty())
 
 	def vertical_control_negative(self, *args):
-		print(str(*args))
+		print("vert_neg")
 		# execute_action_pub.publish(Empty())
 		translate_neg_z_pub.publish(Empty())
 
 	def tilt_angle_control_positive(self, *args):
-		print(str(*args))
-		# execute_action_pub.publish(Empty())
+		print("tilt_pos")
+		value = rospy.get_param("/KinovaAR/TiltAngle")
+		# self.screen.ids.Tile_angle_value_text.text = str(rospy.get_param("/KinovaAR/TiltAngle"))
+		self.screen.ids.Tile_angle_value_text.text = str(value)
+
 		tilt_pos_pub.publish(Empty())
 
 	def tilt_angle_control_negative(self, *args):
-		print(str(*args))
-		# execute_action_pub.publish(Empty())
+		print("tilt_neg")
+		self.screen.ids.Tile_angle_value_text.text = "test2"
 		tilt_neg_pub.publish(Empty())
 
-	def max_velocity_control_positive(self, *args):
-		print(str(*args))
-		# execute_action_pub.publish(Empty())
+	def max_vel_control_positive(self, *args):
+		print("vel_pos")
+		self.screen.ids.Max_Velocity_value_text.text = str(rospy.get_param("/KinovaAR/MaxVelocity"))
 		tilt_pos_pub.publish(Empty())
 
-	def max_velocity_control_negative(self, *args):
-		print(str(*args))
-		# execute_action_pub.publish(Empty())
+	def max_vel_control_negative(self, *args):
+		print("vel_neg")
+		self.screen.ids.Max_Velocity_value_text.text = str(rospy.get_param("/KinovaAR/MaxVelocity"))
 		tilt_neg_pub.publish(Empty())
 
 
@@ -75,8 +78,8 @@ if __name__ == "__main__":
 	tilt_pos_pub = rospy.Publisher("/KinovaAR/tiltPositive", Empty, queue_size=1)
 	tilt_neg_pub = rospy.Publisher("/KinovaAR/tiltNegative", Empty, queue_size=1)
 
-	velocity_pos_pub = rospy.Publisher("/KinovaAR/MaxVelocity_Inc", Empty, queue_size=1)
-	velocity_neg_pub = rospy.Publisher("/KinovaAR/MaxVelocity_Dec", Empty, queue_size=1)
+	velocity_pos_pub = rospy.Publisher("/KinovaAR/MaxVelocity_inc", Empty, queue_size=1)
+	velocity_neg_pub = rospy.Publisher("/KinovaAR/MaxVelocity_dec", Empty, queue_size=1)
 
 	# pub = rospy.Publisher('/KinovaAR/MaxVelocity', Float32, queue_size=1)
 	rospy.init_node('kivymd_gui', anonymous=True)	

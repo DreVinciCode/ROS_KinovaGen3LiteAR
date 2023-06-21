@@ -109,8 +109,13 @@ class ExampleMoveItTrajectories(object):
       
       self.translate_neg_z_sub = rospy.Subscriber("/KinovaAR/translateNegativeZ", Empty, self.translate_neg_z_callback)
 
-      self.velocity_pos_pub = rospy.Subscriber("/KinovaAR/MaxVelocity_Inc", Empty, self.set_max_vel_dec_callback)
+      self.velocity_inc_pub = rospy.Subscriber("/KinovaAR/MaxVelocity_inc", Empty, self.set_max_vel_inc_callback)
 
+      self.velocity_dec_pub = rospy.Subscriber("/KinovaAR/MaxVelocity_dec", Empty, self.set_max_vel_dec_callback)
+
+      self.angle_tilt_inc_pub = rospy.Subscriber("/KinovaAR/tiltPositive", Empty, self.set_max_angle_inc_callback)
+
+      self.angle_tilt_dec_pub = rospy.Subscriber("/KinovaAR/tiltNegative", Empty, self.set_max_angle_dec_callback)
 
       # self.plan_pour_actions_sub = rospy.Subscriber("/KinovaAR/plan_pour", Empty, self.plan_pour_speed)
 
@@ -134,6 +139,13 @@ class ExampleMoveItTrajectories(object):
     except:
       rospy.logerr("Failed to call ROS spin")
 
+
+  def set_max_angle_dec_callback(self, data):
+    self.dec_max_tilt()
+
+  def set_max_angle_inc_callback(self, data):
+    self.inc_max_tilt()
+
   def set_max_vel_inc_callback(self, data):
     self.inc_max_velocity()
 
@@ -153,11 +165,9 @@ class ExampleMoveItTrajectories(object):
     self.translate_along_neg_z()
 
   def max_angle_change_callback(self, data):
-    self.max_angle = data.data
     self.plan_pour_speed()
 
   def max_velocity_change_callback(self, data):
-    self.max_velocity = data.data
     self.plan_pour_speed()
 
   def plan_pour_speed(self):
@@ -217,7 +227,6 @@ class ExampleMoveItTrajectories(object):
         else:
             time.sleep(0.01)
 
-
   def reach_pour_home_joint_values(self):
       arm_group = self.arm_group
       joint_positions = arm_group.get_current_joint_values()
@@ -244,13 +253,11 @@ class ExampleMoveItTrajectories(object):
         rospy.loginfo("Planned Initial Pose!")
       #   return self.wait_for_action_end_or_abort()
 
-
   def get_current_joint_values(self):
     arm_group = self.arm_group
     joint_positions = arm_group.get_current_joint_values()
     for p in joint_positions: rospy.loginfo(p)
     return joint_positions
-
 
   def target_pose_callback(self, data):
     rospy.loginfo(data.pose.position)
@@ -282,17 +289,25 @@ class ExampleMoveItTrajectories(object):
     self.reach_cartesian_pose(pose=new_pose_goal, tolerance=0.001, constraints=None)
 
   def dec_max_velocity(self):
-    pass
-    # current_pose = self.get_cartesian_pose()
-    # new_pose_goal = current_pose
-    # new_pose_goal.position.z = current_pose.position.z - 0.01
-    # self.reach_cartesian_pose(pose=new_pose_goal, tolerance=0.001, constraints=None)
-
+    self.max_velocity = self.max_velocity - 0.05
+    rospy.set_param("/KinovaAR/MaxVelocity", self.max_velocity)
+    self.max_velocity_change_callback(self.max_velocity)
+    
   def inc_max_velocity(self):
-    pass
-
-
-
+    self.max_velocity = self.max_velocity + 0.05
+    rospy.set_param("/KinovaAR/MaxVelocity", self.max_velocity)
+    self.max_velocity_change_callback(self.max_velocity)
+    
+  def inc_max_tilt(self):
+    self.max_angle = self.max_angle + 0.05
+    rospy.set_param("/KinovaAR/TiltAngle", self.max_angle)
+    self.max_angle_change_callback(self.max_angle)
+    
+  def dec_max_tilt(self):
+    self.max_angle = self.max_angle - 0.05
+    rospy.set_param("/KinovaAR/TiltAngle", self.max_angle)
+    self.max_angle_change_callback(self.max_angle)
+    
   def get_cartesian_pose(self):
     arm_group = self.arm_group
     pose = arm_group.get_current_pose()
