@@ -17,7 +17,7 @@ class Pouring_Control_Panel(MDApp):
 	
 	def build(self):
 		self.screen=Builder.load_file('ros_gui.kv')
-		self.screen.ids.Max_Velocity_value_text.text = str(round(rospy.get_param("/KinovaAR/MaxVelocity"),2))
+		self.screen.ids.Max_Velocity_value_text.text = str(round(rospy.get_param("/KinovaAR/MaxVelocity") * 100 ,2)) + "%"
 		self.screen.ids.Tile_angle_value_text.text = str(round(rospy.get_param("/KinovaAR/TiltAngle"),2))
 		return self.screen
 
@@ -53,12 +53,12 @@ class Pouring_Control_Panel(MDApp):
 
 	def max_vel_control_positive(self, *args):
 		print("vel_pos")
-		self.screen.ids.Max_Velocity_value_text.text = str(round(rospy.get_param("/KinovaAR/MaxVelocity"),2))
+		self.screen.ids.Max_Velocity_value_text.text = str(round(rospy.get_param("/KinovaAR/MaxVelocity") * 100 ,2)) + "%"
 		velocity_pos_pub.publish(Empty())
 
 	def max_vel_control_negative(self, *args):
 		print("vel_neg")
-		self.screen.ids.Max_Velocity_value_text.text = str(round(rospy.get_param("/KinovaAR/MaxVelocity"),2))
+		self.screen.ids.Max_Velocity_value_text.text = str(round(rospy.get_param("/KinovaAR/MaxVelocity") * 100 ,2)) + "%"
 		velocity_neg_pub.publish(Empty())
 
 	def execute_pour_action(self, *args):

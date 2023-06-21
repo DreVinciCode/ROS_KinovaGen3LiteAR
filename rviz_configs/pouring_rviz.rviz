@@ -6,7 +6,6 @@ Panels:
       Expanded:
         - /MotionPlanning1
         - /MotionPlanning1/Scene Robot1
-        - /MotionPlanning1/Scene Robot1/Links1
         - /MotionPlanning1/Planned Path1
         - /MotionPlanning1/Planned Path1/Links1
       Splitter Ratio: 0.49413734674453735
@@ -212,7 +211,7 @@ Visualization Manager:
       Scene Robot:
         Attached Body Color: 150; 50; 150
         Links:
-          All Links Enabled: false
+          All Links Enabled: true
           Expand Joint Details: false
           Expand Link Details: false
           Expand Tree: false
@@ -294,7 +293,7 @@ Visualization Manager:
             Alpha: 1
             Show Axes: false
             Show Trail: false
-            Value: false
+            Value: true
           tool_frame:
             Alpha: 1
             Show Axes: false
