@@ -7,6 +7,8 @@ Panels:
         - /MotionPlanning1
         - /MotionPlanning1/Scene Robot1
         - /MotionPlanning1/Scene Robot1/Links1
+        - /MotionPlanning1/Planned Path1
+        - /MotionPlanning1/Planned Path1/Links1
       Splitter Ratio: 0.49413734674453735
     Tree Height: 741
   - Class: rviz/Selection
@@ -78,7 +80,7 @@ Visualization Manager:
         Color Enabled: true
         Interrupt Display: false
         Links:
-          All Links Enabled: true
+          All Links Enabled: false
           Expand Joint Details: false
           Expand Link Details: false
           Expand Tree: false
@@ -87,12 +89,12 @@ Visualization Manager:
             Alpha: 1
             Show Axes: false
             Show Trail: false
-            Value: true
+            Value: false
           base_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
-            Value: true
+            Value: false
           dummy_link:
             Alpha: 1
             Show Axes: false
@@ -105,7 +107,7 @@ Visualization Manager:
             Alpha: 1
             Show Axes: false
             Show Trail: false
-            Value: true
+            Value: false
           gripper_base_link:
             Alpha: 1
             Show Axes: false
@@ -125,7 +127,7 @@ Visualization Manager:
             Alpha: 1
             Show Axes: false
             Show Trail: false
-            Value: true
+            Value: false
           right_finger_dist_link:
             Alpha: 1
             Show Axes: false
@@ -140,7 +142,7 @@ Visualization Manager:
             Alpha: 1
             Show Axes: false
             Show Trail: false
-            Value: true
+            Value: false
           source_cup:
             Alpha: 1
             Show Axes: false
@@ -150,12 +152,17 @@ Visualization Manager:
             Alpha: 1
             Show Axes: false
             Show Trail: false
-            Value: true
-          target_cup:
+            Value: false
+          target_cup0:
             Alpha: 1
             Show Axes: false
             Show Trail: false
-            Value: true
+            Value: false
+          target_cup1:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: false
           tool_frame:
             Alpha: 1
             Show Axes: false
@@ -164,7 +171,7 @@ Visualization Manager:
             Alpha: 1
             Show Axes: false
             Show Trail: false
-            Value: true
+            Value: false
         Loop Animation: true
         Robot Alpha: 0.5
         Robot Color: 150; 50; 150
@@ -205,7 +212,7 @@ Visualization Manager:
       Scene Robot:
         Attached Body Color: 150; 50; 150
         Links:
-          All Links Enabled: true
+          All Links Enabled: false
           Expand Joint Details: false
           Expand Link Details: false
           Expand Tree: false
@@ -278,11 +285,16 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
             Value: true
-          target_cup:
+          target_cup0:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
+          target_cup1:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: false
           tool_frame:
             Alpha: 1
             Show Axes: false
@@ -311,7 +323,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 1.5282703638076782
+      Distance: 1.1930164098739624
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -326,10 +338,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.630189836025238
+      Pitch: 0.49018967151641846
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 0.45693570375442505
+      Yaw: 0.6169354915618896
     Saved: ~
 Window Geometry:
   Displays:
