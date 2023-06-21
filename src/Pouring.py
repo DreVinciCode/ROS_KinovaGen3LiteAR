@@ -36,7 +36,7 @@ class ExampleMoveItTrajectories(object):
     self.appended_msg = DisplayTrajectory() 
     self.plan_array = []
     
-    self.max_velocity = 1
+    self.max_velocity = 1.0
     self.max_angle = 1.642
 
     rospy.set_param("/KinovaAR/MaxVelocity", self.max_velocity)
@@ -280,7 +280,7 @@ class ExampleMoveItTrajectories(object):
     current_pose = self.get_cartesian_pose()
     new_pose_goal = current_pose
     new_pose_goal.position.z = current_pose.position.z + 0.01
-    self.reach_cartesian_pose(pose=new_pose_goal, tolerance=0.0001, constraints=None)
+    self.reach_cartesian_pose(pose=new_pose_goal, tolerance=0.001, constraints=None)
 
   def translate_along_neg_z(self):
     current_pose = self.get_cartesian_pose()

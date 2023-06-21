@@ -167,7 +167,7 @@ Visualization Manager:
         Show Robot Collision: false
         Show Robot Visual: true
         Show Trail: false
-        State Display Time: 0.05 s
+        State Display Time: REALTIME
         Trail Step Size: 1
         Trajectory Topic: /my_gen3_lite/move_group/display_planned_path
       Planning Metrics:
@@ -310,16 +310,16 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 1.7458869218826294
+      Distance: 1.0470002889633179
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: -0.09701299667358398
-        Y: -0.09912839531898499
-        Z: 0.1386929452419281
+        X: 0.044044043868780136
+        Y: -0.21178913116455078
+        Z: 0.07735942304134369
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false

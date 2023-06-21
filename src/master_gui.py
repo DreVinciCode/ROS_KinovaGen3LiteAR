@@ -17,8 +17,8 @@ class ARViz_GUI(MDApp):
 	
 	def build(self):
 		self.screen=Builder.load_file('ros_gui.kv')
-		self.screen.ids.Max_Velocity_value_text.text = str(rospy.get_param("/KinovaAR/MaxVelocity"))
-		self.screen.ids.Tile_angle_value_text.text = str(rospy.get_param("/KinovaAR/TiltAngle"))
+		self.screen.ids.Max_Velocity_value_text.text = str(round(rospy.get_param("/KinovaAR/MaxVelocity"),2))
+		self.screen.ids.Tile_angle_value_text.text = str(round(rospy.get_param("/KinovaAR/TiltAngle"),2))
 		return self.screen
 
 	def horizontal_control_positive(self, *args):
@@ -43,26 +43,23 @@ class ARViz_GUI(MDApp):
 
 	def tilt_angle_control_positive(self, *args):
 		print("tilt_pos")
-		value = rospy.get_param("/KinovaAR/TiltAngle")
-		# self.screen.ids.Tile_angle_value_text.text = str(rospy.get_param("/KinovaAR/TiltAngle"))
-		self.screen.ids.Tile_angle_value_text.text = str(value)
-
+		self.screen.ids.Tile_angle_value_text.text = str(round(rospy.get_param("/KinovaAR/TiltAngle"),2))
 		tilt_pos_pub.publish(Empty())
 
 	def tilt_angle_control_negative(self, *args):
 		print("tilt_neg")
-		self.screen.ids.Tile_angle_value_text.text = "test2"
+		self.screen.ids.Tile_angle_value_text.text = str(round(rospy.get_param("/KinovaAR/TiltAngle"),2))
 		tilt_neg_pub.publish(Empty())
 
 	def max_vel_control_positive(self, *args):
 		print("vel_pos")
-		self.screen.ids.Max_Velocity_value_text.text = str(rospy.get_param("/KinovaAR/MaxVelocity"))
-		tilt_pos_pub.publish(Empty())
+		self.screen.ids.Max_Velocity_value_text.text = str(round(rospy.get_param("/KinovaAR/MaxVelocity"),2))
+		velocity_pos_pub.publish(Empty())
 
 	def max_vel_control_negative(self, *args):
 		print("vel_neg")
-		self.screen.ids.Max_Velocity_value_text.text = str(rospy.get_param("/KinovaAR/MaxVelocity"))
-		tilt_neg_pub.publish(Empty())
+		self.screen.ids.Max_Velocity_value_text.text = str(round(rospy.get_param("/KinovaAR/MaxVelocity"),2))
+		velocity_neg_pub.publish(Empty())
 
 
 if __name__ == "__main__":
