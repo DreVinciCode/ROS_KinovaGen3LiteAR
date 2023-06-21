@@ -111,3 +111,11 @@ FloatLayout:
 	    md_bg_color: 0, 0, 1, 0.5
 	    pos_hint: {"center_x": 0.3, "center_y": 0.8}
 	    on_press: app.max_vel_control_negative(*args)
+
+	MDRaisedButton:
+	    text: "Execute Pour"
+		font_size: '24sp'
+	    md_bg_color: 0, 0, 1, 0.5
+		size_hint: (0.2, 0.1)
+	    pos_hint: {"center_x": 0.5, "center_y": 0.2}
+	    on_press: app.execute_pour_action(*args)

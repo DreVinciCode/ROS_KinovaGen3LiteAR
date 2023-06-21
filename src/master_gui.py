@@ -9,7 +9,7 @@ from kivymd.uix.button import MDRectangleFlatButton
 
 # import Pouring
 
-class ARViz_GUI(MDApp):
+class Pouring_Control_Panel(MDApp):
 	
 	def __init_(self, **kwargs):
 		super().__init__(**kwargs)
@@ -61,6 +61,9 @@ class ARViz_GUI(MDApp):
 		self.screen.ids.Max_Velocity_value_text.text = str(round(rospy.get_param("/KinovaAR/MaxVelocity"),2))
 		velocity_neg_pub.publish(Empty())
 
+	def execute_pour_action(self, *args):
+		execute_action_pub.publish(Empty())
+
 
 if __name__ == "__main__":
 	
@@ -80,5 +83,5 @@ if __name__ == "__main__":
 
 	# pub = rospy.Publisher('/KinovaAR/MaxVelocity', Float32, queue_size=1)
 	rospy.init_node('kivymd_gui', anonymous=True)	
-	ARViz_GUI().run()
+	Pouring_Control_Panel().run()
 

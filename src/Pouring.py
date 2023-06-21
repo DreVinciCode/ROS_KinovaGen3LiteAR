@@ -267,13 +267,13 @@ class ExampleMoveItTrajectories(object):
   def translate_along_pos_x(self):
     current_pose = self.get_cartesian_pose()
     new_pose_goal = current_pose
-    new_pose_goal.position.y = current_pose.position.y + 0.01
+    new_pose_goal.position.y = current_pose.position.y - 0.01
     self.reach_cartesian_pose(pose=new_pose_goal, tolerance=0.001, constraints=None)
 
   def translate_along_neg_x(self):
     current_pose = self.get_cartesian_pose()
     new_pose_goal = current_pose
-    new_pose_goal.position.y = current_pose.position.y - 0.01
+    new_pose_goal.position.y = current_pose.position.y + 0.01
     self.reach_cartesian_pose(pose=new_pose_goal, tolerance=0.001, constraints=None)
 
   def translate_along_pos_z(self):
