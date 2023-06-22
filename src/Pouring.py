@@ -39,6 +39,8 @@ class ExampleMoveItTrajectories(object):
     self.max_velocity = 1.0
     self.max_angle = 1.65
 
+    self.pause_time = 1
+
     rospy.set_param("/KinovaAR/MaxVelocity", self.max_velocity)
     rospy.set_param("/KinovaAR/TiltAngle", self.max_angle)
 
@@ -153,15 +155,23 @@ class ExampleMoveItTrajectories(object):
 
   def translate_pos_x_callback(self, data):
     self.translate_along_pos_x()
+    time.sleep(self.pause_time)
+    self.plan_pour_speed()
 
   def translate_neg_x_callback(self, data):
     self.translate_along_neg_x()
+    time.sleep(self.pause_time)
+    self.plan_pour_speed()
 
   def translate_pos_z_callback(self, data):
     self.translate_along_pos_z()
+    time.sleep(self.pause_time)
+    self.plan_pour_speed()
 
   def translate_neg_z_callback(self, data):
     self.translate_along_neg_z()
+    time.sleep(self.pause_time)
+    self.plan_pour_speed()
 
   def max_angle_change_callback(self, data):
     self.plan_pour_speed()
