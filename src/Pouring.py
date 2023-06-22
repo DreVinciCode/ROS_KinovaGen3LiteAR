@@ -139,7 +139,6 @@ class ExampleMoveItTrajectories(object):
     except:
       rospy.logerr("Failed to call ROS spin")
 
-
   def set_max_angle_dec_callback(self, data):
     self.dec_max_tilt()
 
@@ -198,18 +197,14 @@ class ExampleMoveItTrajectories(object):
       rospy.loginfo("Planned Initial Pose!")
       
   def execute_action_callback(self, data):  
-
     self.arm_group.go(wait=True)
     time.sleep(2)
-
     self.reach_pour_home_joint_values()
     self.arm_group.go(wait=True)
    
   def resetToHome(self):
-
     self.reach_pour_home_joint_values()
     self.arm_group.go(wait=True)
-
 
   def wait_for_action_end_or_abort(self):
     while not rospy.is_shutdown():
