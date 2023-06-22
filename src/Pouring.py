@@ -37,7 +37,7 @@ class ExampleMoveItTrajectories(object):
     self.plan_array = []
     
     self.max_velocity = 1.0
-    self.max_angle = 1.642
+    self.max_angle = 1.65
 
     rospy.set_param("/KinovaAR/MaxVelocity", self.max_velocity)
     rospy.set_param("/KinovaAR/TiltAngle", self.max_angle)
@@ -280,21 +280,33 @@ class ExampleMoveItTrajectories(object):
 
   def dec_max_velocity(self):
     self.max_velocity = self.max_velocity - 0.05
+    if(self.max_velocity < 0.05):
+      self.max_velocity = 0.05
+
     rospy.set_param("/KinovaAR/MaxVelocity", self.max_velocity)
     self.max_velocity_change_callback(self.max_velocity)
     
   def inc_max_velocity(self):
     self.max_velocity = self.max_velocity + 0.05
+    if(self.max_velocity > 1):
+      self.max_velocity = 1.0
+
     rospy.set_param("/KinovaAR/MaxVelocity", self.max_velocity)
     self.max_velocity_change_callback(self.max_velocity)
     
   def inc_max_tilt(self):
     self.max_angle = self.max_angle + 0.05
+    if(self.max_angle < -1.65):
+      self.max_angle = -1.65
+
     rospy.set_param("/KinovaAR/TiltAngle", self.max_angle)
     self.max_angle_change_callback(self.max_angle)
     
   def dec_max_tilt(self):
     self.max_angle = self.max_angle - 0.05
+    if(self.max_angle > 1.65):
+      self.max_angle = 1.65
+    
     rospy.set_param("/KinovaAR/TiltAngle", self.max_angle)
     self.max_angle_change_callback(self.max_angle)
     
