@@ -296,16 +296,16 @@ class ExampleMoveItTrajectories(object):
     
   def inc_max_tilt(self):
     self.max_angle = self.max_angle + 0.05
-    if(self.max_angle < -1.65):
-      self.max_angle = -1.65
+    if(self.max_angle > 1.65):
+      self.max_angle = 1.65
 
     rospy.set_param("/KinovaAR/TiltAngle", self.max_angle)
     self.max_angle_change_callback(self.max_angle)
     
   def dec_max_tilt(self):
     self.max_angle = self.max_angle - 0.05
-    if(self.max_angle > 1.65):
-      self.max_angle = 1.65
+    if(self.max_angle < -1.65):
+      self.max_angle = -1.65
     
     rospy.set_param("/KinovaAR/TiltAngle", self.max_angle)
     self.max_angle_change_callback(self.max_angle)
