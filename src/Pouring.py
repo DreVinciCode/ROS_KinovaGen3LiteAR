@@ -189,17 +189,10 @@ class ExampleMoveItTrajectories(object):
     arm_group.set_joint_value_target(joint_positions)
 
     try:
-      # Plan the new trajectory
       self.main_plan = arm_group.plan()
-      # plan = DisplayTrajectory()
-      # plan.trajectory[0].joint_trajectory = self.main_plan.joint_trajectory
 
-
-      # self.display_trajectory_pub.publish(plan)
-      # # print(arm_group.plan())
     except:
       rospy.logerr("Failed to plan trajectory.")
-      # Call function to reset the position of target pose object to end effector location
 
     else:
       rospy.loginfo("Planned Initial Pose!")
@@ -207,6 +200,8 @@ class ExampleMoveItTrajectories(object):
   def execute_action_callback(self, data):  
 
     self.arm_group.go(wait=True)
+    time.sleep(2)
+
     self.reach_pour_home_joint_values()
     self.arm_group.go(wait=True)
    
