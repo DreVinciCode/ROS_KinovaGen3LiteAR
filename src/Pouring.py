@@ -208,7 +208,7 @@ class ExampleMoveItTrajectories(object):
       
   def execute_action_callback(self, data):  
     self.arm_group.go(wait=True)
-    time.sleep(2)
+    time.sleep(3)
     self.reach_pour_home_joint_values()
     self.arm_group.go(wait=True)
    
