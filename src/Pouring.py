@@ -37,7 +37,9 @@ class ExampleMoveItTrajectories(object):
     self.plan_array = []
     
     self.max_velocity = 1.0
-    self.max_angle = 1.642
+    self.max_angle = 1.65
+
+    self.pause_time = 1
 
     rospy.set_param("/KinovaAR/MaxVelocity", self.max_velocity)
     rospy.set_param("/KinovaAR/TiltAngle", self.max_angle)
@@ -139,7 +141,6 @@ class ExampleMoveItTrajectories(object):
     except:
       rospy.logerr("Failed to call ROS spin")
 
-
   def set_max_angle_dec_callback(self, data):
     self.dec_max_tilt()
 
@@ -154,15 +155,23 @@ class ExampleMoveItTrajectories(object):
 
   def translate_pos_x_callback(self, data):
     self.translate_along_pos_x()
+    time.sleep(self.pause_time)
+    self.plan_pour_speed()
 
   def translate_neg_x_callback(self, data):
     self.translate_along_neg_x()
+    time.sleep(self.pause_time)
+    self.plan_pour_speed()
 
   def translate_pos_z_callback(self, data):
     self.translate_along_pos_z()
+    time.sleep(self.pause_time)
+    self.plan_pour_speed()
 
   def translate_neg_z_callback(self, data):
     self.translate_along_neg_z()
+    time.sleep(self.pause_time)
+    self.plan_pour_speed()
 
   def max_angle_change_callback(self, data):
     self.plan_pour_speed()
@@ -189,32 +198,23 @@ class ExampleMoveItTrajectories(object):
     arm_group.set_joint_value_target(joint_positions)
 
     try:
-      # Plan the new trajectory
       self.main_plan = arm_group.plan()
-      # plan = DisplayTrajectory()
-      # plan.trajectory[0].joint_trajectory = self.main_plan.joint_trajectory
 
-
-      # self.display_trajectory_pub.publish(plan)
-      # # print(arm_group.plan())
     except:
       rospy.logerr("Failed to plan trajectory.")
-      # Call function to reset the position of target pose object to end effector location
 
     else:
       rospy.loginfo("Planned Initial Pose!")
       
   def execute_action_callback(self, data):  
-
     self.arm_group.go(wait=True)
+    time.sleep(2)
     self.reach_pour_home_joint_values()
     self.arm_group.go(wait=True)
    
   def resetToHome(self):
-
     self.reach_pour_home_joint_values()
     self.arm_group.go(wait=True)
-
 
   def wait_for_action_end_or_abort(self):
     while not rospy.is_shutdown():
@@ -290,21 +290,33 @@ class ExampleMoveItTrajectories(object):
 
   def dec_max_velocity(self):
     self.max_velocity = self.max_velocity - 0.05
+    if(self.max_velocity < 0.05):
+      self.max_velocity = 0.05
+
     rospy.set_param("/KinovaAR/MaxVelocity", self.max_velocity)
     self.max_velocity_change_callback(self.max_velocity)
     
   def inc_max_velocity(self):
     self.max_velocity = self.max_velocity + 0.05
+    if(self.max_velocity > 1):
+      self.max_velocity = 1.0
+
     rospy.set_param("/KinovaAR/MaxVelocity", self.max_velocity)
     self.max_velocity_change_callback(self.max_velocity)
     
   def inc_max_tilt(self):
     self.max_angle = self.max_angle + 0.05
+    if(self.max_angle > 1.65):
+      self.max_angle = 1.65
+
     rospy.set_param("/KinovaAR/TiltAngle", self.max_angle)
     self.max_angle_change_callback(self.max_angle)
     
   def dec_max_tilt(self):
     self.max_angle = self.max_angle - 0.05
+    if(self.max_angle < -1.65):
+      self.max_angle = -1.65
+    
     rospy.set_param("/KinovaAR/TiltAngle", self.max_angle)
     self.max_angle_change_callback(self.max_angle)
     
