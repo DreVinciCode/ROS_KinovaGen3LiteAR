@@ -7,7 +7,6 @@ Panels:
         - /Status1
         - /MotionPlanning1
         - /MotionPlanning1/Planned Path1
-        - /TF1
       Splitter Ratio: 0.49413734674453735
     Tree Height: 284
   - Class: rviz/Selection
@@ -145,21 +144,6 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
             Value: true
-          source_cup:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          table_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          target_cup:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
           tool_frame:
             Alpha: 1
             Show Axes: false
@@ -272,21 +256,6 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
             Value: true
-          source_cup:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          table_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          target_cup:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
           tool_frame:
             Alpha: 1
             Show Axes: false
@@ -301,75 +270,6 @@ Visualization Manager:
         Show Robot Visual: true
       Value: true
       Velocity_Scaling_Factor: 1
-    - Class: rviz/TF
-      Enabled: true
-      Frame Timeout: 15
-      Frames:
-        All Enabled: true
-        arm_link:
-          Value: true
-        base_link:
-          Value: true
-        dummy_link:
-          Value: true
-        end_effector_link:
-          Value: true
-        forearm_link:
-          Value: true
-        gripper_base_link:
-          Value: true
-        left_finger_dist_link:
-          Value: true
-        left_finger_prox_link:
-          Value: true
-        lower_wrist_link:
-          Value: true
-        right_finger_dist_link:
-          Value: true
-        right_finger_prox_link:
-          Value: true
-        shoulder_link:
-          Value: true
-        source_cup:
-          Value: true
-        table_link:
-          Value: true
-        target_cup:
-          Value: true
-        tool_frame:
-          Value: true
-        upper_wrist_link:
-          Value: true
-      Marker Scale: 0.4000000059604645
-      Name: TF
-      Show Arrows: true
-      Show Axes: true
-      Show Names: true
-      Tree:
-        base_link:
-          shoulder_link:
-            arm_link:
-              forearm_link:
-                lower_wrist_link:
-                  upper_wrist_link:
-                    end_effector_link:
-                      dummy_link:
-                        gripper_base_link:
-                          left_finger_prox_link:
-                            left_finger_dist_link:
-                              {}
-                          right_finger_prox_link:
-                            right_finger_dist_link:
-                              {}
-                        tool_frame:
-                          {}
-                      source_cup:
-                        {}
-          table_link:
-            target_cup:
-              {}
-      Update Interval: 0
-      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -398,25 +298,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 1.1870713233947754
+      Distance: 0.957474946975708
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 0.2871011793613434
-        Y: 0.03691038861870766
-        Z: 0.08402622491121292
+        X: 0.10888506472110748
+        Y: 0.06679070740938187
+        Z: 0.3229388892650604
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.24539805948734283
+      Pitch: 0.4553980529308319
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 1.1803995370864868
+      Yaw: 0.7003996968269348
     Saved: ~
 Window Geometry:
   Displays:
