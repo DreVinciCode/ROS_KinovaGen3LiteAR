@@ -192,14 +192,16 @@ FloatLayout:
 		# font_size: '24sp'
 	    md_bg_color: 0, 0, 1, 0.5
 	    pos_hint: {"center_x": 0.35, "center_y": 0.8}
-	    on_press: app.max_vel_control_positive(*args)
+	    # on_press: app.max_vel_control_positive(*args)
+		on_press: app.set_max_velocity([0.20, "Slow"])
 
 	MDRaisedButton:
 	    text: "Medium"
 		# font_size: '24sp'
 	    md_bg_color: 0, 0, 1, 0.5
 	    pos_hint: {"center_x": 0.45, "center_y": 0.8}
-	    on_press: app.max_vel_control_negative(*args)
+	    # on_press: app.max_vel_control_negative(*args)
+		on_press: app.set_max_velocity([0.525, "Medium"])
 
 	MDRaisedButton:
 	    text: "Fast"
@@ -207,7 +209,7 @@ FloatLayout:
 	    md_bg_color: 0, 0, 1, 0.5
 	    pos_hint: {"center_x": 0.55, "center_y": 0.8}
 	    # on_press: app.max_vel_control_negative(*args)
-
+		on_press: app.set_max_velocity([0.84, "Fast"])
 
 
 
