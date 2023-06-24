@@ -119,6 +119,8 @@ class ExampleMoveItTrajectories(object):
 
       self.angle_tilt_dec_pub = rospy.Subscriber("/KinovaAR/tiltNegative", Empty, self.set_max_angle_dec_callback)
 
+      self.set_tilt_angle_sub = rospy.Subscriber("/KinovaAR/setTiltValue", Float32, self.set_max_tilt_callback)
+
       self.reset_pour_position_pub = rospy.Subscriber("/KinovaAR/reset_pour_posiiton", Empty, self.resetToHome)
       # self.plan_pour_actions_sub = rospy.Subscriber("/KinovaAR/plan_pour", Empty, self.plan_pour_speed)
 
@@ -141,6 +143,12 @@ class ExampleMoveItTrajectories(object):
       rospy.spin()
     except:
       rospy.logerr("Failed to call ROS spin")
+
+  def set_max_tilt_callback(self, data):
+    self.max_angle = data.data
+    rospy.set_param("/KinovaAR/TiltAngle", self.max_angle)
+    self.max_angle_change_callback(self.max_angle)
+    
 
   def set_max_angle_dec_callback(self, data):
     self.dec_max_tilt()
