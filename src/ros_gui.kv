@@ -1,120 +1,215 @@
 FloatLayout:
 
-	# MDLabel:
-	# 	text: 'Value: %s' % int(_slider.value)
-	# 	halign: "center"
-	# 	size_hint: 0.25, 0.25
-	#     pos_hint: {"center_x": 0.5, "center_y": 0.7}
 
-	# MDSlider:
-	# 	id: _slider
-	# 	min: -2
-	# 	max: 2
-	# 	value: -2 
-	# 	hint: False
-	# 	# on_touch_up: app.slider_function(self.value)
-	# 	on_touch_move: app.slider_function(self.value)
+
+	# MDLabel:
+	# 	id: Hand_Position
+	# 	text: "Source Cup Position"
+	#     pos_hint: {"center_x": 0.9, "center_y": 0.5}
+	# 	size_hint: 1,1
+
+	# MDRaisedButton:
+	#     text: "Left"
+	#     md_bg_color: 0, 0, 0.8, 0.5
+	#     pos_hint: {"center_x": 0.19, "center_y": 0.5}
+	#     on_press: app.horizontal_control_positive(*args)
+
+	# MDRaisedButton:
+	#     text: "Right"
+	#     md_bg_color: 0, 0, 0.8, 0.5
+	#     pos_hint: {"center_x": 0.33, "center_y": 0.5}
+	#     on_press: app.horizontal_control_negative(*args)
+
+	# MDRaisedButton:
+	#     text: "Up"
+	#     md_bg_color: 0, 0, 0.8, 0.5
+	#     pos_hint: {"center_x": 0.26, "center_y": 0.6}
+	#     on_press: app.vertical_control_positive(*args)
+
+	# MDRaisedButton:
+	#     text: "Down"
+	#     md_bg_color: 0, 0, 0.8, 0.5
+	#     pos_hint: {"center_x": 0.26, "center_y": 0.4}
+	#     on_press: app.vertical_control_negative(*args)
+
+
+
+
 
 	MDLabel:
 		id: Hand_Position
-		text: "Source Cup Position"
-	    pos_hint: {"center_x": 0.9, "center_y": 0.5}
+		text: "Horizontal Position:"
+		font_size: '22sp'
+	    pos_hint: {"center_x": 0.55, "center_y": 0.6}
 		size_hint: 1,1
-	
-	# MDLabel:
-	# 	id: Horizontal_Position_value_text
-	# 	text: "Value"
-	#     pos_hint: {"center_x": 1.1, "center_y": 0.5}
-	# 	size_hint: 1,1
 
 	MDRaisedButton:
 	    text: "Left"
 	    md_bg_color: 0, 0, 0.8, 0.5
-	    pos_hint: {"center_x": 0.19, "center_y": 0.5}
+	    pos_hint: {"center_x": 0.35, "center_y": 0.6}
 	    on_press: app.horizontal_control_positive(*args)
 
 	MDRaisedButton:
 	    text: "Right"
 	    md_bg_color: 0, 0, 0.8, 0.5
-	    pos_hint: {"center_x": 0.33, "center_y": 0.5}
+	    pos_hint: {"center_x": 0.45, "center_y": 0.6}
 	    on_press: app.horizontal_control_negative(*args)
 
+	MDLabel:
+		id: Horizontal_Position
+		text: "Value"
+	    pos_hint: {"center_x": 1.4, "center_y": 0.6}
+		size_hint: 1,1
 
-	# MDLabel:
-	# 	id: Vertical_Position
-	# 	text: "Vertical Position:"
-	#     pos_hint: {"center_x": 0.9, "center_y": 0.6}
-	# 	size_hint: 1,1
-	
-	# MDLabel:
-	# 	id: Vertical_Position_value_text
-	# 	text: "Value"
-	#     pos_hint: {"center_x": 1.1, "center_y": 0.6}
-	# 	size_hint: 1,1
+	MDLabel:
+		id: Spacer
+		text: "Set Value: "
+	    pos_hint: {"center_x": 1.2, "center_y": 0.6}
+		size_hint: 1,1
+
+
+
+
+
+
+
+
+	MDLabel:
+		id: Hand_Position
+		text: "Vertical Position:"
+		font_size: '22sp'
+	    pos_hint: {"center_x": 0.55, "center_y": 0.5}
+		size_hint: 1,1
 
 	MDRaisedButton:
 	    text: "Up"
 	    md_bg_color: 0, 0, 0.8, 0.5
-	    pos_hint: {"center_x": 0.26, "center_y": 0.6}
+	    pos_hint: {"center_x": 0.35, "center_y": 0.5}
 	    on_press: app.vertical_control_positive(*args)
 
 	MDRaisedButton:
 	    text: "Down"
 	    md_bg_color: 0, 0, 0.8, 0.5
-	    pos_hint: {"center_x": 0.26, "center_y": 0.4}
+	    pos_hint: {"center_x": 0.45, "center_y": 0.5}
 	    on_press: app.vertical_control_negative(*args)
 
 	MDLabel:
+		id: Veritcal_Position
+		text: "Value"
+	    pos_hint: {"center_x": 1.4, "center_y": 0.5}
+		size_hint: 1,1
+
+	MDLabel:
+		id: Spacer
+		text: "Set Value: "
+	    pos_hint: {"center_x": 1.2, "center_y": 0.5}
+		size_hint: 1,1
+
+
+
+
+
+
+
+
+
+
+
+	MDLabel:
 		id: Tile_angle
-		text: "Tilt Limit:"
-	    pos_hint: {"center_x": 0.9, "center_y": 0.7}
+		text: "Pour Angle Limit:"
+		font_size: '22sp'
+	    pos_hint: {"center_x": 0.55, "center_y": 0.7}
 		size_hint: 1,1
 	
 	MDLabel:
 		id: Tile_angle_value_text
 		text: "Value"
-	    pos_hint: {"center_x": 1.1, "center_y": 0.7}
+	    pos_hint: {"center_x": 1.4, "center_y": 0.7}
 		size_hint: 1,1
 
+	MDLabel:
+		id: Spacer
+		text: "Set Value: "
+	    pos_hint: {"center_x": 1.2, "center_y": 0.7}
+		size_hint: 1,1
+
+
 	MDRaisedButton:
-	    text: "+"
-		font_size: '24sp'
+	    text: "90"
+		# font_size: '24sp'
 	    md_bg_color: 0, 0, 1, 0.5
-	    pos_hint: {"center_x": 0.2, "center_y": 0.7}
+	    pos_hint: {"center_x": 0.35, "center_y": 0.7}
 	    on_press: app.tilt_angle_control_positive(*args)
 
 	MDRaisedButton:
-	    text: "-"
-		font_size: '24sp'
+	    text: "120"
+		# font_size: '24sp'
 	    md_bg_color: 0, 0, 1, 0.5
-	    pos_hint: {"center_x": 0.32, "center_y": 0.7}
+	    pos_hint: {"center_x": 0.44, "center_y": 0.7}
 	    on_press: app.tilt_angle_control_negative(*args)
+
+	MDRaisedButton:
+	    text: "150"
+		# font_size: '24sp'
+	    md_bg_color: 0, 0, 1, 0.5
+	    pos_hint: {"center_x": 0.53, "center_y": 0.7}
+	    # on_press: app.tilt_angle_control_positive(*args)
+
+	MDRaisedButton:
+	    text: "180"
+		# font_size: '24sp'
+	    md_bg_color: 0, 0, 1, 0.5
+	    pos_hint: {"center_x": 0.62, "center_y": 0.7}
+	    # on_press: app.tilt_angle_control_negative(*args)
+
+
+
+
 
 	MDLabel:
 		id: Max_Velocity 
 		text: "Rotational Velocity:"
-	    pos_hint: {"center_x": 0.9, "center_y": 0.8}
+		font_size: '22sp'
+	    pos_hint: {"center_x": 0.55, "center_y": 0.8}
 		size_hint: 1,1
 	
 	MDLabel:
 		id: Max_Velocity_value_text
 		text: "Value"
-	    pos_hint: {"center_x": 1.1, "center_y": 0.8}
+	    pos_hint: {"center_x": 1.4, "center_y": 0.8}
+		size_hint: 1,1
+	
+	MDLabel:
+		id: Spacer
+		text: "Current Value: "
+	    pos_hint: {"center_x": 1.2, "center_y": 0.8}
 		size_hint: 1,1
 
 	MDRaisedButton:
-	    text: "+"
-		font_size: '24sp'
+	    text: "Slow"
+		# font_size: '24sp'
 	    md_bg_color: 0, 0, 1, 0.5
-	    pos_hint: {"center_x": 0.2, "center_y": 0.8}
+	    pos_hint: {"center_x": 0.35, "center_y": 0.8}
 	    on_press: app.max_vel_control_positive(*args)
 
 	MDRaisedButton:
-	    text: "-"
-		font_size: '24sp'
+	    text: "Medium"
+		# font_size: '24sp'
 	    md_bg_color: 0, 0, 1, 0.5
-	    pos_hint: {"center_x": 0.32, "center_y": 0.8}
+	    pos_hint: {"center_x": 0.45, "center_y": 0.8}
 	    on_press: app.max_vel_control_negative(*args)
+
+	MDRaisedButton:
+	    text: "Fast"
+		# font_size: '24sp'
+	    md_bg_color: 0, 0, 1, 0.5
+	    pos_hint: {"center_x": 0.55, "center_y": 0.8}
+	    # on_press: app.max_vel_control_negative(*args)
+
+
+
+
 
 	MDRaisedButton:
 	    text: "Execute Pour"
@@ -123,3 +218,19 @@ FloatLayout:
 		size_hint: (0.2, 0.1)
 	    pos_hint: {"center_x": 0.5, "center_y": 0.2}
 	    on_press: app.execute_pour_action(*args)
+
+	MDRaisedButton:
+	    text: "Reset"
+		# font_size: '24sp'
+	    md_bg_color: 0, 0, 1, 0.5
+		# size_hint: (0.2, 0.1)
+	    pos_hint: {"center_x": 0.95, "center_y": 0.95}
+	    on_press: app.execute_reset_pour_position(*args)
+
+	# MDIconButton:
+	# 	icon: "/home/andre/catkin_ws/src/ROS_KinovaGen3LiteAR/Images/velocity.png"
+	#     pos_hint: {"center_x": 0.9, "center_y": 0.8}
+
+	# MDIconButton:
+	# 	icon: "/home/andre/Downloads/kinova_ar.jpg"
+	#     pos_hint: {"center_x": 0.5, "center_y": 0.5}

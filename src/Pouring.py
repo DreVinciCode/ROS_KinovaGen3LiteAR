@@ -119,6 +119,7 @@ class ExampleMoveItTrajectories(object):
 
       self.angle_tilt_dec_pub = rospy.Subscriber("/KinovaAR/tiltNegative", Empty, self.set_max_angle_dec_callback)
 
+      self.reset_pour_position_pub = rospy.Subscriber("/KinovaAR/reset_pour_posiiton", Empty, self.resetToHome)
       # self.plan_pour_actions_sub = rospy.Subscriber("/KinovaAR/plan_pour", Empty, self.plan_pour_speed)
 
     except Exception as e:   
@@ -212,7 +213,7 @@ class ExampleMoveItTrajectories(object):
     self.reach_pour_home_joint_values()
     self.arm_group.go(wait=True)
    
-  def resetToHome(self):
+  def resetToHome(self, data):
     self.reach_pour_home_joint_values()
     self.arm_group.go(wait=True)
 

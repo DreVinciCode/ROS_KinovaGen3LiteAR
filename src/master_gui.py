@@ -50,9 +50,13 @@ class Pouring_Control_Panel(MDApp):
 	def execute_pour_action(self, *args):
 		execute_action_pub.publish(Empty())
 
+	def execute_reset_pour_position(self, *args):
+		execute_reset_position_pub.publish(Empty())
+
 if __name__ == "__main__":
 	
 	execute_action_pub = rospy.Publisher("/KinovaAR/execute_action", Empty, queue_size=1)
+	execute_reset_position_pub = rospy.Publisher("/KinovaAR/reset_pour_posiiton", Empty, queue_size=1)
 
 	translate_pos_x_pub = rospy.Publisher("/KinovaAR/translatePositiveX", Empty, queue_size=1)
 	translate_neg_x_pub = rospy.Publisher("/KinovaAR/translateNegativeX", Empty, queue_size=1)
