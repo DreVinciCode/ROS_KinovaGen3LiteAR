@@ -2,7 +2,7 @@
 <launch>
 
     <include file="$(find kortex_driver)/launch/kortex_driver.launch">
-        <arg name="rviz_config" value="$(find kinova_ar)/rviz_configs/kinova_rviz.rviz"/>
+        <arg name="rviz_config" value="$(find kinova_ar)/rviz_configs/Multiple_Trajectories.rviz"/>
         <arg name="arm" value="gen3_lite"/>
         <arg name="dof" value="6"/>
     </include>
