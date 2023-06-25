@@ -4,14 +4,12 @@ Panels:
     Name: Displays
     Property Tree Widget:
       Expanded:
-        - /Global Options1
         - /Status1
         - /First Trajectory1
-        - /First Trajectory1/Planning Request1
+        - /First Trajectory1/Scene Robot1
         - /First Trajectory1/Planned Path1
+        - /First Trajectory1/Planned Path1/Links1
         - /Second Trajectory1
-        - /Second Trajectory1/Planning Request1
-        - /Second Trajectory1/Planned Path1
       Splitter Ratio: 0.501006007194519
     Tree Height: 413
   - Class: rviz/Selection
@@ -86,7 +84,7 @@ Visualization Manager:
         Color Enabled: true
         Interrupt Display: false
         Links:
-          All Links Enabled: true
+          All Links Enabled: false
           Expand Joint Details: false
           Expand Link Details: false
           Expand Tree: false
@@ -153,7 +151,7 @@ Visualization Manager:
             Alpha: 1
             Show Axes: false
             Show Trail: false
-            Value: true
+            Value: false
           tool_frame:
             Alpha: 1
             Show Axes: false
@@ -540,7 +538,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 2.4102864265441895
+      Distance: 1.2719850540161133
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1

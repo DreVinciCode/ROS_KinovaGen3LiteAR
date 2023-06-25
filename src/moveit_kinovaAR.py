@@ -82,6 +82,9 @@ class ExampleMoveItTrajectories(object):
     self.FirstTrajectory = ()
     self.SecondTrajectory = ()
 
+    self.max_velocity = 1
+    self.grasp_angle = 0
+
     self.approachpose = Pose()
 
     try:
@@ -202,8 +205,8 @@ class ExampleMoveItTrajectories(object):
       rospy.logerr("Failed to call ROS spin")
 
   def max_velocity_change_callback(self, data):
-    self.arm_group.set_max_velocity_scaling_factor(data.data)
-
+    self.max_velocity = data.data
+    # self.arm_group.set_max_velocity_scaling_factor(data.data)
 
   def waypoint_callback(self, data):
     self.waypoint_array = data
@@ -217,7 +220,12 @@ class ExampleMoveItTrajectories(object):
 
     self.reach_cartesian_pose(pose=self.waypoint_array.poses[0], tolerance=0.01, constraints=None)
     self.trajectory_execution_callback(Empty())  
-    # self.ShakeTest() 
+    
+    joint_positions = self.arm_group.get_current_joint_values()
+    self.grasp_angle = joint_positions[5]
+
+
+    self.ShakeTest() 
     self.reach_cartesian_pose(pose=self.approachpose, tolerance=0.01, constraints=None)
     self.arm_group.go(wait= True)
     self.example_rest_the_robot()
@@ -245,6 +253,7 @@ class ExampleMoveItTrajectories(object):
     self.approachReturn = self.approach
     try:
       sequence &= self.arm_group.execute(self.approach, wait=True)
+
       self.approachpose = self.arm_group.get_current_pose()
       sequence &= self.arm_group.execute(self.grasp, wait=True)
 
@@ -253,6 +262,7 @@ class ExampleMoveItTrajectories(object):
         rospy.logerr("Failed to call ExecuteAction for First Trajectory")
         # return False
     else:
+
       self.ShakeTest()
       self.reach_gripper_position(0.9)
       self.reach_cartesian_pose(pose=self.approachpose, tolerance=0.01, constraints=None)
@@ -560,8 +570,10 @@ class ExampleMoveItTrajectories(object):
     return pose.pose
 
   def reach_cartesian_pose(self, pose, tolerance, constraints):
+
     arm_group = self.arm_group
-    
+    arm_group.set_max_velocity_scaling_factor(self.max_velocity)
+  
     # Set the tolerance
     arm_group.set_goal_position_tolerance(tolerance)
 
@@ -575,13 +587,9 @@ class ExampleMoveItTrajectories(object):
     try:
       # Plan the new trajectory
       self.main_plan = arm_group.plan()
-      # print(arm_group.plan())
     except:
       rospy.logerr("Failed to plan trajectory.")
-      # Call function to reset the position of target pose object to end effector location
-
     else:
-      # return self.wait_for_action_end_or_abort()
       pass      
 
     self.arm_group = arm_group
@@ -612,8 +620,7 @@ class ExampleMoveItTrajectories(object):
       pass
       # return self.wait_for_action_end_or_abort()
 
-      
-
+    
 
   def trajectory_result_callback(self, data):
     
@@ -656,13 +663,14 @@ class ExampleMoveItTrajectories(object):
 
     self.trajectory_position_reached_pub.publish(Empty())
     self.reach_gripper_position(0.001)
-  
 
     self.lift_arm()
+    joint_positions = self.arm_group.get_current_joint_values()
+    self.grasp_angle = joint_positions[5]
 
-    self.shake_test(1, 2, -0.8)
-    self.shake_test(1, -2, 1.6)
-    self.shake_test(1, 2, -0.8)
+    self.shake_test(1, 2.5, -0.8)
+    self.shake_test(1, -2.5, 1.6)
+    self.shake_test(1, self.grasp_angle, 1.6)
     self.shakedown_arm()
     self.shakeup_arm()
     self.shakedown_arm()
@@ -850,7 +858,6 @@ class ExampleMoveItTrajectories(object):
       else:
           time.sleep(0.35)
 
-
   def shake_test(self, velocity, wrist, hand):
     arm_group = self.arm_group
     arm_group.set_max_velocity_scaling_factor(velocity)
@@ -860,8 +867,8 @@ class ExampleMoveItTrajectories(object):
     joint_positions[1] = joint_positions[1]
     joint_positions[2] = joint_positions[2]
     joint_positions[3] = joint_positions[3]
-    joint_positions[4] = joint_positions[4] + hand
-    joint_positions[5] = joint_positions[5] + wrist
+    joint_positions[4] = joint_positions[4]
+    joint_positions[5] = wrist
 
     arm_group.set_joint_value_target(joint_positions)
 
