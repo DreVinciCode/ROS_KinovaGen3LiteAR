@@ -216,11 +216,21 @@ class ExampleMoveItTrajectories(object):
     self.trajectory_execution_callback(Empty())
     self.approachpose = self.arm_group.get_current_pose()
 
-    self.reach_cartesian_pose(pose=self.waypoint_array.poses[0], tolerance=0.01, constraints=None)
+    self.reach_cartesian_pose(pose=self.waypoint_array.poses[0], tolerance=0.001, constraints=None)
     self.trajectory_execution_callback(Empty())  
+<<<<<<< Updated upstream
     # self.PointAndReturn() 
      
     self.reach_cartesian_pose(pose=self.approachpose, tolerance=0.01, constraints=None)
+=======
+    
+    joint_positions = self.arm_group.get_current_joint_values()
+    self.grasp_angle = joint_positions[5]
+
+
+    self.ShakeTest() 
+    self.reach_cartesian_pose(pose=self.approachpose, tolerance=0.001, constraints=None)
+>>>>>>> Stashed changes
     self.arm_group.go(wait= True)
     
     # self.example_rest_the_robot()
@@ -643,6 +653,7 @@ class ExampleMoveItTrajectories(object):
     success = True
     self.trajectory_position_reached_pub.publish(Empty())
     self.reach_gripper_position(0.01)
+<<<<<<< Updated upstream
   
 
     self.lift_arm()
@@ -653,6 +664,24 @@ class ExampleMoveItTrajectories(object):
     self.shakeup_arm()
     self.shakedown_arm()
     self.shakeup_arm()
+=======
+
+    self.lift_arm()
+    # joint_positions = self.arm_group.get_current_joint_values()
+    # self.grasp_angle = joint_positions[5]
+
+    # self.shake_test(1, 2.5, -0.8)
+    # self.shake_test(1, -2.5, 1.6)
+    # self.shake_test(1, self.grasp_angle, 1.6)
+    # self.shakedown_arm()
+    # self.shakeup_arm()
+    # self.shakedown_arm()
+    # self.shakeup_arm()
+    # self.shakedown_arm()
+    # self.shakeup_arm()
+    # self.shakedown_arm()
+    # self.shakeup_arm()
+>>>>>>> Stashed changes
 
     self.lower_arm()
 
