@@ -149,6 +149,11 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
             Value: true
+          table_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
           tool_frame:
             Alpha: 1
             Show Axes: false
@@ -164,7 +169,7 @@ Visualization Manager:
         Show Robot Collision: false
         Show Robot Visual: true
         Show Trail: false
-        State Display Time: 0.1 s
+        State Display Time: REALTIME
         Trail Step Size: 1
         Trajectory Topic: /KinovaAR/FirstTrajectoryDisplay
       Planning Metrics:
@@ -257,6 +262,11 @@ Visualization Manager:
             Show Trail: false
             Value: true
           shoulder_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          table_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
@@ -366,6 +376,11 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
             Value: true
+          table_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
           tool_frame:
             Alpha: 1
             Show Axes: false
@@ -381,7 +396,7 @@ Visualization Manager:
         Show Robot Collision: false
         Show Robot Visual: true
         Show Trail: false
-        State Display Time: 0.05 s
+        State Display Time: REALTIME
         Trail Step Size: 1
         Trajectory Topic: /KinovaAR/SecondTrajectoryDisplay
       Planning Metrics:
@@ -478,6 +493,11 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
             Value: true
+          table_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
           tool_frame:
             Alpha: 1
             Show Axes: false
@@ -520,16 +540,16 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 2.4102864265441895
+      Distance: 1.0360896587371826
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 0.05302274972200394
-        Y: -0.20207150280475616
-        Z: 0.11042425781488419
+        X: 0.12655925750732422
+        Y: -0.20689979195594788
+        Z: 0.03119785338640213
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
@@ -564,5 +584,5 @@ Window Geometry:
   Views:
     collapsed: true
   Width: 1267
-  X: 67
+  X: 606
   Y: 27

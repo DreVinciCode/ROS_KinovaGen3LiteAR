@@ -184,13 +184,14 @@ class ExampleMoveItTrajectories(object):
     if success:    
       rospy.loginfo("Printing current joint values :")
       self.get_current_joint_values()
-     
-      # rospy.loginfo("Printing current position :")
-      # self.get_cartesian_pose()
-      self.reach_gripper_position(0.9)
-
+      # self.reach_home_joint_values()
 
       self.example_rest_the_robot()
+      self.reach_gripper_position(0.9)
+
+      # self.get_current_joint_values()
+     
+
       # self.reach_home_joint_values()
       # self.get_cartesian_pose()
       # self.example_cartesian_waypoint_action()
@@ -218,9 +219,14 @@ class ExampleMoveItTrajectories(object):
     self.reach_cartesian_pose(pose=self.waypoint_array.poses[0], tolerance=0.01, constraints=None)
     self.trajectory_execution_callback(Empty())  
     # self.PointAndReturn() 
+     
     self.reach_cartesian_pose(pose=self.approachpose, tolerance=0.01, constraints=None)
     self.arm_group.go(wait= True)
-    self.example_rest_the_robot()
+    
+    # self.example_rest_the_robot()
+    self.reach_home_joint_values()
+    self.arm_group.go(wait=True)
+
 
 
   def loadFirstTrajectory(self, data):
@@ -257,7 +263,7 @@ class ExampleMoveItTrajectories(object):
       self.reach_gripper_position(0.9)
       self.reach_cartesian_pose(pose=self.approachpose, tolerance=0.01, constraints=None)
       self.arm_group.go(wait= True)
-      self.example_rest_the_robot()
+      self.reach_home_joint_values()
 
 
   def playSecondTrajectory(self, data):
@@ -279,7 +285,7 @@ class ExampleMoveItTrajectories(object):
       self.reach_gripper_position(0.9)
       self.reach_cartesian_pose(pose=self.approachpose, tolerance=0.01, constraints=None)
       self.arm_group.go(wait= True)
-      self.example_rest_the_robot()
+      self.reach_home_joint_values()
   
   def example_home_the_robot(self):
 
@@ -346,17 +352,16 @@ class ExampleMoveItTrajectories(object):
     self.reach_gripper_position(0.5)
     self.example_rest_the_robot()
 
-
-  def reach_dropoff_joint_values(self):
+  def reach_home_joint_values(self):
     arm_group = self.arm_group
     joint_positions = arm_group.get_current_joint_values()
 
-    joint_positions[0] = 1.836
-    joint_positions[1] = -0.129
-    joint_positions[2] = 2.063
-    joint_positions[3] = -1.587
-    joint_positions[4] = -0.941
-    joint_positions[5] = 0.313
+    joint_positions[0] = -0.05
+    joint_positions[1] = 0.36
+    joint_positions[2] = 2.619
+    joint_positions[3] = -1.53
+    joint_positions[4] = -0.698
+    joint_positions[5] = -1.518
 
     arm_group.set_joint_value_target(joint_positions)
 
@@ -369,33 +374,7 @@ class ExampleMoveItTrajectories(object):
       # Call function to reset the position of target pose object to end effector location
 
     else:
-      rospy.loginfo("Planned Initial Pose!")
-      arm_group.go(wait=True)
-
-  def reach_home_joint_values(self):
-    arm_group = self.arm_group
-    joint_positions = arm_group.get_current_joint_values()
-
-    joint_positions[0] = 1.836
-    joint_positions[1] = 0.033
-    joint_positions[2] = 1.57
-    joint_positions[3] = -1.587
-    joint_positions[4] = -1.59
-    joint_positions[5] = 0.304
-
-    arm_group.set_joint_value_target(joint_positions)
-
-    try:
-      # Plan the new trajectory
-      self.main_plan = arm_group.plan()
-      print(arm_group.plan())
-    except:
-      rospy.logerr("Failed to plan trajectory.")
-      # Call function to reset the position of target pose object to end effector location
-
-    else:
-      rospy.loginfo("Planned Initial Pose!")
-      arm_group.go(wait=True)
+      pass
 
   def get_current_joint_values(self):
     arm_group = self.arm_group
@@ -432,7 +411,6 @@ class ExampleMoveItTrajectories(object):
 
     self.reach_cartesian_pose(pose=data.pose, tolerance=0.01, constraints=None)
 
-
   def get_quaternion_from_euler(self, roll, pitch, yaw):
     """
     Convert an Euler angle to a quaternion.
@@ -451,7 +429,6 @@ class ExampleMoveItTrajectories(object):
     qw = np.cos(roll/2) * np.cos(pitch/2) * np.cos(yaw/2) + np.sin(roll/2) * np.sin(pitch/2) * np.sin(yaw/2)
    
     return [qx, qy, qz, qw]
-
 
 
   # def example_cartesian_waypoint_action(self):
@@ -586,11 +563,6 @@ class ExampleMoveItTrajectories(object):
       pass      
 
     self.arm_group = arm_group
-    # Plan
-
-    # rospy.loginfo("Planning")
-
-    # return arm_group.go(wait=True)
 
 
   def trajectory_sequence_callback(self, data):
