@@ -82,9 +82,6 @@ class ExampleMoveItTrajectories(object):
     self.FirstTrajectory = ()
     self.SecondTrajectory = ()
 
-    self.max_velocity = 1
-    self.grasp_angle = 0
-
     self.approachpose = Pose()
 
     try:
@@ -187,13 +184,14 @@ class ExampleMoveItTrajectories(object):
     if success:    
       rospy.loginfo("Printing current joint values :")
       self.get_current_joint_values()
-     
-      # rospy.loginfo("Printing current position :")
-      # self.get_cartesian_pose()
-      self.reach_gripper_position(0.9)
-
+      # self.reach_home_joint_values()
 
       self.example_rest_the_robot()
+      self.reach_gripper_position(0.9)
+
+      # self.get_current_joint_values()
+     
+
       # self.reach_home_joint_values()
       # self.get_cartesian_pose()
       # self.example_cartesian_waypoint_action()
@@ -205,8 +203,8 @@ class ExampleMoveItTrajectories(object):
       rospy.logerr("Failed to call ROS spin")
 
   def max_velocity_change_callback(self, data):
-    self.max_velocity = data.data
-    # self.arm_group.set_max_velocity_scaling_factor(data.data)
+    self.arm_group.set_max_velocity_scaling_factor(data.data)
+
 
   def waypoint_callback(self, data):
     self.waypoint_array = data
@@ -220,15 +218,15 @@ class ExampleMoveItTrajectories(object):
 
     self.reach_cartesian_pose(pose=self.waypoint_array.poses[0], tolerance=0.01, constraints=None)
     self.trajectory_execution_callback(Empty())  
-    
-    joint_positions = self.arm_group.get_current_joint_values()
-    self.grasp_angle = joint_positions[5]
-
-
-    self.ShakeTest() 
+    # self.PointAndReturn() 
+     
     self.reach_cartesian_pose(pose=self.approachpose, tolerance=0.01, constraints=None)
     self.arm_group.go(wait= True)
-    self.example_rest_the_robot()
+    
+    # self.example_rest_the_robot()
+    self.reach_home_joint_values()
+    self.arm_group.go(wait=True)
+
 
 
   def loadFirstTrajectory(self, data):
@@ -253,7 +251,6 @@ class ExampleMoveItTrajectories(object):
     self.approachReturn = self.approach
     try:
       sequence &= self.arm_group.execute(self.approach, wait=True)
-
       self.approachpose = self.arm_group.get_current_pose()
       sequence &= self.arm_group.execute(self.grasp, wait=True)
 
@@ -262,12 +259,11 @@ class ExampleMoveItTrajectories(object):
         rospy.logerr("Failed to call ExecuteAction for First Trajectory")
         # return False
     else:
-
-      self.ShakeTest()
+      self.PointAndReturn()
       self.reach_gripper_position(0.9)
       self.reach_cartesian_pose(pose=self.approachpose, tolerance=0.01, constraints=None)
       self.arm_group.go(wait= True)
-      self.example_rest_the_robot()
+      self.reach_home_joint_values()
 
 
   def playSecondTrajectory(self, data):
@@ -285,11 +281,11 @@ class ExampleMoveItTrajectories(object):
         # return False
     else:
       # sequence &= self.wait_for_action_end_or_abort()
-      self.ShakeTest()
+      self.PointAndReturn()
       self.reach_gripper_position(0.9)
       self.reach_cartesian_pose(pose=self.approachpose, tolerance=0.01, constraints=None)
       self.arm_group.go(wait= True)
-      self.example_rest_the_robot()
+      self.reach_home_joint_values()
   
   def example_home_the_robot(self):
 
@@ -356,16 +352,16 @@ class ExampleMoveItTrajectories(object):
     self.reach_gripper_position(0.5)
     self.example_rest_the_robot()
 
-  def reach_dropoff_joint_values(self):
+  def reach_home_joint_values(self):
     arm_group = self.arm_group
     joint_positions = arm_group.get_current_joint_values()
 
-    joint_positions[0] = 1.836
-    joint_positions[1] = -0.129
-    joint_positions[2] = 2.063
-    joint_positions[3] = -1.587
-    joint_positions[4] = -0.941
-    joint_positions[5] = 0.313
+    joint_positions[0] = -0.05
+    joint_positions[1] = 0.36
+    joint_positions[2] = 2.619
+    joint_positions[3] = -1.53
+    joint_positions[4] = -0.698
+    joint_positions[5] = -1.518
 
     arm_group.set_joint_value_target(joint_positions)
 
@@ -378,33 +374,7 @@ class ExampleMoveItTrajectories(object):
       # Call function to reset the position of target pose object to end effector location
 
     else:
-      rospy.loginfo("Planned Initial Pose!")
-      arm_group.go(wait=True)
-
-  def reach_home_joint_values(self):
-    arm_group = self.arm_group
-    joint_positions = arm_group.get_current_joint_values()
-
-    joint_positions[0] = 1.836
-    joint_positions[1] = 0.033
-    joint_positions[2] = 1.57
-    joint_positions[3] = -1.587
-    joint_positions[4] = -1.59
-    joint_positions[5] = 0.304
-
-    arm_group.set_joint_value_target(joint_positions)
-
-    try:
-      # Plan the new trajectory
-      self.main_plan = arm_group.plan()
-      print(arm_group.plan())
-    except:
-      rospy.logerr("Failed to plan trajectory.")
-      # Call function to reset the position of target pose object to end effector location
-
-    else:
-      rospy.loginfo("Planned Initial Pose!")
-      arm_group.go(wait=True)
+      pass
 
   def get_current_joint_values(self):
     arm_group = self.arm_group
@@ -441,7 +411,6 @@ class ExampleMoveItTrajectories(object):
 
     self.reach_cartesian_pose(pose=data.pose, tolerance=0.01, constraints=None)
 
-
   def get_quaternion_from_euler(self, roll, pitch, yaw):
     """
     Convert an Euler angle to a quaternion.
@@ -460,7 +429,6 @@ class ExampleMoveItTrajectories(object):
     qw = np.cos(roll/2) * np.cos(pitch/2) * np.cos(yaw/2) + np.sin(roll/2) * np.sin(pitch/2) * np.sin(yaw/2)
    
     return [qx, qy, qz, qw]
-
 
 
   # def example_cartesian_waypoint_action(self):
@@ -570,10 +538,8 @@ class ExampleMoveItTrajectories(object):
     return pose.pose
 
   def reach_cartesian_pose(self, pose, tolerance, constraints):
-
     arm_group = self.arm_group
-    arm_group.set_max_velocity_scaling_factor(self.max_velocity)
-  
+    
     # Set the tolerance
     arm_group.set_goal_position_tolerance(tolerance)
 
@@ -587,12 +553,17 @@ class ExampleMoveItTrajectories(object):
     try:
       # Plan the new trajectory
       self.main_plan = arm_group.plan()
+      # print(arm_group.plan())
     except:
       rospy.logerr("Failed to plan trajectory.")
+      # Call function to reset the position of target pose object to end effector location
+
     else:
+      # return self.wait_for_action_end_or_abort()
       pass      
 
     self.arm_group = arm_group
+
 
   def trajectory_sequence_callback(self, data):
     self.last_action_notif_type = None
@@ -604,8 +575,8 @@ class ExampleMoveItTrajectories(object):
         rospy.logerr("Failed to call ExecuteAction")
         # return False
     else:
-      # self.capture_the_flag()
-      pass
+      self.capture_the_flag()
+
 
   def trajectory_execution_callback(self, data):
     self.last_action_notif_type = None
@@ -620,7 +591,8 @@ class ExampleMoveItTrajectories(object):
       pass
       # return self.wait_for_action_end_or_abort()
 
-    
+      
+
 
   def trajectory_result_callback(self, data):
     
@@ -657,22 +629,24 @@ class ExampleMoveItTrajectories(object):
       pass
 
   def execute_sequence_callback(self, data):
-     pass
+    self.capture_the_flag()
 
-  def ShakeTest(self):
+  def capture_the_flag(self):
+     
+    self.reach_gripper_position(0.01)
+    self.reach_dropoff_joint_values()
+    self.reach_gripper_position(0.5)
+    self.reach_home_joint_values()
 
+  def PointAndReturn(self):
+
+    success = True
     self.trajectory_position_reached_pub.publish(Empty())
-    self.reach_gripper_position(0.001)
+    self.reach_gripper_position(0.01)
+  
 
     self.lift_arm()
-    joint_positions = self.arm_group.get_current_joint_values()
-    self.grasp_angle = joint_positions[5]
 
-    self.shake_test(1, 2.5, -0.8)
-    self.shake_test(1, -2.5, 1.6)
-    self.shake_test(1, self.grasp_angle, 1.6)
-    self.shakedown_arm()
-    self.shakeup_arm()
     self.shakedown_arm()
     self.shakeup_arm()
     self.shakedown_arm()
@@ -690,7 +664,9 @@ class ExampleMoveItTrajectories(object):
 
   def move_arm(self, value):
     self.last_action_notif_type = None
-
+    # Get the actual cartesian pose to increment it
+    # You can create a subscriber to listen to the base_feedback
+    # Here we only need the latest message in the topic though
     feedback = rospy.wait_for_message("/" + self.robot_name + "/base_feedback", BaseCyclic_Feedback)
 
     # Possible to execute waypointList via execute_action service or use execute_waypoint_trajectory service directly
@@ -727,7 +703,9 @@ class ExampleMoveItTrajectories(object):
   
   def lift_arm(self):
     self.last_action_notif_type = None
-
+    # Get the actual cartesian pose to increment it
+    # You can create a subscriber to listen to the base_feedback
+    # Here we only need the latest message in the topic though
     feedback = rospy.wait_for_message("/" + self.robot_name + "/base_feedback", BaseCyclic_Feedback)
 
     # Possible to execute waypointList via execute_action service or use execute_waypoint_trajectory service directly
@@ -750,7 +728,10 @@ class ExampleMoveItTrajectories(object):
 
     req.input.oneof_action_parameters.execute_waypoint_list.append(trajectory)
 
+    # # Call the service
+    # rospy.loginfo("Sending the robot to the cartesian pose...")
     try:
+        # self.arm_group.execute(req, wait=True)
         self.execute_action(req)
     except rospy.ServiceException:
         rospy.logerr("Failed to call ExecuteWaypointTrajectory")
@@ -761,7 +742,9 @@ class ExampleMoveItTrajectories(object):
 
   def lower_arm(self):
     self.last_action_notif_type = None
-
+    # Get the actual cartesian pose to increment it
+    # You can create a subscriber to listen to the base_feedback
+    # Here we only need the latest message in the topic though
     feedback = rospy.wait_for_message("/" + self.robot_name + "/base_feedback", BaseCyclic_Feedback)
 
     # Possible to execute waypointList via execute_action service or use execute_waypoint_trajectory service directly
@@ -798,7 +781,12 @@ class ExampleMoveItTrajectories(object):
 
   def shakedown_arm(self):
     self.last_action_notif_type = None
+    # Get the actual cartesian pose to increment it
+    # You can create a subscriber to listen to the base_feedback
+    # Here we only need the latest message in the topic though
     feedback = rospy.wait_for_message("/" + self.robot_name + "/base_feedback", BaseCyclic_Feedback)
+
+    # Possible to execute waypointList via execute_action service or use execute_waypoint_trajectory service directly
     req = ExecuteActionRequest()
     trajectory = WaypointList()
 
@@ -818,18 +806,26 @@ class ExampleMoveItTrajectories(object):
 
     req.input.oneof_action_parameters.execute_waypoint_list.append(trajectory)
 
+    # # Call the service
+    # rospy.loginfo("Sending the robot to the cartesian pose...")
     try:
+        # self.arm_group.execute(req, wait=True)
         self.execute_action(req)
     except rospy.ServiceException:
         rospy.logerr("Failed to call ExecuteWaypointTrajectory")
         return False
     else:
-        time.sleep(0.35)
+        time.sleep(0.3)
+        # return self.wait_for_action_end_or_abort()
 
   def shakeup_arm(self):
       self.last_action_notif_type = None
+      # Get the actual cartesian pose to increment it
+      # You can create a subscriber to listen to the base_feedback
+      # Here we only need the latest message in the topic though
       feedback = rospy.wait_for_message("/" + self.robot_name + "/base_feedback", BaseCyclic_Feedback)
 
+      # Possible to execute waypointList via execute_action service or use execute_waypoint_trajectory service directly
       req = ExecuteActionRequest()
       trajectory = WaypointList()
 
@@ -849,6 +845,8 @@ class ExampleMoveItTrajectories(object):
 
       req.input.oneof_action_parameters.execute_waypoint_list.append(trajectory)
 
+      # # Call the service
+      # rospy.loginfo("Sending the robot to the cartesian pose...")
       try:
           # self.arm_group.execute(req, wait=True)
           self.execute_action(req)
@@ -856,31 +854,8 @@ class ExampleMoveItTrajectories(object):
           rospy.logerr("Failed to call ExecuteWaypointTrajectory")
           return False
       else:
-          time.sleep(0.35)
-
-  def shake_test(self, velocity, wrist, hand):
-    arm_group = self.arm_group
-    arm_group.set_max_velocity_scaling_factor(velocity)
-    joint_positions = arm_group.get_current_joint_values()
-
-    joint_positions[0] = joint_positions[0]
-    joint_positions[1] = joint_positions[1]
-    joint_positions[2] = joint_positions[2]
-    joint_positions[3] = joint_positions[3]
-    joint_positions[4] = joint_positions[4]
-    joint_positions[5] = wrist
-
-    arm_group.set_joint_value_target(joint_positions)
-
-    try:
-      self.main_plan = arm_group.plan()
-      self.arm_group.go(wait=True)
-
-    except:
-      rospy.logerr("Failed to plan trajectory.")
-
-    else:
-      rospy.loginfo("Planned Initial Pose!")
+          time.sleep(0.3)
+          # return self.wait_for_action_end_or_abort()
 
 if __name__ == '__main__':
   example = ExampleMoveItTrajectories()
