@@ -82,6 +82,8 @@ class ExampleMoveItTrajectories(object):
     self.FirstTrajectory = ()
     self.SecondTrajectory = ()
 
+    self.gripper_value = 0.1
+
     self.approachpose = Pose()
 
     try:
@@ -103,15 +105,15 @@ class ExampleMoveItTrajectories(object):
                                                     queue_size=20)
       self.main_plan = self.arm_group.plan()
 
-      # Create the second MoveItInterface necessary objects
-      arm_group_name2 = "arm"
-      self.robot2 = moveit_commander.RobotCommander("robot_description")
-      self.scene2 = moveit_commander.PlanningSceneInterface(ns=rospy.get_namespace())
-      self.arm_group2 = moveit_commander.MoveGroupCommander(arm_group_name2, ns=rospy.get_namespace())
-      self.display_trajectory_publisher2 = rospy.Publisher(rospy.get_namespace() + 'move_group/SecondTrajectory',
-                                                    moveit_msgs.msg.DisplayTrajectory,
-                                                    queue_size=20)
-      self.main_plan2 = self.arm_group2.plan()
+      # # Create the second MoveItInterface necessary objects
+      # arm_group_name2 = "arm"
+      # self.robot2 = moveit_commander.RobotCommander("robot_description")
+      # self.scene2 = moveit_commander.PlanningSceneInterface(ns=rospy.get_namespace())
+      # self.arm_group2 = moveit_commander.MoveGroupCommander(arm_group_name2, ns=rospy.get_namespace())
+      # self.display_trajectory_publisher2 = rospy.Publisher(rospy.get_namespace() + 'move_group/SecondTrajectory',
+      #                                               moveit_msgs.msg.DisplayTrajectory,
+      #                                               queue_size=20)
+      # self.main_plan2 = self.arm_group2.plan()
 
 
 
@@ -183,11 +185,14 @@ class ExampleMoveItTrajectories(object):
 
     if success:    
       rospy.loginfo("Printing current joint values :")
-      self.get_current_joint_values()
+      # self.get_current_joint_values()
       # self.reach_home_joint_values()
 
-      self.example_rest_the_robot()
-      self.reach_gripper_position(0.9)
+      self.random_number()
+
+
+      # self.example_rest_the_robot()
+      # self.reach_gripper_position(0.9)
 
       # self.get_current_joint_values()
      
@@ -201,6 +206,11 @@ class ExampleMoveItTrajectories(object):
       rospy.spin()
     except:
       rospy.logerr("Failed to call ROS spin")
+
+  def random_number(self):
+    values = np.random.uniform(0.1, 0.2, size=100)
+    print(values)
+
 
   def max_velocity_change_callback(self, data):
     self.arm_group.set_max_velocity_scaling_factor(data.data)
@@ -233,6 +243,7 @@ class ExampleMoveItTrajectories(object):
     approach = data.approach.trajectory[0]
     grasp = data.grasp.trajectory[0]
     self.FirstTrajectory = (approach, grasp)
+    print(grasp)
     rospy.loginfo("First Trajectory Logged")
 
   def loadSecondTrajectory(self, data):
@@ -368,7 +379,9 @@ class ExampleMoveItTrajectories(object):
     try:
       # Plan the new trajectory
       self.main_plan = arm_group.plan()
-      # print(arm_group.plan())
+      self.arm_group.go(wait = True)
+      self.reset_position_reached_pub.publish(Empty())
+
     except:
       rospy.logerr("Failed to plan trajectory.")
       # Call function to reset the position of target pose object to end effector location
@@ -619,8 +632,8 @@ class ExampleMoveItTrajectories(object):
     
     try:
       self.main_plan = gripper_group.plan()
-      gripper_joint.move(relative_position * (gripper_max_absolute_pos - gripper_min_absolute_pos) + gripper_min_absolute_pos, True)
-
+      # gripper_joint.move(relative_position * (gripper_max_absolute_pos - gripper_min_absolute_pos) + gripper_min_absolute_pos, True)
+      gripper_joint.move(self.gripper_value)
       # rospy.loginfo("Planning Gripper")
     except:
       rospy.loginfo("Failed to plan gripper")
@@ -640,7 +653,6 @@ class ExampleMoveItTrajectories(object):
 
   def PointAndReturn(self):
 
-    success = True
     self.trajectory_position_reached_pub.publish(Empty())
     self.reach_gripper_position(0.01)
   
@@ -657,7 +669,6 @@ class ExampleMoveItTrajectories(object):
     self.lower_arm()
 
     self.reach_gripper_position(0.9)
-    # self.reach_cartesian_pose(pose=self.waypoint_array.poses[1], tolerance=0.01, constraints=None)
     self.trajectory_execution_callback(Empty())  
 
 
