@@ -600,7 +600,7 @@ class ExampleMoveItTrajectories(object):
     feedback = rospy.wait_for_message("/" + self.robot_name + "/joint_states", JointState)
     
     if(feedback.position[6] < 0.1):
-      self.reach_gripper_position(feedback.position[6] + np.random.uniform(0, 0.02))
+      self.reach_gripper_position(feedback.position[6] + np.random.uniform(0.01, 0.04))
   
     elif(feedback.position[6] > 0.3):
      self.reach_gripper_position(feedback.position[6] + np.random.uniform(0.08, 0.15))
