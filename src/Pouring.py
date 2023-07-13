@@ -38,9 +38,13 @@ class ExampleMoveItTrajectories(object):
     
     self.max_velocity = 1.0
     self.max_angle = 1.65
+    self.horizontal_pos = 0
+    self.vertical_pos = 0
 
     self.pause_time = 1
 
+    rospy.set_param("/KinovaAR/Vertical", self.vertical_pos)
+    rospy.set_param("/KinovaAR/Horizontal", self.horizontal_pos)
     rospy.set_param("/KinovaAR/MaxVelocity", self.max_velocity)
     rospy.set_param("/KinovaAR/TiltAngle", self.max_angle)
 
@@ -171,21 +175,29 @@ class ExampleMoveItTrajectories(object):
   def translate_pos_x_callback(self, data):
     self.translate_along_pos_x()
     time.sleep(self.pause_time)
+    self.horizontal_pos = self.horizontal_pos + 1
+    rospy.set_param("/KinovaAR/Horizontal", self.horizontal_pos)
     self.plan_pour_speed()
 
   def translate_neg_x_callback(self, data):
     self.translate_along_neg_x()
     time.sleep(self.pause_time)
+    self.horizontal_pos = self.horizontal_pos - 1
+    rospy.set_param("/KinovaAR/Horizontal", self.horizontal_pos)
     self.plan_pour_speed()
 
   def translate_pos_z_callback(self, data):
     self.translate_along_pos_z()
     time.sleep(self.pause_time)
+    self.vertical_pos = self.vertical_pos + 1
+    rospy.set_param("/KinovaAR/Vertical", self.vertical_pos)
     self.plan_pour_speed()
 
   def translate_neg_z_callback(self, data):
     self.translate_along_neg_z()
     time.sleep(self.pause_time)
+    self.vertical_pos = self.vertical_pos - 1
+    rospy.set_param("/KinovaAR/Vertical", self.vertical_pos)
     self.plan_pour_speed()
 
   def max_angle_change_callback(self, data):
@@ -251,7 +263,7 @@ class ExampleMoveItTrajectories(object):
       joint_positions[2] = 2.144
       joint_positions[3] = 1.532
       joint_positions[4] = -1.357
-      joint_positions[5] = 1.642
+      joint_positions[5] = 1.6
 
       arm_group.set_joint_value_target(joint_positions)
 
@@ -283,12 +295,14 @@ class ExampleMoveItTrajectories(object):
     current_pose = self.get_cartesian_pose()
     new_pose_goal = current_pose
     new_pose_goal.position.y = current_pose.position.y - 0.01
+    print("Right")
     self.reach_cartesian_pose(pose=new_pose_goal, tolerance=0.001, constraints=None)
 
   def translate_along_neg_x(self):
     current_pose = self.get_cartesian_pose()
     new_pose_goal = current_pose
     new_pose_goal.position.y = current_pose.position.y + 0.01
+    print("Left")
     self.reach_cartesian_pose(pose=new_pose_goal, tolerance=0.001, constraints=None)
 
   def translate_along_pos_z(self):
@@ -373,6 +387,15 @@ class ExampleMoveItTrajectories(object):
 
     rospy.loginfo("Planning")
   
+
+  def source_configurations_callback(self, value):
+
+    if(value == 0):
+      self.max_angle = 0
+      self.max_velocity = 1
+    pass
+
+
 
 if __name__ == '__main__':
   example = ExampleMoveItTrajectories()
