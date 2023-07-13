@@ -263,7 +263,7 @@ class ExampleMoveItTrajectories(object):
       joint_positions[2] = 2.144
       joint_positions[3] = 1.532
       joint_positions[4] = -1.357
-      joint_positions[5] = 1.642
+      joint_positions[5] = 1.6
 
       arm_group.set_joint_value_target(joint_positions)
 
@@ -295,12 +295,14 @@ class ExampleMoveItTrajectories(object):
     current_pose = self.get_cartesian_pose()
     new_pose_goal = current_pose
     new_pose_goal.position.y = current_pose.position.y - 0.01
+    print("Right")
     self.reach_cartesian_pose(pose=new_pose_goal, tolerance=0.001, constraints=None)
 
   def translate_along_neg_x(self):
     current_pose = self.get_cartesian_pose()
     new_pose_goal = current_pose
     new_pose_goal.position.y = current_pose.position.y + 0.01
+    print("Left")
     self.reach_cartesian_pose(pose=new_pose_goal, tolerance=0.001, constraints=None)
 
   def translate_along_pos_z(self):

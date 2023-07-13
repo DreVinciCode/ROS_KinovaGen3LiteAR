@@ -188,6 +188,13 @@ class ExampleMoveItTrajectories(object):
 
   def random_number(self):
     values = np.random.uniform(0.0, 0.2)
+
+    values = self.arm_group.get_goal_tolerance()
+    print(values)
+    self.arm_group.set_goal_orientation_tolerance(0.1)
+    self.arm_group.set_goal_position_tolerance(0.1)
+    values = self.arm_group.get_goal_tolerance()
+
     print(values)
 
 
@@ -220,6 +227,8 @@ class ExampleMoveItTrajectories(object):
 
   def loadFirstTrajectory(self, data):
     approach = data.approach.trajectory[0]
+    print(type(approach))
+    print(approach)
     grasp = data.grasp.trajectory[0]
     self.FirstTrajectory = (approach, grasp)
     rospy.loginfo("First Trajectory Logged")

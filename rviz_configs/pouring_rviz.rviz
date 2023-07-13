@@ -6,6 +6,7 @@ Panels:
       Expanded:
         - /MotionPlanning1
         - /MotionPlanning1/Scene Robot1
+        - /MotionPlanning1/Scene Robot1/Links1
         - /MotionPlanning1/Planned Path1
         - /MotionPlanning1/Planned Path1/Links1
       Splitter Ratio: 0.49413734674453735
@@ -88,12 +89,17 @@ Visualization Manager:
             Alpha: 1
             Show Axes: false
             Show Trail: false
-            Value: false
+            Value: true
           base_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
-            Value: false
+            Value: true
+          coffee_cup:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
           dummy_link:
             Alpha: 1
             Show Axes: false
@@ -106,7 +112,7 @@ Visualization Manager:
             Alpha: 1
             Show Axes: false
             Show Trail: false
-            Value: false
+            Value: true
           gripper_base_link:
             Alpha: 1
             Show Axes: false
@@ -126,7 +132,7 @@ Visualization Manager:
             Alpha: 1
             Show Axes: false
             Show Trail: false
-            Value: false
+            Value: true
           right_finger_dist_link:
             Alpha: 1
             Show Axes: false
@@ -141,7 +147,12 @@ Visualization Manager:
             Alpha: 1
             Show Axes: false
             Show Trail: false
-            Value: false
+            Value: true
+          soda_can:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
           source_cup:
             Alpha: 1
             Show Axes: false
@@ -152,16 +163,11 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
             Value: false
-          target_cup0:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: false
           target_cup1:
             Alpha: 1
             Show Axes: false
             Show Trail: false
-            Value: false
+            Value: true
           tool_frame:
             Alpha: 1
             Show Axes: false
@@ -170,7 +176,7 @@ Visualization Manager:
             Alpha: 1
             Show Axes: false
             Show Trail: false
-            Value: false
+            Value: true
         Loop Animation: true
         Robot Alpha: 0.5
         Robot Color: 150; 50; 150
@@ -211,7 +217,7 @@ Visualization Manager:
       Scene Robot:
         Attached Body Color: 150; 50; 150
         Links:
-          All Links Enabled: true
+          All Links Enabled: false
           Expand Joint Details: false
           Expand Link Details: false
           Expand Tree: false
@@ -226,6 +232,11 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
             Value: true
+          coffee_cup:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: false
           dummy_link:
             Alpha: 1
             Show Axes: false
@@ -274,17 +285,17 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
             Value: true
+          soda_can:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
           source_cup:
             Alpha: 1
             Show Axes: false
             Show Trail: false
-            Value: true
+            Value: false
           table_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          target_cup0:
             Alpha: 1
             Show Axes: false
             Show Trail: false
@@ -322,7 +333,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 1.1930164098739624
+      Distance: 0.676998496055603
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -337,10 +348,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.49018967151641846
+      Pitch: 0.4351895749568939
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 0.6169354915618896
+      Yaw: 0.4169386625289917
     Saved: ~
 Window Geometry:
   Displays:
