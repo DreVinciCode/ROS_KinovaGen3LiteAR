@@ -1,51 +1,48 @@
 #!/usr/bin/python3.7
 
 import rospy
-import time
 from std_msgs.msg import *
-from kivy.uix.screenmanager import Screen
+# from kivy.uix.screenmanager import Screen
 from kivymd.app import MDApp
 from kivy.lang import Builder
+
 from kivymd.uix.button import MDRectangleFlatButton
 
 class Pouring_Control_Panel(MDApp):
 	
 	def __init_(self, **kwargs):
 		super().__init__(**kwargs)
-		self.horizontal_pos = 0
-		self.vertical_pos = 0
 
-	
+
+
 	def build(self):
 		self.screen=Builder.load_file('ros_gui.kv')
-		self.screen.ids.Max_Velocity_value_text.text = "--"
+		self.screen.ids.Max_Velocity_value_text.text = "Fast"
 		self.screen.ids.Tile_angle_value_text.text = "--"
-		self.screen.ids.Horizontal_Position.text = str(0)
-		self.screen.ids.Veritcal_Position.text = str(0)
-
-
+		self.screen.ids.Horizontal_Position.text = str(rospy.get_param("/KinovaAR/Horizontal"))
+		self.screen.ids.Vertical_Position.text = str(rospy.get_param("/KinovaAR/Vertical"))
 		
 		return self.screen
 
 	def horizontal_control_positive(self, *args):
-		self.horizontal_pos += 1
 		translate_pos_x_pub.publish(Empty())
-		# self.screen.ids.Horizontal_Position.text = str(int(self.horizontal_pos))
+		value = rospy.get_param("/KinovaAR/Horizontal") + 1
+		self.screen.ids.Horizontal_Position.text = str(value)
 
 	def horizontal_control_negative(self, *args):
-		# self.horizontal_pos = self.horizontal_pos - 1
 		translate_neg_x_pub.publish(Empty())
-		# self.screen.ids.Horizontal_Position.text = str(int(self.horizontal_pos))
+		value = rospy.get_param("/KinovaAR/Horizontal") - 1
+		self.screen.ids.Horizontal_Position.text = str(value)
 
 	def vertical_control_positive(self, *args):
-		self.vertical_pos = self.vertical_pos + 1
 		translate_pos_z_pub.publish(Empty())
-		self.screen.ids.Vertical_Position.text = str(self.vertical_pos)
+		value = rospy.get_param("/KinovaAR/Vertical") + 1
+		self.screen.ids.Vertical_Position.text = str(value)
 
 	def vertical_control_negative(self, *args):
-		self.vertical = self.vertical - 1
 		translate_neg_z_pub.publish(Empty())
-		self.screen.ids.Veritcal_Position.text = str(self.vertical_pos)
+		value = rospy.get_param("/KinovaAR/Vertical") - 1
+		self.screen.ids.Vertical_Position.text = str(value)
 
 	def tilt_angle_control_positive(self, *args):
 		self.screen.ids.Horizontal_Position.text = "test"
@@ -76,8 +73,8 @@ class Pouring_Control_Panel(MDApp):
 		execute_action_pub.publish(Empty())
 
 	def execute_reset_pour_position(self, *args):
-		self.screen.ids.Max_Velocity_value_text.text = ""
-		self.screen.ids.Tile_angle_value_text.text = ""
+		self.screen.ids.Max_Velocity_value_text.text = "--"
+		self.screen.ids.Tile_angle_value_text.text = "--"
 		self.screen.ids.Horizontal_Position.text = str(0)
 		self.screen.ids.Vertical_Position.text = str(0)
 		execute_reset_position_pub.publish(Empty())
@@ -103,4 +100,5 @@ if __name__ == "__main__":
 
 	rospy.init_node('kivymd_gui', anonymous=True)	
 	Pouring_Control_Panel().run()
+
 
