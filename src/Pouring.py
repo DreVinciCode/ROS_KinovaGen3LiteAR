@@ -50,7 +50,6 @@ class ExampleMoveItTrajectories(object):
     rospy.set_param("/KinovaAR/MaxVelocity", self.max_velocity)
     rospy.set_param("/KinovaAR/TiltAngle", self.max_angle)
 
-    
     try:
       self.is_gripper_present = rospy.get_param(rospy.get_namespace() + "is_gripper_present", False)
       if self.is_gripper_present:
@@ -130,7 +129,6 @@ class ExampleMoveItTrajectories(object):
       self.set_max_velocity_sub = rospy.Subscriber("/KinovaAR/setMaxVelocity", Float32, self.set_max_velocity_callback)
 
       self.reset_pour_position_pub = rospy.Subscriber("/KinovaAR/reset_pour_posiiton", Empty, self.resetToHome)
-      # self.plan_pour_actions_sub = rospy.Subscriber("/KinovaAR/plan_pour", Empty, self.plan_pour_speed)
 
     except Exception as e:   
       print (e)
@@ -207,8 +205,6 @@ class ExampleMoveItTrajectories(object):
   def plan_pour_speed(self):
     arm_group = self.arm_group
     arm_group.set_max_velocity_scaling_factor(self.max_velocity)
-    # arm_group.set_max_acceleration_scaling_factor(0.01)
-
     arm_group.set_goal_position_tolerance(0.1)
     joint_positions = arm_group.get_current_joint_values()
 
@@ -217,7 +213,6 @@ class ExampleMoveItTrajectories(object):
     joint_positions[2] = joint_positions[2]
     joint_positions[3] = joint_positions[3]
     joint_positions[4] = joint_positions[4] 
-    # joint_positions[5] = -0.453
     joint_positions[5] = self.max_angle
 
     arm_group.set_joint_value_target(joint_positions)

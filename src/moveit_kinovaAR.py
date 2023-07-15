@@ -84,6 +84,8 @@ class ExampleMoveItTrajectories(object):
 
     self.approachpose = Pose()
 
+    self.noisy_grasp_pose = Pose()
+
     try:
       self.is_gripper_present = rospy.get_param(rospy.get_namespace() + "is_gripper_present", False)
       if self.is_gripper_present:
@@ -172,31 +174,27 @@ class ExampleMoveItTrajectories(object):
       # self.get_current_joint_values()
       # self.reach_home_joint_values()
 
-      self.random_number()
-
-
       self.example_rest_the_robot()
-      self.reach_gripper_position(0.9)
-
-      self.reach_gripper_position(0.9)
-
+      # self.reach_gripper_position(0.9)
 
     try:
       rospy.spin()
     except:
       rospy.logerr("Failed to call ROS spin")
 
-  def random_number(self):
-    values = np.random.uniform(0.0, 0.2)
 
-    values = self.arm_group.get_goal_tolerance()
-    print(values)
-    self.arm_group.set_goal_orientation_tolerance(0.1)
-    self.arm_group.set_goal_position_tolerance(0.1)
-    values = self.arm_group.get_goal_tolerance()
+  def randomized_pose(self, pose):
+    noisy_values = []
 
-    print(values)
+    for _ in range(3):
+      noisy_values.append(round(np.random.uniform(-0.005, 0.005), 3))
 
+    pose.position.x += noisy_values[0]
+    pose.position.y += noisy_values[1]
+    pose.position.z += noisy_values[2]
+
+    self.noisy_grasp_pose = pose
+    print("Noise grasp pose created")
 
   def max_velocity_change_callback(self, data):
     self.arm_group.set_max_velocity_scaling_factor(data.data)
@@ -205,7 +203,7 @@ class ExampleMoveItTrajectories(object):
   def waypoint_callback(self, data):
     self.waypoint_array = data
     self.reach_cartesian_pose(pose=data.poses[1], tolerance=0.01, constraints=None)
-
+    self.randomized_pose(self.waypoint_array.poses[0])
 
   def waypoint_execute_callback(self,data):  
     
@@ -227,8 +225,6 @@ class ExampleMoveItTrajectories(object):
 
   def loadFirstTrajectory(self, data):
     approach = data.approach.trajectory[0]
-    print(type(approach))
-    print(approach)
     grasp = data.grasp.trajectory[0]
     self.FirstTrajectory = (approach, grasp)
     rospy.loginfo("First Trajectory Logged")
@@ -250,15 +246,20 @@ class ExampleMoveItTrajectories(object):
     try:
       sequence &= self.arm_group.execute(self.approach, wait=True)
       self.approachpose = self.arm_group.get_current_pose()
-      sequence &= self.arm_group.execute(self.grasp, wait=True)
+      
+      # Add a conditional statement to direct to noisy_grasp pose
+      self.reach_cartesian_pose(pose=self.noisy_grasp_pose, tolerance=0.01, constraints=None)
+      self.arm_group.go(wait=True)
+
+      # sequence &= self.arm_group.execute(self.grasp, wait=True)
 
         # self.execute_action(req)
     except rospy.ServiceException:
         rospy.logerr("Failed to call ExecuteAction for First Trajectory")
         # return False
     else:
-      self.ShakeTest()
-      self.reach_gripper_position(0.9)
+      # self.ShakeTest()
+      # self.reach_gripper_position(0.9)
       self.reach_cartesian_pose(pose=self.approachpose, tolerance=0.01, constraints=None)
       self.arm_group.go(wait= True)
       self.reach_home_joint_values()
@@ -325,7 +326,7 @@ class ExampleMoveItTrajectories(object):
         # rospy.loginfo("Sending robot to rest position...")
         try:
             self.execute_action(req)
-            self.reach_gripper_position(0.9)
+            # self.reach_gripper_position(0.9)
 
         except rospy.ServiceException:
             rospy.logerr("Failed to call ExecuteAction")
