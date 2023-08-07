@@ -214,11 +214,19 @@ FloatLayout:
 	    on_press: app.execute_pour_action(*args)
 
 	MDRaisedButton:
-	    text: "Reset"
+	    text: "Home Position"
 		# font_size: '24sp'
 	    md_bg_color: 0, 0, 1, 0.5
 		# size_hint: (0.2, 0.1)
-	    pos_hint: {"center_x": 0.95, "center_y": 0.95}
+	    pos_hint: {"center_x": 0.90, "center_y": 0.95}
+	    on_press: app.execute_reset_home_position(*args)
+
+	MDRaisedButton:
+	    text: "Reset Pour"
+		# font_size: '24sp'
+	    md_bg_color: 0, 0, 1, 0.5
+		# size_hint: (0.2, 0.1)
+	    pos_hint: {"center_x": 0.75, "center_y": 0.95}
 	    on_press: app.execute_reset_pour_position(*args)
 
 	# MDIconButton:

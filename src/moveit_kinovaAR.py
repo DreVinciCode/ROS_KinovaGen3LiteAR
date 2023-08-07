@@ -175,13 +175,12 @@ class ExampleMoveItTrajectories(object):
       # self.reach_home_joint_values()
 
       self.example_rest_the_robot()
-      # self.reach_gripper_position(0.9)
+      self.reach_gripper_position(0.9)
 
     try:
       rospy.spin()
     except:
       rospy.logerr("Failed to call ROS spin")
-
 
   def randomized_pose(self, pose):
     noisy_values = []
@@ -206,13 +205,17 @@ class ExampleMoveItTrajectories(object):
     self.randomized_pose(self.waypoint_array.poses[0])
 
   def waypoint_execute_callback(self,data):  
-    
+    # self.reach_cartesian_pose(pose=data.poses[1], tolerance=0.01, constraints=None)
+
     self.trajectory_execution_callback(Empty())
     self.approachpose = self.arm_group.get_current_pose()
 
     self.reach_cartesian_pose(pose=self.waypoint_array.poses[0], tolerance=0.01, constraints=None)
     self.trajectory_execution_callback(Empty())  
+
     # self.ShakeTest() 
+    self.reset_position_reached_pub.publish(Empty())
+
      
     self.reach_cartesian_pose(pose=self.approachpose, tolerance=0.01, constraints=None)
     self.arm_group.go(wait= True)
@@ -220,6 +223,7 @@ class ExampleMoveItTrajectories(object):
     # self.example_rest_the_robot()
     self.reach_home_joint_values()
     self.arm_group.go(wait=True)
+    self.reach_gripper_position(0.9)
 
 
 
@@ -238,11 +242,10 @@ class ExampleMoveItTrajectories(object):
   def playFirstTrajectory(self, data):
     
     sequence = True
-
     self.approach = self.FirstTrajectory[0]
     self.grasp = self.FirstTrajectory[1]
-
     self.approachReturn = self.approach
+
     try:
       sequence &= self.arm_group.execute(self.approach, wait=True)
       self.approachpose = self.arm_group.get_current_pose()
@@ -258,8 +261,8 @@ class ExampleMoveItTrajectories(object):
         rospy.logerr("Failed to call ExecuteAction for First Trajectory")
         # return False
     else:
-      # self.ShakeTest()
-      # self.reach_gripper_position(0.9)
+      self.ShakeTest()
+      self.reach_gripper_position(0.9)
       self.reach_cartesian_pose(pose=self.approachpose, tolerance=0.01, constraints=None)
       self.arm_group.go(wait= True)
       self.reach_home_joint_values()
@@ -267,14 +270,18 @@ class ExampleMoveItTrajectories(object):
 
   def playSecondTrajectory(self, data):
     sequence = True
-
     self.approach = self.SecondTrajectory[0]
     self.grasp = self.SecondTrajectory[1]
+    self.approachReturn = self.approach
+
     try:
       sequence &= self.arm_group.execute(self.approach, wait=True)
       self.approachpose = self.arm_group.get_current_pose()
-      sequence &= self.arm_group.execute(self.grasp, wait=True)
-        # self.execute_action(req)
+
+      self.reach_cartesian_pose(pose=self.noisy_grasp_pose, tolerance=0.01, constraints=None)
+      self.arm_group.go(wait=True)
+      # sequence &= self.arm_group.execute(self.grasp, wait=True)
+
     except rospy.ServiceException:
         rospy.logerr("Failed to call ExecuteAction for Second Trajectory")
         # return False
@@ -368,7 +375,7 @@ class ExampleMoveItTrajectories(object):
       # Plan the new trajectory
       self.main_plan = arm_group.plan()
       self.arm_group.go(wait = True)
-      self.reset_position_reached_pub.publish(Empty())
+      # self.reset_position_reached_pub.publish(Empty())
 
     except:
       rospy.logerr("Failed to plan trajectory.")
@@ -607,15 +614,7 @@ class ExampleMoveItTrajectories(object):
     self.reach_gripper_position(0.01)
 
     self.lift_arm()
-    feedback = rospy.wait_for_message("/" + self.robot_name + "/joint_states", JointState)
     
-    if(feedback.position[6] < 0.1):
-      self.reach_gripper_position(feedback.position[6] + np.random.uniform(0.01, 0.04))
-  
-    elif(feedback.position[6] > 0.3):
-     self.reach_gripper_position(feedback.position[6] + np.random.uniform(0.08, 0.15))
-      # self.reach_gripper_position(feedback.position[6] + 0.15)
-
     self.shakedown_arm()
     self.shakeup_arm()
     self.shakedown_arm()
@@ -722,7 +721,7 @@ class ExampleMoveItTrajectories(object):
         self.FillCartesianWaypoint(
             feedback.base.commanded_tool_pose_x,
             feedback.base.commanded_tool_pose_y,
-            feedback.base.commanded_tool_pose_z - 0.07,
+            feedback.base.commanded_tool_pose_z - 0.08,
             feedback.base.commanded_tool_pose_theta_x,
             feedback.base.commanded_tool_pose_theta_y,
             feedback.base.commanded_tool_pose_theta_z,
@@ -743,7 +742,7 @@ class ExampleMoveItTrajectories(object):
         rospy.logerr("Failed to call ExecuteWaypointTrajectory")
         return False
     else:
-        time.sleep(0.3)
+        time.sleep(0.4)
         # return self.wait_for_action_end_or_abort()
 
   def shakeup_arm(self):
@@ -761,7 +760,7 @@ class ExampleMoveItTrajectories(object):
           self.FillCartesianWaypoint(
               feedback.base.commanded_tool_pose_x,
               feedback.base.commanded_tool_pose_y,
-              feedback.base.commanded_tool_pose_z + 0.07,
+              feedback.base.commanded_tool_pose_z + 0.08,
               feedback.base.commanded_tool_pose_theta_x,
               feedback.base.commanded_tool_pose_theta_y,
               feedback.base.commanded_tool_pose_theta_z,
@@ -782,7 +781,7 @@ class ExampleMoveItTrajectories(object):
           rospy.logerr("Failed to call ExecuteWaypointTrajectory")
           return False
       else:
-          time.sleep(0.3)
+          time.sleep(0.4)
           # return self.wait_for_action_end_or_abort()
 
 if __name__ == '__main__':

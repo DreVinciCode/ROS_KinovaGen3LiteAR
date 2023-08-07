@@ -60,7 +60,7 @@ class KinovaARTrajectoryManager(object):
         if(True):
             self.FirstTrajectory = data
             self.FirstTrajectory_Publisher.publish(self.FirstTrajectory)
-            self.FirstTrajectoryDisplay_Publisher.publish(data)
+            self.SecondTrajectoryDisplay_Publisher.publish(data)
         else:
             pass
 

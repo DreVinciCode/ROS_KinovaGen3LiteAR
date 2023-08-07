@@ -73,6 +73,9 @@ class Pouring_Control_Panel(MDApp):
 		execute_action_pub.publish(Empty())
 
 	def execute_reset_pour_position(self, *args):
+		execute_reset_pour_pub.publish(Empty())
+
+	def execute_reset_home_position(self, *args):
 		self.screen.ids.Max_Velocity_value_text.text = "--"
 		self.screen.ids.Tile_angle_value_text.text = "--"
 		self.screen.ids.Horizontal_Position.text = str(0)
@@ -83,6 +86,7 @@ if __name__ == "__main__":
 	
 	execute_action_pub = rospy.Publisher("/KinovaAR/execute_action", Empty, queue_size=1)
 	execute_reset_position_pub = rospy.Publisher("/KinovaAR/reset_pour_posiiton", Empty, queue_size=1)
+	execute_reset_pour_pub = rospy.Publisher("/KinovaAR/reset_joint_posiiton", Empty, queue_size=1)
 
 	translate_pos_x_pub = rospy.Publisher("/KinovaAR/translatePositiveX", Empty, queue_size=1)
 	translate_neg_x_pub = rospy.Publisher("/KinovaAR/translateNegativeX", Empty, queue_size=1)

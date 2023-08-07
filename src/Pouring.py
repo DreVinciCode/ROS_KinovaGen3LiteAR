@@ -45,6 +45,8 @@ class ExampleMoveItTrajectories(object):
 
     self.pause_time = 1
 
+    self.translate_value = 0.015
+
     rospy.set_param("/KinovaAR/Vertical", self.vertical_pos)
     rospy.set_param("/KinovaAR/Horizontal", self.horizontal_pos)
     rospy.set_param("/KinovaAR/MaxVelocity", self.max_velocity)
@@ -129,6 +131,8 @@ class ExampleMoveItTrajectories(object):
       self.set_max_velocity_sub = rospy.Subscriber("/KinovaAR/setMaxVelocity", Float32, self.set_max_velocity_callback)
 
       self.reset_pour_position_pub = rospy.Subscriber("/KinovaAR/reset_pour_posiiton", Empty, self.resetToHome)
+
+      self.reset_pour_wrist_position_sub = rospy.Subscriber("/KinovaAR/reset_joint_posiiton", Empty, self.resetToPour)
 
     except Exception as e:   
       print (e)
@@ -229,13 +233,23 @@ class ExampleMoveItTrajectories(object):
   def execute_action_callback(self, data):  
     self.arm_group.go(wait=True)
     time.sleep(3)
-    self.reach_pour_home_joint_values()
-    self.arm_group.go(wait=True)
+    # self.reach_pour_home_joint_values()
+    # self.arm_group.go(wait=True)
    
+
+  def resetToPour(self, data):
+
+    self.reach_pour_joint_values()
+    self.arm_group.go(wait=True)
+
+
   def resetToHome(self, data):
+
     self.horizontal_pos = 0
     self.vertical_pos = 0
     self.max_velocity = 1
+    self.arm_group.set_max_velocity_scaling_factor(self.max_velocity)
+
     self.max_angle = 1.6
 
     rospy.set_param("/KinovaAR/Horizontal", self.horizontal_pos)
@@ -254,6 +268,30 @@ class ExampleMoveItTrajectories(object):
             return False
         else:
             time.sleep(0.01)
+
+
+  def reach_pour_joint_values(self):
+      arm_group = self.arm_group
+      joint_positions = arm_group.get_current_joint_values()
+
+      joint_positions[5] = 1.6
+
+      arm_group.set_joint_value_target(joint_positions)
+
+      try:
+        # Plan the new trajectory
+        self.main_plan = arm_group.plan()
+        arm_group.go(wait=True)
+
+      except:
+        rospy.logerr("Failed to plan trajectory.")
+        # Call function to reset the position of target pose object to end effector location
+
+      else:
+        rospy.loginfo("Planned Initial Pose!")
+      #   return self.wait_for_action_end_or_abort()
+
+
 
   def reach_pour_home_joint_values(self):
       arm_group = self.arm_group
@@ -295,7 +333,7 @@ class ExampleMoveItTrajectories(object):
   def translate_along_pos_x(self):
     current_pose = self.get_cartesian_pose()
     new_pose_goal = current_pose
-    new_pose_goal.position.y = current_pose.position.y - 0.01
+    new_pose_goal.position.y = current_pose.position.y - self.translate_value
     self.reach_cartesian_pose(pose=new_pose_goal, tolerance=0.001, constraints=None)
     self.horizontal_pos = self.horizontal_pos + 1
     rospy.set_param("/KinovaAR/Horizontal", self.horizontal_pos)
@@ -304,7 +342,7 @@ class ExampleMoveItTrajectories(object):
   def translate_along_neg_x(self):
     current_pose = self.get_cartesian_pose()
     new_pose_goal = current_pose
-    new_pose_goal.position.y = current_pose.position.y + 0.01
+    new_pose_goal.position.y = current_pose.position.y + self.translate_value
     self.reach_cartesian_pose(pose=new_pose_goal, tolerance=0.001, constraints=None)
     self.horizontal_pos = self.horizontal_pos - 1
     rospy.set_param("/KinovaAR/Horizontal", self.horizontal_pos)
@@ -312,13 +350,13 @@ class ExampleMoveItTrajectories(object):
   def translate_along_pos_z(self):
     current_pose = self.get_cartesian_pose()
     new_pose_goal = current_pose
-    new_pose_goal.position.z = current_pose.position.z + 0.01
+    new_pose_goal.position.z = current_pose.position.z + self.translate_value
     self.reach_cartesian_pose(pose=new_pose_goal, tolerance=0.001, constraints=None)
 
   def translate_along_neg_z(self):
     current_pose = self.get_cartesian_pose()
     new_pose_goal = current_pose
-    new_pose_goal.position.z = current_pose.position.z - 0.01
+    new_pose_goal.position.z = current_pose.position.z - self.translate_value
     self.reach_cartesian_pose(pose=new_pose_goal, tolerance=0.001, constraints=None)
 
   def dec_max_velocity(self):
