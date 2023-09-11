@@ -2,6 +2,8 @@
 
 from geometry_msgs.msg import Twist
 from kortex_driver.msg import BaseCyclic_Feedback
+from std_msgs.msg import *
+
 
 import rospy
 
@@ -16,6 +18,13 @@ class messageConverter:
         self.Kinova_Velocity = rospy.Publisher("KinovaAR/end_effector_velocity", Twist, queue_size=1)
 
         self.KinovaAR_velocity_correction = rospy.Publisher("/my_gen3_lite/in/cartesian_velocity_mod", Twist, queue_size=1)
+
+
+        self.kinovaAR_clearfaults = rospy.Publisher("/my_gen3_lite/in/clear_faults", Empty, queue_size=1)
+
+        self.kinovaAR_stop = rospy.Publisher("/my_gen3_lite/in/emergency_stop", Empty, queue_size=1)
+
+        self.emergency_stop_flag = False
 
     	rospy.spin()
 
@@ -57,12 +66,22 @@ class messageConverter:
         if(z_pos < rospy.get_param("/kinovaAR/z_min")):
             # What command to send? Stop command? Opposite velocity commands?
             
+            if(not self.emergency_stop_flag):
+
+                self.kinovaAR_stop.publish(Empty())
+                self.emergency_stop_flag = True
+                # self.kinovaAR_clearfaults.publish(Empty())
+
             # Trigger only if this condition is met. 
             Twist_Message = Twist()
-            Twist_Message.linear.z = 0.1
+            Twist_Message.linear.z = 0.2
             self.KinovaAR_velocity_correction.publish(Twist_Message)
             Twist_Message.linear.z = 0.0
             self.KinovaAR_velocity_correction.publish(Twist_Message)
+
+        elif(z_pos > rospy.get_param("/kinovaAR/z_min")):
+            self.emergency_stop_flag = False
+
 
         if(z_pos > rospy.get_param("/kinovaAR/z_max")):
             # What command to send? Stop command? Opposite velocity commands?
