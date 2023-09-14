@@ -142,7 +142,7 @@ class ExampleMoveItTrajectories(object):
       self.waypoint_execute_sub = rospy.Subscriber("/KinovaAR/WayPointsExecute", Empty, self.waypoint_execute_callback)
 
       self.GripperSubscriber = rospy.Subscriber("/KinovaAR/Pose", Int16, self.KinovaPose_callback)
-      self.RL_Home_Position_Subscriber = rospy.Subscriber("/KinovaAR/RL_HomePosition", Empty, self.reach_home_joint_values)
+      self.RL_Home_Position_Subscriber = rospy.Subscriber("/KinovaAR/HomePosition", Empty, self.reach_home_joint_values)
 
 
       self.trajectorySequence_Publisher = rospy.Publisher("/KinovaAR/execute_practice_sequence", Empty, queue_size=1)
@@ -172,10 +172,10 @@ class ExampleMoveItTrajectories(object):
     if success:    
       rospy.loginfo("Printing current joint values :")
       # self.get_current_joint_values()
-      # self.reach_home_joint_values()
+      self.reach_home_joint_values()
 
-      self.example_rest_the_robot()
-      self.reach_gripper_position(0.9)
+      # self.example_rest_the_robot()
+      self.reach_gripper_position(0)
 
     try:
       rospy.spin()
@@ -362,12 +362,12 @@ class ExampleMoveItTrajectories(object):
     arm_group = self.arm_group
     joint_positions = arm_group.get_current_joint_values()
 
-    joint_positions[0] = -0.05
-    joint_positions[1] = 0.36
-    joint_positions[2] = 2.619
-    joint_positions[3] = -1.53
-    joint_positions[4] = -0.698
-    joint_positions[5] = -1.518
+    joint_positions[0] = 0.079
+    joint_positions[1] = 0.116
+    joint_positions[2] = 1.66
+    joint_positions[3] = -1.57
+    joint_positions[4] = -1.407
+    joint_positions[5] = -1.362
 
     arm_group.set_joint_value_target(joint_positions)
 
