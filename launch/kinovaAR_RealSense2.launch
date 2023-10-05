@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<launch>
+
+    <include file="$(find kortex_driver)/launch/kortex_driver_realsense2.launch">
+        <arg name="rviz_config" value="$(find kinova_ar)/rviz_configs/kinova_realsense2.rviz"/>
+        <arg name="arm" value="gen3_lite"/>
+        <arg name="dof" value="6"/>
+    </include>
+        
+        
+    <include file="$(find realsense2_camera)/launch/rs_camera.launch">
+        <arg name="filters" value="pointcloud"/>
+    </include>
+
+
+    <include file="$(find ros_tcp_endpoint)/launch/endpoint.launch"/>
+
+    <include file="$(find kinova_ar)/launch/gripper.launch"/>
+
+    
+    <node pkg="kinova_ar" name="GripperPose" type="GripperController.py" output="screen"> </node>
+    <node pkg="kinova_ar" name="TwistMessageConverter" type="ConvertTwistToTwistCommand.py" output="screen"> </node>
+    <node pkg="kinova_ar" name="EndEffectorPose" type="kinova_ar_EE_pose.py" output="screen"> </node>
+    <!-- <node pkg="kinova_ar" name="Waypoint" type="WaypointExample.py" output="screen"> </node> -->
+
+    <node pkg="kinova_ar" name="UnityRosParamManager" type="UnityRosParamManager.py" output="screen"> </node>
+
+
+    <rosparam>
+        kinovaAR/z_min: 0.02
+        kinovaAR/z_max: 1
+
+        kinovaAR/y_min: 1
+        kinovaAR/y_max: 1
+
+        kinovaAR/x_min: 1
+        kinovaAR/x_max: 2
+    </rosparam>
+
+
+</launch>
