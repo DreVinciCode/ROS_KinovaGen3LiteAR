@@ -2,8 +2,7 @@
 
 from moveit_msgs.msg import *
 from std_msgs.msg import *
-from kinova_study.msg import load_trajectory
-
+from kinova_study.msg import *
 import rospy
 
 class KinovaARTrajectoryManager(object):
@@ -18,6 +17,14 @@ class KinovaARTrajectoryManager(object):
         self.FirstTrajectory = DisplayTrajectory()
         self.SecondTrajectory = DisplayTrajectory()
 
+        self.trajectories_msg = LoadTrajectoryMultiArray()
+        self._planA = load_trajectory()
+        self._planB = load_trajectory()
+
+        self.received_messages = []
+
+        self.trajectoryInfo = TrajectoryInfo()
+
         try:
             rospy.init_node('TrajectoryManager')
             self.trajectory_planner_sub = rospy.Subscriber("/my_gen3_lite/move_group/display_planned_path", DisplayTrajectory, self.trajectory_planner_callback)
@@ -29,6 +36,9 @@ class KinovaARTrajectoryManager(object):
             self.SecondTrajectoryDisplay_Publisher = rospy.Publisher("/KinovaAR/SecondTrajectoryDisplay", DisplayTrajectory, queue_size=1)
 
             self.KeyPress_sub = rospy.Subscriber("/KinovaAR/save", Empty, self.change_bool_callback)
+
+            self.TrajectorySubscriber_sub = rospy.Subscriber("/KinovaAR/TrajectoryCombined", load_trajectory, self.temp)
+            self.PublishTrajectories_msg = rospy.Publisher("/KinovaAR/TrajectoryCombined_test", LoadTrajectoryMultiArray, queue_size=1)
 
 
         except Exception as e:   
@@ -42,6 +52,26 @@ class KinovaARTrajectoryManager(object):
             rospy.spin()
         except:
             rospy.logerr("Failed to call ROS spin")
+
+
+    def temp(self, data):
+
+        # self.grasp_regions = {"middle-body": 0, "lower-body": 1, "upper-handle": 2, "lower-handle": 3, "middle-rim": 4, "lower-rim": 5, "rim-body": 6}
+        self.received_messages.append(data)
+
+        if len(self.received_messages) == 2:
+
+            self._planA = self.received_messages[0]
+            self._planB = self.received_messages[1]
+
+
+            self.trajectories_msg.Trajectories = [self._planA, self._planB]
+
+            self.trajectoryInfo.trajectories = self.trajectories_msg
+            self.trajectoryInfo.grasp_region = 0
+
+            self.PublishTrajectories_msg.publish(self.trajectories_msg)
+            print("2 recorded")
 
     def change_bool_callback(self, data):
         

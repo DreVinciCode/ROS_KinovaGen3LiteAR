@@ -44,7 +44,7 @@ from geometry_msgs.msg import PoseStamped, PoseArray
 from kortex_driver.srv import *
 from kortex_driver.msg import *
 from moveit_msgs.msg import *
-from kinova_study.msg import load_trajectory
+from kinova_study.msg import *
 from sensor_msgs.msg import JointState
 
 from tf.transformations import euler_from_quaternion, quaternion_from_euler
@@ -149,7 +149,10 @@ class ExampleMoveItTrajectories(object):
 
       self.reset_position_sub = rospy.Subscriber("/KinovaAR/reset_position", Empty, self.reset_position_callback)
       self.reset_position_reached_pub = rospy.Publisher("/KinovaAR/reset_position/reached", Empty, queue_size=1)
-      self.trajectory_position_reached_pub = rospy.Publisher("/KinovaAR/trajectory_position/reached", Empty, queue_size=1)
+
+      # self.approach_position_reached_pub = rospy.Publisher("/KinovaAR/approach_position/reached", Empty, queue_size=1)      
+      # self.grasp_position_reached_pub = rospy.Publisher("/KinovaAR/grasp_position/reached", Empty, queue_size=1)
+      # self.handover_position_reached_pub = rospy.Publisher("/KinovaAR/handover_position/reached", Empty, queue_size=1)
 
       self.load_FirstTrajectory_sub = rospy.Subscriber("/KinovaAR/FirstTrajectoryCombined", load_trajectory, self.loadFirstTrajectory)
       self.load_SecondTrajectory_sub = rospy.Subscriber("/KinovaAR/SecondTrajectoryCombined", load_trajectory, self.loadSecondTrajectory)
@@ -172,10 +175,12 @@ class ExampleMoveItTrajectories(object):
     if success:    
       rospy.loginfo("Printing current joint values :")
       # self.get_current_joint_values()
-      self.reach_home_joint_values()
+      # self.reach_home_joint_values()
 
-      # self.example_rest_the_robot()
+      self.example_rest_the_robot()
       self.reach_gripper_position(0.9)
+
+      # self.reach_handover_joint_values()
 
     try:
       rospy.spin()
@@ -209,20 +214,23 @@ class ExampleMoveItTrajectories(object):
 
     self.trajectory_execution_callback(Empty())
     self.approachpose = self.arm_group.get_current_pose()
-
+    self.reset_position_reached_pub.publish(Empty())
+    
     self.reach_cartesian_pose(pose=self.waypoint_array.poses[0], tolerance=0.01, constraints=None)
     self.trajectory_execution_callback(Empty())  
-
-    # self.ShakeTest() 
     self.reset_position_reached_pub.publish(Empty())
 
-     
-    self.reach_cartesian_pose(pose=self.approachpose, tolerance=0.01, constraints=None)
-    self.arm_group.go(wait= True)
-    
-    # self.example_rest_the_robot()
+
+    self.reach_cartesian_pose(pose=self.waypoint_array.poses[2], tolerance=0.01, constraints=None)
+    self.trajectory_execution_callback(Empty()) 
+
+
+    # self.reach_handover_joint_values()
+    # self.handover_position_reached_pub.publish(Empty())
+    self.reset_position_reached_pub.publish(Empty())
+
     self.reach_home_joint_values()
-    self.arm_group.go(wait=True)
+    # self.arm_group.go(wait=True)
     self.reach_gripper_position(0.9)
 
 
@@ -252,11 +260,8 @@ class ExampleMoveItTrajectories(object):
       
       # Add a conditional statement to direct to noisy_grasp pose
       # self.reach_cartesian_pose(pose=self.noisy_grasp_pose, tolerance=0.01, constraints=None)
-      # sequence &= self.arm_group.execute(self.grasp, wait=True)
-
-      self.arm_group.go(wait=True)
-
       sequence &= self.arm_group.execute(self.grasp, wait=True)
+      # self.arm_group.go(wait=True)
 
         # self.execute_action(req)
     except rospy.ServiceException:
@@ -264,10 +269,16 @@ class ExampleMoveItTrajectories(object):
         # return False
     else:
       # self.ShakeTest()
-      self.reach_gripper_position(0.9)
-      self.reach_cartesian_pose(pose=self.approachpose, tolerance=0.01, constraints=None)
-      self.arm_group.go(wait= True)
-      self.reach_home_joint_values()
+      self.reach_gripper_position(0.1)
+      
+      
+      # self.reach_handover_joint_values()
+
+     
+     
+      # self.reach_cartesian_pose(pose=self.approachpose, tolerance=0.01, constraints=None)
+      # self.arm_group.go(wait= True)
+      # self.reach_home_joint_values()
 
 
   def playSecondTrajectory(self, data):
@@ -359,6 +370,40 @@ class ExampleMoveItTrajectories(object):
     rospy.loginfo("Reseting Position!")
     self.reach_gripper_position(0.5)
     self.example_rest_the_robot()
+
+  def reach_handover_joint_values(self):
+    arm_group = self.arm_group
+    joint_positions = arm_group.get_current_joint_values()
+
+    # Blue side up?
+    # joint_positions[0] = -0.19
+    # joint_positions[1] = -0.97
+    # joint_positions[2] = 1.612
+    # joint_positions[3] = 1.368
+    # joint_positions[4] = -0.996
+    # joint_positions[5] = -1.45
+
+    # Try new joints
+    joint_positions[0] = -0.052
+    joint_positions[1] = -0.72
+    joint_positions[2] = 1.99
+    joint_positions[3] = -1.64
+    joint_positions[4] = 1.149
+    joint_positions[5] = -1.55
+    arm_group.set_joint_value_target(joint_positions)
+
+    try:
+      # Plan the new trajectory
+      self.main_plan = arm_group.plan()
+      self.arm_group.go(wait = True)
+      # self.reset_position_reached_pub.publish(Empty())
+
+    except:
+      rospy.logerr("Failed to plan trajectory.")
+      # Call function to reset the position of target pose object to end effector location
+
+    else:
+      pass
 
   def reach_home_joint_values(self):
     arm_group = self.arm_group
