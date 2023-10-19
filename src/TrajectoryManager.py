@@ -2,7 +2,7 @@
 
 from moveit_msgs.msg import *
 from std_msgs.msg import *
-from kinova_study.msg import *
+from kinova_study.msg import LoadTrajectory, TrajectoryInfo, LoadTrajectoryMultiArray
 import rospy
 
 class KinovaARTrajectoryManager(object):
@@ -18,8 +18,8 @@ class KinovaARTrajectoryManager(object):
         self.SecondTrajectory = DisplayTrajectory()
 
         self.trajectories_msg = LoadTrajectoryMultiArray()
-        self._planA = load_trajectory()
-        self._planB = load_trajectory()
+        self._planA = LoadTrajectory()
+        self._planB = LoadTrajectory()
 
         self.received_messages = []
 
@@ -37,8 +37,8 @@ class KinovaARTrajectoryManager(object):
 
             self.KeyPress_sub = rospy.Subscriber("/KinovaAR/save", Empty, self.change_bool_callback)
 
-            self.TrajectorySubscriber_sub = rospy.Subscriber("/KinovaAR/TrajectoryCombined", load_trajectory, self.temp)
-            self.PublishTrajectories_msg = rospy.Publisher("/KinovaAR/TrajectoryCombined_test", LoadTrajectoryMultiArray, queue_size=1)
+            self.TrajectorySubscriber_sub = rospy.Subscriber("/KinovaAR/TrajectoryCombined", LoadTrajectory, self.temp)
+            self.PublishTrajectories_msg = rospy.Publisher("/KinovaAR/TrajectoryCombined_test", TrajectoryInfo, queue_size=1)
 
 
         except Exception as e:   
@@ -65,12 +65,12 @@ class KinovaARTrajectoryManager(object):
             self._planB = self.received_messages[1]
 
 
-            self.trajectories_msg.Trajectories = [self._planA, self._planB]
+            self.trajectories_msg.trajectories =  self.received_messages
 
-            self.trajectoryInfo.trajectories = self.trajectories_msg
-            self.trajectoryInfo.grasp_region = 0
+            self.trajectoryInfo.trajectories = [self._planA, self._planB]
+            self.trajectoryInfo.grasp_region = [0, 0]
 
-            self.PublishTrajectories_msg.publish(self.trajectories_msg)
+            self.PublishTrajectories_msg.publish(self.trajectoryInfo)
             print("2 recorded")
 
     def change_bool_callback(self, data):
