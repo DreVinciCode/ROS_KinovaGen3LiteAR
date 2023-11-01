@@ -25,7 +25,6 @@ class ExampleFullArmMovement:
         
         rospy.init_node('example_full_arm_movement_python')
 
-
         # Get node params
         self.robot_name = rospy.get_param('~robot_name', "my_gen3_lite")
         self.degrees_of_freedom = rospy.get_param("/" + self.robot_name + "/degrees_of_freedom", 7)
@@ -54,7 +53,7 @@ class ExampleFullArmMovement:
             req.input.mode = GripperMode.GRIPPER_POSITION
             # rospy.loginfo(GripperMode.GRIPPER_POSITION)
             self.send_gripper_command(req)
-            time.sleep(0.1)
+            time.sleep(0.01)
 
 if __name__ == "__main__":
     ex = ExampleFullArmMovement()
