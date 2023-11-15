@@ -46,18 +46,15 @@ from kortex_driver.msg import *
 from moveit_msgs.msg import *
 from kinova_study.msg import *
 from sensor_msgs.msg import JointState
-
 from tf.transformations import euler_from_quaternion, quaternion_from_euler
 
-import actionlib
-
+# import actionlib
+import os
 import sys
 import time
 import rospy
 import moveit_commander
-
-
-import math
+# import math
 import time
 
 import numpy as np
@@ -164,6 +161,8 @@ class ExampleMoveItTrajectories(object):
 
       self.max_velocity_change_sub = rospy.Subscriber("/KinovaAR/MaxVelocity", Float32, self.max_velocity_change_callback)
 
+      self.clear_poses_sub = rospy.Subscriber("/KinovaAR/ClearPoses", Empty, self.clear_targets)
+
     except Exception as e:   
       print (e)
       self.is_init_success = False
@@ -178,7 +177,7 @@ class ExampleMoveItTrajectories(object):
       # self.reach_home_joint_values()
 
       self.example_rest_the_robot()
-      self.reach_gripper_position(0.9)
+      self.reach_gripper_position(0.1)
 
       # self.reach_handover_joint_values()
 
@@ -186,6 +185,7 @@ class ExampleMoveItTrajectories(object):
       rospy.spin()
     except:
       rospy.logerr("Failed to call ROS spin")
+
 
   def randomized_pose(self, pose):
     noisy_values = []
@@ -214,26 +214,25 @@ class ExampleMoveItTrajectories(object):
 
     self.trajectory_execution_callback(Empty())
     self.approachpose = self.arm_group.get_current_pose()
+    time.sleep(0.2)
     self.reset_position_reached_pub.publish(Empty())
     
     self.reach_cartesian_pose(pose=self.waypoint_array.poses[0], tolerance=0.01, constraints=None)
     self.trajectory_execution_callback(Empty())  
+    time.sleep(0.2)
     self.reset_position_reached_pub.publish(Empty())
 
 
     self.reach_cartesian_pose(pose=self.waypoint_array.poses[2], tolerance=0.01, constraints=None)
     self.trajectory_execution_callback(Empty()) 
-
+    time.sleep(0.2)
 
     # self.reach_handover_joint_values()
     # self.handover_position_reached_pub.publish(Empty())
     self.reset_position_reached_pub.publish(Empty())
 
-    self.reach_home_joint_values()
-    # self.arm_group.go(wait=True)
-    self.reach_gripper_position(0.9)
-
-
+    self.example_rest_the_robot()
+    self.reach_gripper_position(0.1)
 
   def loadFirstTrajectory(self, data):
     approach = data.approach.trajectory[0]
@@ -269,13 +268,9 @@ class ExampleMoveItTrajectories(object):
         # return False
     else:
       # self.ShakeTest()
-      self.reach_gripper_position(0.1)
+      self.reach_gripper_position(0.1)    
       
-      
-      # self.reach_handover_joint_values()
-
-     
-     
+      # self.reach_handover_joint_values()    
       # self.reach_cartesian_pose(pose=self.approachpose, tolerance=0.01, constraints=None)
       # self.arm_group.go(wait= True)
       # self.reach_home_joint_values()
