@@ -4,7 +4,7 @@ import keyboard
 import rospy
 import threading
 import random
-from std_msgs.msg import Empty
+from std_msgs.msg import Empty, Float32
 import time
 
 class DRT_Manager(object):
@@ -14,10 +14,13 @@ class DRT_Manager(object):
         self.pub = rospy.Publisher('/KinovaAR/DRT_signal', Empty, queue_size=1)
         self.sub = rospy.Subscriber('/KinovaAR/DRT_response', Empty, self.response_callback)
         
+        self.accuracy_pub = rospy.Publisher("/KinovaAR/DRT_accuracy", Float32, queue_size=1)
+
         self.response_received = False
 
         self.key_pressed = False
         self.counter = 0
+        self.success_counter = 0
         self.next_publish_time = rospy.Time.now()
 
         signal_thread = threading.Thread(target=self.drt_signal_thread)
@@ -29,12 +32,18 @@ class DRT_Manager(object):
     def response_callback(self, data):
         current_time = rospy.Time.now()
         if (self.next_publish_time - current_time) >= rospy.Duration(2.5):
-            print( (self.next_publish_time - current_time).to_sec)
-            # rospy.loginfo("Response received within 2500ms after publishing")
-            pass
+            rospy.loginfo("Response received within 2500ms after publishing")
+            self.success_counter += 1
+            # self.calculate_rate()
         else:
             rospy.loginfo("Response NOT received within 2500ms after publishing")
         self.response_received = True
+
+    def calculate_rate(self):
+        accuracy = self.success_counter / self.counter
+        self.accuracy_pub.publish(accuracy)
+        print(accuracy) 
+
 
     def drt_signal_thread(self):
         while not rospy.is_shutdown():
