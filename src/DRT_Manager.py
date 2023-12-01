@@ -49,7 +49,7 @@ class DRT_Manager(object):
         while not rospy.is_shutdown():
             current_time = rospy.Time.now()
             if current_time >= self.next_publish_time and not self.response_received:
-                rand = random.uniform(3, 4)
+                rand = random.uniform(3, 5)
                 self.next_publish_time = current_time + rospy.Duration(rand)
                 self.pub.publish(Empty())
                 self.counter += 1
