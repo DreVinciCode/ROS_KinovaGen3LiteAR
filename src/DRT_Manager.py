@@ -23,9 +23,9 @@ class DRT_Manager(object):
         self.success_counter = None
         self.signal_thread = None
 
-        self.start_drt()
+        # self.start_drt()
 
-    def start_drt(self) -> threading.Thread:
+    def start_drt(self, data) -> threading.Thread:
         self.success_counter = 0
         self.counter = 0
 
