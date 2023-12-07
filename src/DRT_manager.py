@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 '''
 Author: Andre Cleaver
 Modifed: BMK
@@ -6,7 +8,7 @@ This node is responsible for scheduling DRT triggers for the hololens
 and sending accuracy metrics through a service to the study controller
 '''
 
-#!/usr/bin/env python3
+
 
 import time
 import threading
@@ -102,7 +104,7 @@ class DRTManager():
 
 if __name__ == '__main__':
     try:
-        DRT = DRT_Manager()
+        DRT = DRTManager()
         rospy.spin()
     except rospy.ROSInterruptException:
         pass
