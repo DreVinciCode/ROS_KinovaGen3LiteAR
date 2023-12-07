@@ -5,7 +5,7 @@ import threading
 import random
 from std_msgs.msg import Empty
 import time
-from kinova_ar.srv import SendDRTScore, SendDRTScoreResponse
+from kinova_ar.srv import SendStatistics, SendStatisticsResponse
 from std_srvs.srv import Empty as EmptyService
 
 class DRT_Manager(object):
@@ -16,7 +16,7 @@ class DRT_Manager(object):
         self.pub = rospy.Publisher('/KinovaAR/DRT_signal', Empty, queue_size=1)
 
         rospy.Service('/KinovaAR/start_drt', EmptyService, self.start_drt)
-        rospy.Service('/KinovaAR/stop_drt', SendDRTScore, self.send_score)
+        rospy.Service('/KinovaAR/stop_drt', SendStatistics, self.send_score)
 
         self.run_drt = None
         self.counter = None
@@ -25,7 +25,7 @@ class DRT_Manager(object):
 
         # self.start_drt()
 
-    def start_drt(self, data) -> threading.Thread:
+    def start_drt(self, _) -> threading.Thread:
         self.success_counter = 0
         self.counter = 0
 
@@ -34,6 +34,8 @@ class DRT_Manager(object):
         self.signal_thread = threading.Thread(target=self.drt_signal_thread)
         self.signal_thread.daemon = True
         self.signal_thread.start()
+
+        return EmptyService()
 
     def drt_signal_thread(self):
         time_sleep = random.uniform(2.5, 5)
@@ -58,7 +60,7 @@ class DRT_Manager(object):
 
             rospy.loginfo(f"Current score: {self.success_counter / self.counter}")
 
-    def send_score(self, data: SendDRTScore) -> SendDRTScoreResponse:
+    def send_score(self, _ : SendStatistics) -> SendStatisticsResponse:
         '''return drt accuracy score to service sender
         '''
         self.run_drt = False
@@ -73,7 +75,7 @@ class DRT_Manager(object):
         score = self.success_counter / self.counter
         rospy.loginfo(f"Final score: {score}")
 
-        return SendDRTScoreResponse(score)
+        return SendStatisticsResponse(score)
 
 
 if __name__ == '__main__':
