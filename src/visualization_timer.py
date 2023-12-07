@@ -2,18 +2,17 @@
 
 import rospy
 from std_msgs.msg import Int32
-from kinova_ar.srv import SendStatistics, SendStatisticsResponse
-from std_srvs.srv import Empty as EmptyService
+from kinova_ar.srv import SendStatistics, SendStatisticsResponse, SendInt16, SendInt16Response
 
-class BonusTime(object):
+class VisualizationTimer(object):
     def __init__(self):
 
         rospy.init_node('bonus_time_manager', anonymous=True)
 
         self.pub = rospy.Subscriber("/KinovaAR/VisualCondition", Int32, self.update_visualization)
 
-        rospy.Service('/KinovaAR/start_bonus_time', EmptyService, self.start)
-        rospy.Service('/KinovaAR/stop_bonus_time', SendStatistics, self.send_data)
+        rospy.Service('/KinovaAR/start_visualization_timer', SendInt16, self.start_timer)
+        rospy.Service('/KinovaAR/stop_visualization_timer', SendStatistics, self.send_timer_data)
 
         self.start_time = None
 
@@ -23,22 +22,22 @@ class BonusTime(object):
 
         rospy.spin()
 
-    def start(self, data) -> EmptyService:
-        self.visualization_times = [0.0 for _ in range(data.number_of_visualizations)]
+    def start_timer(self, data) -> SendInt16Response:
+        self.visualization_times = [0.0 for _ in range(data.data)]
 
         self.start_time = rospy.Time.now()
 
-        return EmptyService()
+        return SendInt16Response()
 
     def update_visualization(self, data):
         self.visualization_times[self.current_visualization] += (rospy.Time.now() - self.start_time).to_sec()
         self.current_visualization = data.data
         self.start_time = rospy.Time.now()
 
-    def send_data(self, _ : SendStatistics) -> SendStatisticsResponse:
+    def send_timer_data(self, _ : SendStatistics) -> SendStatisticsResponse:
         self.visualization_times[self.current_visualization] += (rospy.Time.now() - self.start_time).to_sec()
 
-        return self.visualization_times
+        return SendStatisticsResponse(self.visualization_times)
 
 
 if __name__ == '__main__':

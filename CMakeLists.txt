@@ -58,7 +58,7 @@ find_package(catkin REQUIRED COMPONENTS
 add_service_files(
   FILES
   SendDRTScore.srv
-
+  SendInt16.srv
 )
 
 ## Generate actions in the 'action' folder

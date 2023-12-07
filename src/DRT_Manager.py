@@ -6,7 +6,7 @@ import random
 from std_msgs.msg import Empty
 import time
 from kinova_ar.srv import SendStatistics, SendStatisticsResponse
-from std_srvs.srv import Empty as EmptyService
+from std_srvs.srv import Empty as EmptyService, EmptyResponse
 
 class DRT_Manager(object):
     def __init__(self):
@@ -35,7 +35,7 @@ class DRT_Manager(object):
         self.signal_thread.daemon = True
         self.signal_thread.start()
 
-        return EmptyService()
+        return EmptyResponse()
 
     def drt_signal_thread(self):
         time_sleep = random.uniform(2.5, 5)
