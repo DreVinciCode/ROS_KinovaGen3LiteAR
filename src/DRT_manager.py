@@ -1,14 +1,29 @@
+'''
+Author: Andre Cleaver
+Modifed: BMK
+
+This node is responsible for scheduling DRT triggers for the hololens
+and sending accuracy metrics through a service to the study controller
+'''
+
 #!/usr/bin/env python3
 
-import rospy
+import time
 import threading
 import random
+
+import rospy
+
 from std_msgs.msg import Empty
-import time
 from kinova_ar.srv import SendStatistics, SendStatisticsResponse
 from std_srvs.srv import Empty as EmptyService, EmptyResponse
 
-class DRT_Manager(object):
+class DRTManager():
+    '''
+    DRT_Manager class includes function that act as a middle man
+    enabling communication with study controller and hololens
+    '''
+
     def __init__(self):
 
         rospy.init_node('drt_manager', anonymous=True)
@@ -23,9 +38,11 @@ class DRT_Manager(object):
         self.success_counter = None
         self.signal_thread = None
 
-        # self.start_drt()
-
     def start_drt(self, _) -> threading.Thread:
+        '''
+        start_drt callback starts timer and spawns thread
+        that publishes to hololens
+        '''
         self.success_counter = 0
         self.counter = 0
 
@@ -38,6 +55,10 @@ class DRT_Manager(object):
         return EmptyResponse()
 
     def drt_signal_thread(self):
+        '''
+        publishes triggers to the hololens 
+        and records number of triggers sent
+        '''
         time_sleep = random.uniform(2.5, 5)
         while self.run_drt:
             time.sleep(time_sleep)
@@ -63,6 +84,7 @@ class DRT_Manager(object):
     def send_score(self, _ : SendStatistics) -> SendStatisticsResponse:
         '''return drt accuracy score to service sender
         '''
+
         self.run_drt = False
 
         if self.signal_thread is None:
