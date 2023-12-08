@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+
+
 '''
 Author: BMK
 
@@ -5,11 +8,10 @@ This node is responsible for recording how long participants
 use each visual condition for the bonus trial
 '''
 
-#!/usr/bin/env python3
 
 import rospy
 from std_msgs.msg import Int32
-from kinova_ar.srv import SendTimer, SendTimerResponse, SendInt16, SendInt16Response
+from kinova_ar.srv import StopTimer, StopTimerResponse, SendInt16, SendInt16Response
 
 class VisualizationTimer(object):
     '''
@@ -24,7 +26,7 @@ class VisualizationTimer(object):
         self.pub = rospy.Subscriber("/KinovaAR/VisualCondition", Int32, self.update_visualization)
 
         rospy.Service('/KinovaAR/start_visualization_timer', SendInt16, self.start_timer)
-        rospy.Service('/KinovaAR/stop_visualization_timer', SendTimer, self.send_timer_data)
+        rospy.Service('/KinovaAR/stop_visualization_timer', StopTimer, self.send_timer_data)
 
         self.start_time = None
 
@@ -60,14 +62,14 @@ class VisualizationTimer(object):
         self.current_visualization = data.data
         self.start_time = rospy.Time.now()
 
-    def send_timer_data(self, _ : SendTimer) -> SendTimerResponse:
+    def send_timer_data(self, _ : StopTimer) -> StopTimerResponse:
         '''
         service call to stop all timers and send statistics
         '''
 
         self.visualization_times[self.current_visualization] += (rospy.Time.now() - self.start_time).to_sec()
 
-        return SendTimerResponse(self.visualization_times)
+        return StopTimerResponse(self.visualization_times)
 
 
 if __name__ == '__main__':
