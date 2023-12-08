@@ -57,7 +57,8 @@ find_package(catkin REQUIRED COMPONENTS
 ## Generate services in the 'srv' folder
 add_service_files(
   FILES
-  SendStatistics.srv
+  StopDRT.srv
+  StopTimer.srv
   SendInt16.srv
 )
 

@@ -17,7 +17,7 @@ import random
 import rospy
 
 from std_msgs.msg import Empty
-from kinova_ar.srv import SendStatistics, SendStatisticsResponse
+from kinova_ar.srv import StopDRT, StopDRTResponse
 from std_srvs.srv import Empty as EmptyService, EmptyResponse
 
 class DRTManager():
@@ -33,7 +33,7 @@ class DRTManager():
         self.pub = rospy.Publisher('/KinovaAR/DRT_signal', Empty, queue_size=1)
 
         rospy.Service('/KinovaAR/start_drt', EmptyService, self.start_drt)
-        rospy.Service('/KinovaAR/stop_drt', SendStatistics, self.send_score)
+        rospy.Service('/KinovaAR/stop_drt', StopDRT, self.send_score)
 
         self.run_drt = None
         self.counter = None
@@ -83,7 +83,7 @@ class DRTManager():
 
             rospy.loginfo(f"Current score: {self.success_counter / self.counter}")
 
-    def send_score(self, _ : SendStatistics) -> SendStatisticsResponse:
+    def send_score(self, _ : StopDRT) -> StopDRTResponse:
         '''return drt accuracy score to service sender
         '''
 
@@ -99,7 +99,7 @@ class DRTManager():
         score = self.success_counter / self.counter
         rospy.loginfo(f"Final score: {score}")
 
-        return SendStatisticsResponse(score)
+        return StopDRTResponse(score)
 
 
 if __name__ == '__main__':
