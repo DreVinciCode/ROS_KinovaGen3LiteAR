@@ -24,16 +24,14 @@ class Recorder(object):
 
 
     def keyboard_listener(self):
-        if keyboard.is_pressed('space') and not self.key_pressed and self.signalReceived:
+        if keyboard.is_pressed('a') and not self.key_pressed and self.signalReceived:
             self.DRT_Publisher.publish(Empty())
             self.key_pressed = True
             self.signalReceived = False
-        elif keyboard.is_pressed('space') and not self.key_pressed and not self.signalReceived:
+        elif keyboard.is_pressed('a') and not self.key_pressed and not self.signalReceived:
             pass
-        if not keyboard.is_pressed('space'):
+        if not keyboard.is_pressed('a'):
             self.key_pressed = False
-            
-        rospy.sleep(0.1) 
 
 if __name__ == '__main__':
     try:
