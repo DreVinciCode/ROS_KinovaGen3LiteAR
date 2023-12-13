@@ -46,8 +46,6 @@ class VisualizationTimer(object):
 
         self.visualization_times = [0.0 for _ in range(data.data)]
 
-        self.start_time = rospy.Time.now()
-
         return SendInt16Response()
 
     def update_visualization(self, data):
@@ -57,19 +55,23 @@ class VisualizationTimer(object):
 
         :param data: callback data, contains what the new visual type is
         '''
+        if self.start_time is not None or self.current_visualization is not None:
+            self.visualization_times[self.current_visualization] += (rospy.Time.now() - self.start_time).to_sec()
 
-        self.visualization_times[self.current_visualization] += (rospy.Time.now() - self.start_time).to_sec()
-        self.current_visualization = data.data
         self.start_time = rospy.Time.now()
+        self.current_visualization = data.data
 
     def send_timer_data(self, _ : StopTimer) -> StopTimerResponse:
         '''
         service call to stop all timers and send statistics
         '''
+        if self.start_time is not None:
+            self.visualization_times[self.current_visualization] += (rospy.Time.now() - self.start_time).to_sec()
+            self.start_time = None
+            self.current_visualization = None
 
-        self.visualization_times[self.current_visualization] += (rospy.Time.now() - self.start_time).to_sec()
-
-        return StopTimerResponse(self.visualization_times)
+            rospy.logerr(self.visualization_times)
+            return StopTimerResponse(self.visualization_times)
 
 
 if __name__ == '__main__':
