@@ -230,15 +230,27 @@ class ExampleMoveItTrajectories(object):
     self.set_gripper_position(1)
     time.sleep(2)
 
+
     self.reach_cartesian_pose(pose=self.waypoint_array.poses[2], tolerance=0.01, constraints=None)
     self.trajectory_execution_callback(Empty()) 
     time.sleep(0.2)
+    self.reset_position_reached_pub.publish(Empty())
+
+    self.reach_cartesian_pose(pose=self.waypoint_array.poses[3], tolerance=0.01, constraints=None)
+    self.trajectory_execution_callback(Empty()) 
+    time.sleep(0.2)
+    self.reset_position_reached_pub.publish(Empty())
 
 
     self.set_gripper_position(0)
     time.sleep(2)
     # self.reach_handover_joint_values()
     # self.handover_position_reached_pub.publish(Empty())
+    self.reset_position_reached_pub.publish(Empty())
+
+    self.reach_cartesian_pose(pose=self.waypoint_array.poses[2], tolerance=0.01, constraints=None)
+    self.trajectory_execution_callback(Empty()) 
+    time.sleep(0.2)
     self.reset_position_reached_pub.publish(Empty())
 
     self.example_rest_the_robot()
