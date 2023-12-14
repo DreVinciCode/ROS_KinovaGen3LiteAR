@@ -55,7 +55,7 @@ class VisualizationTimer(object):
 
         :param data: callback data, contains what the new visual type is
         '''
-        if self.start_time is not None or self.current_visualization is not None:
+        if self.start_time is not None and self.current_visualization is not None:
             self.visualization_times[self.current_visualization] += (rospy.Time.now() - self.start_time).to_sec()
 
         self.start_time = rospy.Time.now()
@@ -70,7 +70,6 @@ class VisualizationTimer(object):
             self.start_time = None
             self.current_visualization = None
 
-            rospy.logerr(self.visualization_times)
             return StopTimerResponse(self.visualization_times)
 
 
