@@ -136,7 +136,7 @@ class ExampleMoveItTrajectories(object):
       rospy.wait_for_service(send_gripper_command_full_name)
       self.send_gripper_command = rospy.ServiceProxy(send_gripper_command_full_name, SendGripperCommand)
 
-
+      # self.replayTrajectory_sub = rospy.Subscriber("/KinovaAR/TrajectoryCombined", LoadTrajectory, self.trajectory_callback)
 
       self.trajectory_execution_sub = rospy.Subscriber("/KinovaAR/execute_action", Empty, self.trajectory_execution_callback)
       self.target_pose_sub = rospy.Subscriber("/KinovaAR/targetPose", PoseStamped, self.target_pose_callback)
@@ -190,6 +190,30 @@ class ExampleMoveItTrajectories(object):
       rospy.spin()
     except:
       rospy.logerr("Failed to call ROS spin")
+
+
+  # def trajectory_callback(self, data):
+     
+  #   print("Loaded a trajectory!")
+  #   sequence = True
+  #   # self.approach = data.approach_of_grasp
+  #   # self.grasp = data.grasp
+  #   # self.delivery = data.approach_of_delivery
+  #   # self.place = data.delivery
+
+  #   try:
+  #     sequence &= self.arm_group.execute(data.approach_of_grasp, wait=True)      
+  #     sequence &= self.arm_group.execute(data.grasp, wait=True)    
+  #     self.set_gripper_position(1)
+  #     sequence &= self.arm_group.execute(data.approach_of_delivery, wait=True)      
+  #     sequence &= self.arm_group.execute(data.delivery, wait=True)
+  #     self.set_gripper_position(0)
+
+
+  #   except rospy.ServiceException:
+  #       rospy.logerr("Failed to call ExecuteAction for First Trajectory")
+  #   else:
+  #     self.example_rest_the_robot()
 
 
   def randomized_pose(self, pose):

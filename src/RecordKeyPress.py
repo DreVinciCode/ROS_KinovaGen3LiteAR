@@ -3,7 +3,7 @@
 import keyboard
 import rospy
 import time
-from std_msgs.msg import Empty
+from std_msgs.msg import Empty, Int32, Int16
 
 class Recorder(object):
     def __init__(self):
@@ -12,6 +12,9 @@ class Recorder(object):
         self.Empty_Publisher = rospy.Publisher("/KinovaAR/save", Empty, queue_size=1)
         self.DRT_Publisher = rospy.Publisher("/KinovaAR/DRT_response", Empty, queue_size=1)
         self.DRT_Subscriber = rospy.Subscriber("/KinovaAR/DRT_signal", Empty, self.signalUpdate)
+
+        self.visualization_pub = rospy.Publisher("/visualization_type", Int16, queue_size=1)
+        self.condition_pub = rospy.Publisher("/KinovaAR/VisualCondition", Int32, queue_size=1)
         self.record_check = True
         self.key_pressed = False
         self.signalReceived = False
@@ -32,6 +35,16 @@ class Recorder(object):
             pass
         if not keyboard.is_pressed('a'):
             self.key_pressed = False
+
+        if keyboard.is_pressed('i'):
+            self.visualization_pub.publish(0)
+            self.condition_pub.publish(0)
+        elif keyboard.is_pressed('o'):
+            self.visualization_pub.publish(1)
+            self.condition_pub.publish(1)            
+        elif keyboard.is_pressed('p'):
+            self.visualization_pub.publish(2)
+            self.condition_pub.publish(2)
 
 if __name__ == '__main__':
     try:

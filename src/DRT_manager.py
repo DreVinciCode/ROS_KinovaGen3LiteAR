@@ -8,8 +8,6 @@ This node is responsible for scheduling DRT triggers for the hololens
 and sending accuracy metrics through a service to the study controller
 '''
 
-
-
 import time
 import threading
 import random
